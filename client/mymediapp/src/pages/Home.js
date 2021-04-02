@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 import { googleClientID, scopes } from "../config";
-import axios from "axios";
 export const Home = () => {
   let GoogleAuth;
   const googleLoginButton = useRef();
@@ -8,6 +7,7 @@ export const Home = () => {
   useEffect(() => {
     handleClientLoad();
   }, []);
+
   const handleClientLoad = () => {
     //googleSDK의 역할을 수행한다.
     window.googleSDKLoaded = () => {
@@ -30,7 +30,7 @@ export const Home = () => {
   };
 
   const initClient = () => {
-    GoogleAuth = window.gapi.auth2.getAuthInstance({
+    GoogleAuth = window.gapi.auth2.init({
       client_id: googleClientID,
       scope: scopes,
     });
