@@ -1,11 +1,25 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { googleClientID, scopes, serverUrl } from "../config";
+import {
+  ChakraProvider,
+  SimpleGrid,
+  Container,
+  Button,
+} from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
+
+import { MenuElement } from "../components/Menu";
+import Card from "../components/Card";
+
 export const Home = () => {
   let GoogleAuth;
 
   const googleLoginButton = useRef();
   const [accessToken, setAccessToken] = useState();
+  const { t } = useTranslation();
+  const [language, setLanguage] = useState();
 
   useEffect(() => {
     handleClientLoad();
@@ -20,6 +34,19 @@ export const Home = () => {
   }, [accessToken]);
   //accessToken의 값이 변경될 때마다 useEffect내부의 코드를 실행한다.
 
+  useEffect(() => {
+    console.log(language);
+    if (language) {
+      if (language === "Korean") {
+        i18n.changeLanguage("ko");
+      } else if (language === "English") {
+        i18n.changeLanguage("en");
+        console.log("to eng");
+      } else if (language === "Vietnamese") {
+        i18n.changeLanguage("vi");
+      }
+    } //언어가 많아지면 어떻게 하지?
+  }, [language]);
   const handleClientLoad = () => {
     //googleSDK의 역할을 수행한다.
     window.googleSDKLoaded = () => {
@@ -70,10 +97,62 @@ export const Home = () => {
   return (
     <div>
       <button ref={googleLoginButton}>Google Login</button>
+      {/* <CardElements data= {serviceDescriptionsData}></CardElements> */}
+      <p>{t("home.card.calendarTitle")}</p>
+      <MenuElement
+        language="korean"
+        handleMenuClick={(e) => {
+          console.log(e);
+          setLanguage(e.target.firstChild.nodeValue);
+        }}
+      ></MenuElement>
     </div>
   );
 };
 
+const CardElements = (props) => {
+  const serviceDescriptionsData = [
+    {
+      id: "1",
+      product: "MyMedi Calendar",
+      summary: "This is a summary, can be any length",
+      longLine: "Very short, can be any description",
+    },
+    {
+      id: "2",
+      product: "Product 1",
+      summary: "This is a summary, can be any length",
+      longLine: "Very short, can be any description",
+    },
+    {
+      id: "3",
+      product: "Product 1",
+      summary: "This is a summary, can be any length",
+      longLine: "Very short, can be any description",
+    },
+  ];
+
+  return (
+    <ChakraProvider>
+      <Container maxW="80rem" centerContent>
+        <SimpleGrid columns={[1, 2, 1, 2]}>
+          {serviceDescriptionsData.map(function (data) {
+            const { id, product, summary, longLine } = data;
+            return (
+              <Card
+                key={id}
+                product={product}
+                summary={summary}
+                longLine={longLine}
+              />
+            );
+          })}
+        </SimpleGrid>
+      </Container>
+      <Button colorScheme="blue">Button</Button>
+    </ChakraProvider>
+  );
+};
 //TODO
 //package.json에서 프록시 설정을 하면 백엔드를 쓸때 cors 문제를 미연에 방지할 수 있다.
 //home ui 정돈하기

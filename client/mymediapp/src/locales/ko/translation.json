@@ -1,0 +1,9 @@
+{
+    "language" : "언어",
+
+    "home" : {
+        "card": {
+            "calendarTitle": "MyMedi 달력"
+        }
+    }
+}

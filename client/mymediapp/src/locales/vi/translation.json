@@ -1,0 +1,9 @@
+{
+    "language" : "ngôn ngữ",
+
+    "home" : {
+        "card": {
+            "calendarTitle": "Lịch MyMedi"
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "language" : "language",
+
+    "home" : {
+        "card": {
+            "calendarTitle": "MyMedi Calendar"
+        }
+    }
+}
