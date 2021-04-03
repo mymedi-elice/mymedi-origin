@@ -1,12 +1,20 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import axios from 'axios';
 import { googleClientID, scopes } from "../config";
 export const Home = () => {
   let GoogleAuth;
+  const serverUrl = 'http://localhost:5000';
   const googleLoginButton = useRef();
+  const [accessToken, setAccessToken] = useState();
 
   useEffect(() => {
     handleClientLoad();
-  }, []);
+    console.log(accessToken);
+    sendAccessTokenToServer();
+    return () => {
+      console.log(accessToken);
+    }
+  }, [accessToken]);
 
   const handleClientLoad = () => {
     //googleSDK의 역할을 수행한다.
@@ -39,12 +47,21 @@ export const Home = () => {
       googleLoginButton.current, //click handler를 붙일 element
       {}, //여기에도 옵션을 넣을 수 있는 것 같다.
       (resourceOwner) => {
+        setAccessToken(resourceOwner.tc.access_token);
         console.log(resourceOwner);
       }, //성공한 경우 호출할 함수를 여기 넣는다
       (error) => {
         console.log(error);
       } //실패할 경우 호출할 함수를 여기 넣는다.
     );
+  };
+
+  const sendAccessTokenToServer = () => {
+    axios.post(serverUrl+'/auth/accesstoken', accessToken, {
+      params: {
+        accessToken: accessToken
+      }
+    })
   };
 
   return (
