@@ -64,5 +64,7 @@ export const Home = () => {
   );
 };
 
+//TODO
 //package.json에서 프록시 설정을 하면 백엔드를 쓸때 cors 문제를 미연에 방지할 수 있다.
-//나중에..할것..
+//백엔드로 토큰 보내기
+//home ui 정돈하기
