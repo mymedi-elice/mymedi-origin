@@ -10,16 +10,5 @@ parser_accessToken.add_argument('accessToken')
 def accesstoken():
     args = parser_accessToken.parse_args()
     accessToken = args['accessToken']
-
-    error = None
-
-    if accessToken is None:
-        error = "There is no accessToken"
-
-    if error is None:
-        return jsonify(
-            status = "success",
-            result = accessToken
-        )
-
-    return jsonify(status = "failure", error = error)
+    print(accessToken)
+    return jsonify(status = "success", accessToken = accessToken)
