@@ -4,6 +4,10 @@ import requests
 
 from flask import Blueprint, jsonify, request, Flask, session, abort, redirect
 
+
+# db
+from module import db
+
 # Google Oauth
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
@@ -62,11 +66,36 @@ def callback():
         audience = GOOGLE_CLIENT_ID
     )
 
-    session["google_id"] = id_info.get("sub")
-    session["name"] = id_info.get("name")
+    # session
+    session['google_id'] = id_info.get("sub")
+
+    # 구글 인증을 받은 사용자에게 sub, name 정보를 요청받는다.
+    sub = id_info.get("sub")
+    # print(sub)
+
+    # 사용자의 sub, name 정보를 db에 저장한다.
+    db_class = db.Database()
+
+    # 이미 등록된 유저라면 db에 저장하지 않는다.
+    sql = "SELECT id FROM user WHERE sub = %s"
+    row = db_class.executeOne(sql, (sub))
+
+    # db에 등록되지 않은 유저라면 db에 저장
+    if row is None:
+        sql = "INSERT INTO user (sub) VALUES (%s)"
+        db_class.execute(sql, (sub,))
+        db_class.commit()
+
+    # sub 정보를 기반으로 jwt access token을 발급한다.
+    # access_token = create_access_token(identity = sub)
 
     return redirect('/googleOauth/protected_area')
 
+    # 프론트에서 로그인한 사용자에 대한 access_token을 localStorage에 저장한다.
+    # return jsonify(status = "success", result = {"name": name, "access_token": access_token})
+
+# jwt token을 사용하는 경우 서버에서 token을 clear 해주지 않고,
+# 프론트에서 localStorage에 저장된 access_token을 clear 해주는 방식으로 설정
 @googleOauth.route('/logout')
 def logout():
     session.clear()
@@ -82,4 +111,5 @@ def index():
 @googleOauth.route("/protected_area")
 @login_is_required
 def protected_area():
+    # current_user = get_jwt_identity()
     return "Protected! <a href = '/googleOauth/logout'><button>Logout</button></a>"
