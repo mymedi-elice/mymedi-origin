@@ -2,10 +2,14 @@ import pymysql
 
 class Database():
     def __init__(self):
-        self.db= pymysql.connect(host='localhost',
-                                  user='root',
-                                  db='mymedi',
-                                  charset='utf8')
+        self.db= pymysql.connect(
+            host='localhost',
+            user='root',
+            port = 3306,
+            db='mymedi',
+            charset='utf8',
+            autocommit = True
+            )
         self.cursor= self.db.cursor(pymysql.cursors.DictCursor)
 
     def execute(self, query, args={}):
@@ -21,5 +25,5 @@ class Database():
         row= self.cursor.fetchall()
         return row
 
-    def commit():
+    def commit(self):
         self.db.commit()
