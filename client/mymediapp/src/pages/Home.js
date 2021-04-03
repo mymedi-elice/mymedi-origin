@@ -1,20 +1,24 @@
-import React, { useRef, useState, useEffect } from "react";
-import axios from 'axios';
-import { googleClientID, scopes } from "../config";
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import { googleClientID, scopes, serverUrl } from "../config";
 export const Home = () => {
   let GoogleAuth;
-  const serverUrl = 'http://localhost:5000';
+
   const googleLoginButton = useRef();
   const [accessToken, setAccessToken] = useState();
 
   useEffect(() => {
     handleClientLoad();
-    console.log(accessToken);
-    sendAccessTokenToServer();
-    return () => {
-      console.log(accessToken);
+  }, []);
+  //onmount 시점에 한번만 useEffect 내부의 코드를 실행한다. (handleClientLoad는 구글 oauth를 위한 환경설정을 한다.)
+
+  useEffect(() => {
+    if (accessToken) {
+      //accessToken이 존재할 때만 서버에 엑세스 토큰을 보낸다.
+      sendAccessTokenToServer();
     }
   }, [accessToken]);
+  //accessToken의 값이 변경될 때마다 useEffect내부의 코드를 실행한다.
 
   const handleClientLoad = () => {
     //googleSDK의 역할을 수행한다.
@@ -45,37 +49,26 @@ export const Home = () => {
 
     GoogleAuth.attachClickHandler(
       googleLoginButton.current, //click handler를 붙일 element
-      {}, //여기에도 옵션을 넣을 수 있는 것 같다.
+      {}, //여기에도 scope 등의 옵션을 넣을 수 있는 것 같다.
       (resourceOwner) => {
         setAccessToken(resourceOwner.tc.access_token);
         console.log(resourceOwner);
-      }, //성공한 경우 호출할 함수를 여기 넣는다
+      }, //인증에 성공한 경우 호출할 함수를 여기 넣는다
       (error) => {
         console.log(error);
-      } //실패할 경우 호출할 함수를 여기 넣는다.
+      } //인증 실패할 경우 호출할 함수를 여기 넣는다.
     );
   };
 
-  const sendAccessTokenToServer = () => {
-    axios.post(serverUrl+'/auth/accesstoken', accessToken, {
-      params: {
-        accessToken: accessToken
-      }
-    })
-  };
+  const sendAccessTokenToServer = useCallback(async () => {
+    const res = await axios.post(serverUrl + "/auth/accesstoken", {
+      accessToken: accessToken,
+    });
+    console.log("post response", res); //post 요청에 대한 응답을 콘솔에 표시
+  }, [accessToken]);
 
   return (
     <div>
-      Hello
-      {/* <GoogleLogin
-        clientId={googleClientID}
-        onSuccess={(res) => {
-          console.log(res);
-        }}
-        onFailure={(error) => {
-          console.log(error);
-        }}
-      ></GoogleLogin> 라이브러리를 이용한 로그인*/}
       <button ref={googleLoginButton}>Google Login</button>
     </div>
   );
@@ -83,5 +76,4 @@ export const Home = () => {
 
 //TODO
 //package.json에서 프록시 설정을 하면 백엔드를 쓸때 cors 문제를 미연에 방지할 수 있다.
-//백엔드로 토큰 보내기
 //home ui 정돈하기
