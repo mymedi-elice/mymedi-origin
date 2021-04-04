@@ -1,6 +1,12 @@
 {
     "language" : "language",
-
+    "navbar" : {
+        "calendar": "Calendar",
+        "matching": "Translator",
+        "mypage": "MyPage",
+        "login": "Login",
+        "logout": "Logout"
+    },
     "home" : {
         "card": {
             "calendarTitle": "MyMedi Calendar"

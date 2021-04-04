@@ -1,6 +1,12 @@
 {
     "language" : "언어",
-
+    "navbar" : {
+        "calendar": "달력",
+        "matching": "통역사",
+        "mypage": "내 정보",
+        "login": "로그인",
+        "logout": "로그아웃"
+    },
     "home" : {
         "card": {
             "calendarTitle": "MyMedi 달력"

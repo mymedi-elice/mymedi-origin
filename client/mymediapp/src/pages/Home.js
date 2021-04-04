@@ -47,6 +47,7 @@ export const Home = () => {
       }
     } //언어가 많아지면 어떻게 하지?
   }, [language]);
+
   const handleClientLoad = () => {
     //googleSDK의 역할을 수행한다.
     window.googleSDKLoaded = () => {
@@ -100,9 +101,8 @@ export const Home = () => {
       {/* <CardElements data= {serviceDescriptionsData}></CardElements> */}
       <p>{t("home.card.calendarTitle")}</p>
       <MenuElement
-        language="korean"
+        language={t("language")}
         handleMenuClick={(e) => {
-          console.log(e);
           setLanguage(e.target.firstChild.nodeValue);
         }}
       ></MenuElement>

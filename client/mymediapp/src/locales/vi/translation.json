@@ -1,6 +1,12 @@
 {
     "language" : "ngôn ngữ",
-
+    "navbar" : {
+        "calendar": "lịch",
+        "matching": "người phiên dịch",
+        "mypage": "Thông tin của tôi",
+        "login": "đăng nhập",
+        "logout": "đăng xuất"
+    },
     "home" : {
         "card": {
             "calendarTitle": "Lịch MyMedi"

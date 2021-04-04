@@ -19,12 +19,12 @@ export const MenuElement = (props) => {
     {
       id: "2",
       language: "English",
-      flagImage: "https://www.countryflags.io/vn/flat/64.png",
+      flagImage: "https://www.countryflags.io/um/flat/64.png",
     },
     {
       id: "3",
       language: "Vietnamese",
-      flagImage: "https://www.countryflags.io/um/flat/64.png",
+      flagImage: "https://www.countryflags.io/vn/flat/64.png",
     },
   ];
   return (
