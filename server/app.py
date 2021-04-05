@@ -7,8 +7,8 @@ app.secret_key = "mymedi"
 CORS(app)
 
 # flask_jwt_extended를 위한 secret_key 설정
-# app.config["JWT_SECRET_KEY"] = "super-secret"
-# jwt = JWTManager(app)
+app.config["JWT_SECRET_KEY"] = "super-secret"
+jwt = JWTManager(app)
 
 from test import test
 app.register_blueprint(test)
