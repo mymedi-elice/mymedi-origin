@@ -4,7 +4,6 @@ import requests
 
 from flask import Blueprint, jsonify, request, Flask, session, abort, redirect
 
-
 # db
 from module import db
 
@@ -89,7 +88,8 @@ def callback():
     # sub 정보를 기반으로 jwt access token을 발급한다.
     # access_token = create_access_token(identity = sub)
 
-    return redirect('/googleOauth/protected_area')
+    # return redirect('/googleOauth/protected_area')
+    return id_info
 
     # 프론트에서 로그인한 사용자에 대한 access_token을 localStorage에 저장한다.
     # return jsonify(status = "success", result = {"name": name, "access_token": access_token})

@@ -50,6 +50,7 @@ def idtoken():
 
     return jsonify(status = "success", sub = sub, access_token = access_token)
 
+# 로그인된 사용자에 대한 검증
 @auth.route('/protected')
 @jwt_required
 def protected():

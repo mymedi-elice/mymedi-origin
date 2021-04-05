@@ -1,5 +1,6 @@
 import pymysql
 
+# 나중에 config 파일에 db 연결에 대한 정보를 넣어서 비공개로 전환하기
 class Database():
     def __init__(self):
         self.db= pymysql.connect(
