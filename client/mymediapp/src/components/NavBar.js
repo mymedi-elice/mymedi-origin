@@ -15,19 +15,12 @@ import {
   useDisclosure,
   useColorModeValue,
   Stack,
+  propNames,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
-
-//https://chakra-templates.dev/navigation/navbar
-//simple with user dropdown
-
-const Links = ["Dashboard", "Projects", "Team"]; // 국제화 잊지말기
-// const validUserLinks = ['Calendar', 'Matching', 'MyPage', 'Logout'];
-// const unValidUserLinks = ['Login'];
-// 위 두개는 국제화를 위해 부모 컴포넌트에서 props로 넘겨주기
+import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
+import MenuElement from "./Menu";
 
 const NavLink = ({ children }) => (
-  // const NavLink = ({ children }: { children: ReactNode }) => ( //?????ReactNode???
   <Link
     px={2}
     py={1}
@@ -42,11 +35,9 @@ const NavLink = ({ children }) => (
   </Link>
 );
 
-export default function Simple() {
+export default function NavBar(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // const validUserLinks = ['Calendar', 'Matching', 'MyPage', 'Logout'];
-  // const unValidUserLinks = ['Login'];
-
+  const Links = props.links;
   return (
     <>
       <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
@@ -71,6 +62,17 @@ export default function Simple() {
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
+            <Button
+              variant={"solid"}
+              colorScheme={"teal"}
+              size={"sm"}
+              mr={4}
+              // leftIcon={<AddIcon />}
+              ref={props.googleLogin}
+            >
+              {props.logState}
+            </Button>
+            {/* isLoggedIn을 통해 logout버튼을 보여주는 경우 필요 */}
             <Menu>
               <MenuButton
                 as={Button}
@@ -78,19 +80,11 @@ export default function Simple() {
                 variant={"link"}
                 cursor={"pointer"}
               >
-                <Avatar
-                  size={"sm"}
-                  src={
-                    "https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                  }
-                />
+                {props.language}
               </MenuButton>
-              <MenuList>
-                <MenuItem>Link 1</MenuItem>
-                <MenuItem>Link 2</MenuItem>
-                <MenuDivider />
-                <MenuItem>Link 3</MenuItem>
-              </MenuList>
+              <MenuElement
+                handleMenuClick={props.handleMenuClick}
+              ></MenuElement>
             </Menu>
           </Flex>
         </Flex>

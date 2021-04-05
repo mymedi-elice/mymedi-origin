@@ -1,4 +1,10 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useContext,
+} from "react";
 import axios from "axios";
 import { googleClientID, scopes, serverUrl } from "../config";
 import {
@@ -10,29 +16,42 @@ import {
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 
-import { MenuElement } from "../components/Menu";
-import Card from "../components/Card";
+import { cookiesContext } from "../context";
 
-export const Home = () => {
+import MenuElement from "../components/Menu";
+import Card from "../components/Card";
+import NavBar from "../components/NavBar";
+import Footer from "../components/Footer";
+
+axios.defaults.baseURL = serverUrl;
+axios.defaults.withCredentials = true;
+
+export default function Home() {
   let GoogleAuth;
 
   const googleLoginButton = useRef();
-  const [accessToken, setAccessToken] = useState();
+  const [idToken, setIdToken] = useState();
   const { t } = useTranslation();
   const [language, setLanguage] = useState();
+  // const [isLoggedIn, setIsLoggedIn] = useState();
+
+  // const {cookies, setCookies, hasCookie, setHasCookie} = useContext(cookiesContext);
+  const { hasCookie, setHasCookie } = useContext(cookiesContext);
 
   useEffect(() => {
     handleClientLoad();
-  }, []);
+  }, [googleLoginButton]);
+  //googleLoginButton이 존재하지 않는 경우를 대비해서 값이 변할때마다 실행
+  //꼭 필요한건지는 모르겠음...
   //onmount 시점에 한번만 useEffect 내부의 코드를 실행한다. (handleClientLoad는 구글 oauth를 위한 환경설정을 한다.)
 
   useEffect(() => {
-    if (accessToken) {
-      //accessToken이 존재할 때만 서버에 엑세스 토큰을 보낸다.
-      sendAccessTokenToServer();
+    if (idToken) {
+      //google idToken이 존재할 때만 서버에 엑세스 토큰을 보낸다.
+      sendIdTokenToServer();
     }
-  }, [accessToken]);
-  //accessToken의 값이 변경될 때마다 useEffect내부의 코드를 실행한다.
+  }, [idToken]);
+  //google idToken의 값이 변경될 때마다 useEffect내부의 코드를 실행한다.
 
   useEffect(() => {
     console.log(language);
@@ -74,41 +93,55 @@ export const Home = () => {
       client_id: googleClientID,
       scope: scopes,
     });
-
-    GoogleAuth.attachClickHandler(
-      googleLoginButton.current, //click handler를 붙일 element
-      {}, //여기에도 scope 등의 옵션을 넣을 수 있는 것 같다.
-      (resourceOwner) => {
-        setAccessToken(resourceOwner.tc.access_token);
-        console.log(resourceOwner);
-      }, //인증에 성공한 경우 호출할 함수를 여기 넣는다
-      (error) => {
-        console.log(error);
-      } //인증 실패할 경우 호출할 함수를 여기 넣는다.
-    );
+    if (googleLoginButton) {
+      GoogleAuth.attachClickHandler(
+        googleLoginButton.current, //click handler를 붙일 element
+        {}, //여기에도 scope 등의 옵션을 넣을 수 있는 것 같다.
+        (resourceOwner) => {
+          setIdToken(resourceOwner.tc.id_token);
+          console.log(resourceOwner);
+        }, //인증에 성공한 경우 호출할 함수를 여기 넣는다
+        (error) => {
+          console.log(error);
+        } //인증 실패할 경우 호출할 함수를 여기 넣는다.
+      );
+    }
   };
 
-  const sendAccessTokenToServer = useCallback(async () => {
-    const res = await axios.post(serverUrl + "/auth/accesstoken", {
-      accessToken: accessToken,
+  const sendIdTokenToServer = useCallback(async () => {
+    const res = await axios.post(serverUrl + "/auth/idtoken", {
+      idToken: idToken,
     });
     console.log("post response", res); //post 요청에 대한 응답을 콘솔에 표시
-  }, [accessToken]);
 
+    if (res.data.status === "success") {
+      setHasCookie(true);
+    }
+  }, [idToken]);
+
+  const validUserLinks = [
+    t("navbar.calendar"),
+    t("navbar.matching"),
+    t("navbar.mypage"),
+  ];
+
+  console.log(googleLoginButton);
   return (
     <div>
-      <button ref={googleLoginButton}>Google Login</button>
-      {/* <CardElements data= {serviceDescriptionsData}></CardElements> */}
-      <p>{t("home.card.calendarTitle")}</p>
-      <MenuElement
+      <NavBar
         language={t("language")}
         handleMenuClick={(e) => {
           setLanguage(e.target.firstChild.nodeValue);
         }}
-      ></MenuElement>
+        links={hasCookie ? validUserLinks : []}
+        logState={hasCookie ? t("navbar.logout") : t("navbar.login")}
+        googleLogin={googleLoginButton}
+      ></NavBar>
+      <p>{t("home.card.calendarTitle")}</p>
+      <Footer></Footer>
     </div>
   );
-};
+}
 
 const CardElements = (props) => {
   const serviceDescriptionsData = [

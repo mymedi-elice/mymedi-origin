@@ -4,7 +4,7 @@
         "calendar": "Calendar",
         "matching": "Translator",
         "mypage": "MyPage",
-        "login": "Login",
+        "login": "Google Login",
         "logout": "Logout"
     },
     "home" : {

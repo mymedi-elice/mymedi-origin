@@ -5,11 +5,12 @@ import {
   MenuButton,
   Image,
   ChevronDownIcon,
+  Button,
 } from "@chakra-ui/react";
 
 import React from "react";
 
-export const MenuElement = (props) => {
+export default function MenuElement(props) {
   const serviceDescriptionsData = [
     {
       id: "1",
@@ -28,24 +29,21 @@ export const MenuElement = (props) => {
     },
   ];
   return (
-    <Menu>
-      <MenuButton rightIcon={<ChevronDownIcon />}>{props.language}</MenuButton>
-      <MenuList onClick={props.handleMenuClick}>
-        {serviceDescriptionsData.map((country) => {
-          return (
-            <MenuItem minH="48px" key={country.id}>
-              <Image
-                boxSize="2rem"
-                borderRadius="full"
-                src={country.flagImage}
-                alt={country.language}
-                mr="12px"
-              />
-              <span>{country.language}</span>
-            </MenuItem>
-          );
-        })}
-      </MenuList>
-    </Menu>
+    <MenuList onClick={props.handleMenuClick}>
+      {serviceDescriptionsData.map((country) => {
+        return (
+          <MenuItem minH="48px" key={country.id}>
+            <Image
+              boxSize="2rem"
+              borderRadius="full"
+              src={country.flagImage}
+              alt={country.language}
+              mr="12px"
+            />
+            <span>{country.language}</span>
+          </MenuItem>
+        );
+      })}
+    </MenuList>
   );
-};
+}
