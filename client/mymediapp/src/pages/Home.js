@@ -23,9 +23,6 @@ import Card from "../components/Card";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 
-axios.defaults.baseURL = serverUrl;
-axios.defaults.withCredentials = true;
-
 export default function Home() {
   let GoogleAuth;
 
@@ -116,6 +113,7 @@ export default function Home() {
 
     if (res.data.status === "success") {
       setHasCookie(true);
+      console.log("res");
     }
   }, [idToken]);
 

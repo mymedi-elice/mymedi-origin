@@ -7,7 +7,7 @@ import { cookiesContext } from "./context";
 
 function App() {
   // const [cookies, setCookies] = useCookies(["user"]);
-  const [hasCookie, setHasCookie] = useState(true);
+  const [hasCookie, setHasCookie] = useState(false);
 
   const cookiesValue = { hasCookie, setHasCookie };
 
