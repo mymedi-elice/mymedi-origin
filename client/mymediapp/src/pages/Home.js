@@ -5,7 +5,7 @@ export const Home = () => {
   let GoogleAuth;
 
   const googleLoginButton = useRef();
-  const [accessToken, setAccessToken] = useState();
+  const [idToken, setIdToken] = useState();
 
   useEffect(() => {
     handleClientLoad();
@@ -13,12 +13,12 @@ export const Home = () => {
   //onmount 시점에 한번만 useEffect 내부의 코드를 실행한다. (handleClientLoad는 구글 oauth를 위한 환경설정을 한다.)
 
   useEffect(() => {
-    if (accessToken) {
-      //accessToken이 존재할 때만 서버에 엑세스 토큰을 보낸다.
-      sendAccessTokenToServer();
+    if (idToken) {
+      //idToken이 존재할 때만 서버에 엑세스 토큰을 보낸다.
+      sendIdTokenToServer();
     }
-  }, [accessToken]);
-  //accessToken의 값이 변경될 때마다 useEffect내부의 코드를 실행한다.
+  }, [idToken]);
+  //idToken의 값이 변경될 때마다 useEffect내부의 코드를 실행한다.
 
   const handleClientLoad = () => {
     //googleSDK의 역할을 수행한다.
@@ -51,7 +51,7 @@ export const Home = () => {
       googleLoginButton.current, //click handler를 붙일 element
       {}, //여기에도 scope 등의 옵션을 넣을 수 있는 것 같다.
       (resourceOwner) => {
-        setAccessToken(resourceOwner.tc.access_token);
+        setIdToken(resourceOwner.tc.id_token);
         console.log(resourceOwner);
       }, //인증에 성공한 경우 호출할 함수를 여기 넣는다
       (error) => {
@@ -60,12 +60,12 @@ export const Home = () => {
     );
   };
 
-  const sendAccessTokenToServer = useCallback(async () => {
-    const res = await axios.post(serverUrl + "/auth/accesstoken", {
-      accessToken: accessToken,
+  const sendIdTokenToServer = useCallback(async () => {
+    const res = await axios.post(serverUrl + "/auth/idtoken", {
+      idToken: idToken,
     });
     console.log("post response", res); //post 요청에 대한 응답을 콘솔에 표시
-  }, [accessToken]);
+  }, [idToken]);
 
   return (
     <div>
