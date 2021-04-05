@@ -16,8 +16,8 @@ app.register_blueprint(test)
 from auth import auth
 app.register_blueprint(auth)
 
-from googleOauth import googleOauth
-app.register_blueprint(googleOauth)
+# from googleOauth import googleOauth
+# app.register_blueprint(googleOauth)
 
 if __name__ == "__main__":
     app.run(debug = True)
