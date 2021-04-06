@@ -1,6 +1,7 @@
 # Use an official Python runtime as an image
-FROM python:3.6
-ENV PATH /venvs/mymedi/lib
+FROM python:3.9
+
+ENV PYTHONPATH "${PYTHONPATH}:/venvs/mymedi/lib/site-packages"
 
 # The EXPOSE instruction indicates the ports on which a container
 # will listen for connections
@@ -17,5 +18,6 @@ COPY requirements.txt /app
 RUN pip3 install -r requirements.txt
 
 # Run app.py when the container launches
+ENTRYPOINT ["python"]
 COPY app.py /app
-CMD python3 app.py
+CMD python3 -m flask run
