@@ -46,7 +46,7 @@ def login():
     authorization_url, state = flow.authorization_url()
     session["state"] = state
     print(session)
-    return redirect(authorization_url)
+    return jsonify(status = 200, authorization_url = authorization_url)
 
 @googleOauth.route("/callback")
 def callback():
@@ -93,7 +93,7 @@ def callback():
     # access_token = create_access_token(identity = sub)
 
     # return redirect('/googleOauth/protected_area')
-    return id_info
+    return jsonify(status = 200)
 
     # 프론트에서 로그인한 사용자에 대한 access_token을 localStorage에 저장한다.
     # return jsonify(status = "success", result = {"name": name, "access_token": access_token})
