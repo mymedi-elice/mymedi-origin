@@ -57,15 +57,22 @@ export default function Home() {
 
   useEffect(() => {
     console.log(language);
+
+    const languageDict = {
+      Korean: "ko",
+      English: "en",
+      Vietnamese: "vi",
+    };
+
     if (language) {
-      if (language === "Korean") {
-        i18n.changeLanguage("ko");
-      } else if (language === "English") {
-        i18n.changeLanguage("en");
-        console.log("to eng");
-      } else if (language === "Vietnamese") {
-        i18n.changeLanguage("vi");
-      }
+      i18n.changeLanguage(languageDict[language]);
+      // if (language === "Korean") {
+      //   i18n.changeLanguage("ko");
+      // } else if (language === "English") {
+      //   i18n.changeLanguage("en");
+      // } else if (language === "Vietnamese") {
+      //   i18n.changeLanguage("vi");
+      // }
     } //언어가 많아지면 어떻게 하지?
   }, [language]);
 
@@ -158,8 +165,9 @@ export default function Home() {
     <div>
       <NavBar
         language={t("language")}
-        handleMenuClick={(e) => {
-          setLanguage(e.target.firstChild.nodeValue);
+        handleMenuClick={(item) => {
+          setLanguage(item);
+          console.log(item);
         }}
         links={isLoggedIn ? validUserLinks : []}
         logButton={isLoggedIn ? t("navbar.logout") : t("navbar.login")}
