@@ -165,32 +165,45 @@ export default function Home() {
   };
 
   const [firstRes, setFirstRes] = useState();
-  const [authUrl, setAuthUrl] = useState();
+  const [popup, setPopup] = useState();
+  const [saveState, setSaveState] = useState();
+  const [saveUrl, setSaveUrl] = useState();
+  let loginPopup;
   const handleLogin = async () => {
     // history.push(serverUrl + "/googleOauth/login");
     const res = await axios.get(serverUrl + "/googleOauth/login");
     console.log(res);
     if (res.data.status === 200) {
-      window.open(
+      loginPopup = window.open(
         res.data.authorization_url,
         "popUpWindow",
         "height=500,width=500,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes"
       );
+
+      setPopup(loginPopup.location.href);
+      // if (loginPopup) {
+      //   loginPopup.onbeforeunload = () => {
+      //     handleRedirect();
+      //   };
+      //}
       setFirstRes(res.data.status);
-      setAuthUrl(res.data.authorization_url);
+      // setAuthUrl(res.data.authorization_url);
     }
   };
 
   const handleRedirect = async () => {
-    const res2 = await axios.get(serverUrl + "/googleOauth/callback");
-    console.log(res2);
+    console.log("실행");
+    if (firstRes === 200) {
+      const res2 = await axios.get(serverUrl + "/googleOauth/getUrl", {
+        url: loginPopup.location.href,
+      });
+      console.log(res2);
+    }
   };
 
   useEffect(() => {
-    if (firstRes === 200) {
-      handleRedirect();
-    }
-  }, [firstRes]);
+    handleRedirect();
+  }, [popup]);
 
   return (
     <div>

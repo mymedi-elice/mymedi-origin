@@ -45,21 +45,32 @@ def login_is_required(function):
 def login():
     authorization_url, state = flow.authorization_url()
     session["state"] = state
-    print(session)
+    print("session 표시", session)
+
     return jsonify(status = 200, authorization_url = authorization_url)
+
+# @googleOauth.route("/getUrl")
+# def getUrl():
+#     session["request_url"] = request.args["url"]
+#     return jsonify(status=200, gotUrl = True)
 
 @googleOauth.route("/callback")
 def callback():
     print("실행")
+    print(request.url)
+    # flow.fetch_token(authorization_response = request.url)
     flow.fetch_token(authorization_response = request.url)
-    print("check")
-    # print(request)
-    print(session['state'], request.args['state'])
-    if not session['state'] == request.args['state']:
-        abort(500) # State does not match!
+    print(request.args.get("code"))
+    print("request", request)
+    print("session", session)
+    # print(session['state'], request.args['state'])
+    # if not session['state'] == request.args['state']:
+    #     abort(500) # State does not match!
 
     credentials = flow.credentials
+    print(credentials._id_token)
     request_session = requests.session()
+    print(request_session)
     cached_session = cachecontrol.CacheControl(request_session)
     token_request = google.auth.transport.requests.Request(session = cached_session)
 
