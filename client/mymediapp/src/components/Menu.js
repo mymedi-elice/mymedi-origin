@@ -29,10 +29,17 @@ export default function MenuElement(props) {
     },
   ];
   return (
-    <MenuList onClick={props.handleMenuClick}>
+    <MenuList>
       {serviceDescriptionsData.map((country) => {
+        //
         return (
-          <MenuItem minH="48px" key={country.id}>
+          <MenuItem
+            onClick={() => {
+              props.handleMenuClick(country.language);
+            }}
+            minH="48px"
+            key={country.id}
+          >
             <Image
               boxSize="2rem"
               borderRadius="full"

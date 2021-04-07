@@ -18,7 +18,6 @@ import i18n from "i18next";
 
 import { cookiesContext } from "../context";
 
-import MenuElement from "../components/Menu";
 import Card from "../components/Card";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
@@ -30,10 +29,16 @@ export default function Home() {
   const [idToken, setIdToken] = useState();
   const { t } = useTranslation();
   const [language, setLanguage] = useState();
-  // const [isLoggedIn, setIsLoggedIn] = useState();
+  const [isLoggedIn, setIsLoggedIn] = useState();
 
   // const {cookies, setCookies, hasCookie, setHasCookie} = useContext(cookiesContext);
-  const { hasCookie, setHasCookie } = useContext(cookiesContext);
+  // const { hasCookie, setHasCookie } = useContext(cookiesContext);
+
+  useEffect(() => {
+    if (localStorage.getItem("access_token")) {
+      isLoggedInServer();
+    }
+  }, []);
 
   useEffect(() => {
     handleClientLoad();
@@ -52,15 +57,22 @@ export default function Home() {
 
   useEffect(() => {
     console.log(language);
+
+    const languageDict = {
+      Korean: "ko",
+      English: "en",
+      Vietnamese: "vi",
+    };
+
     if (language) {
-      if (language === "Korean") {
-        i18n.changeLanguage("ko");
-      } else if (language === "English") {
-        i18n.changeLanguage("en");
-        console.log("to eng");
-      } else if (language === "Vietnamese") {
-        i18n.changeLanguage("vi");
-      }
+      i18n.changeLanguage(languageDict[language]);
+      // if (language === "Korean") {
+      //   i18n.changeLanguage("ko");
+      // } else if (language === "English") {
+      //   i18n.changeLanguage("en");
+      // } else if (language === "Vietnamese") {
+      //   i18n.changeLanguage("vi");
+      // }
     } //언어가 많아지면 어떻게 하지?
   }, [language]);
 
@@ -112,7 +124,9 @@ export default function Home() {
     console.log("post response", res); //post 요청에 대한 응답을 콘솔에 표시
 
     if (res.data.status === "success") {
-      setHasCookie(true);
+      localStorage.setItem("access_token", res.data.access_token);
+      localStorage.setItem("refresh_token", res.data.refresh_token);
+      setIsLoggedIn(true);
       console.log("res");
     }
   }, [idToken]);
@@ -123,17 +137,43 @@ export default function Home() {
     t("navbar.mypage"),
   ];
 
-  console.log(googleLoginButton);
+  const isLoggedInServer = useCallback(async () => {
+    const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
+    const res = await axios.get(serverUrl + "/auth/protected", {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
+    if (res.data.status === "success") {
+      setIsLoggedIn(true);
+    } else {
+      //일단은 이렇게 했지만
+      //이제 로그아웃 시키는게 아니라 로그인 연장 모달을 띄우게 하는 걸로 기능 고치기
+      setIsLoggedIn(false);
+      localStorage.removeItem("access_token");
+      console.log("log out");
+    }
+  }, []);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem("access_token");
+    console.log("log out");
+  };
+
   return (
     <div>
       <NavBar
         language={t("language")}
-        handleMenuClick={(e) => {
-          setLanguage(e.target.firstChild.nodeValue);
+        handleMenuClick={(item) => {
+          setLanguage(item);
+          console.log(item);
         }}
-        links={hasCookie ? validUserLinks : []}
-        logState={hasCookie ? t("navbar.logout") : t("navbar.login")}
+        links={isLoggedIn ? validUserLinks : []}
+        logButton={isLoggedIn ? t("navbar.logout") : t("navbar.login")}
         googleLogin={googleLoginButton}
+        logstat={isLoggedIn}
+        handleLogout={handleLogout}
       ></NavBar>
       <p>{t("home.card.calendarTitle")}</p>
       <Footer></Footer>

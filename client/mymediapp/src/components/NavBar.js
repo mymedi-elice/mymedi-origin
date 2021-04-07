@@ -62,17 +62,28 @@ export default function NavBar(props) {
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
-            <Button
-              variant={"solid"}
-              colorScheme={"teal"}
-              size={"sm"}
-              mr={4}
-              // leftIcon={<AddIcon />}
-              ref={props.googleLogin}
-            >
-              {props.logState}
-            </Button>
-            {/* isLoggedIn을 통해 logout버튼을 보여주는 경우 필요 */}
+            {!props.logstat ? (
+              <Button
+                variant={"solid"}
+                colorScheme={"teal"}
+                size={"sm"}
+                mr={4}
+                leftIcon={<AddIcon />}
+                ref={props.googleLogin}
+              >
+                {props.logButton}
+              </Button>
+            ) : (
+              <Button
+                variant={"solid"}
+                colorScheme={"teal"}
+                size={"sm"}
+                mr={4}
+                onClick={props.handleLogout}
+              >
+                {props.logButton}
+              </Button>
+            )}
             <Menu>
               <MenuButton
                 as={Button}
