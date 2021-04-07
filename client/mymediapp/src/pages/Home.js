@@ -196,7 +196,11 @@ export default function Home() {
 
   const handleSendCode = async (url) => {
     console.log("실행");
-    const res2 = await axios.get(serverUrl + "/googleOauth/callback", url);
+    const res2 = await axios.get(serverUrl + "/googleOauth/callback", {
+      params: {
+        url: url
+      }
+    });
     console.log(res2);
   };
 

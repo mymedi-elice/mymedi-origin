@@ -22,6 +22,9 @@ import urllib.parse
 # from flask_jwt_extended import jwt_required
 # from flask_jwt_extended import get_jwt_identity
 
+parser_url = reqparse.RequestParser()
+parser_url.add_argument('url')
+
 googleOauth = Blueprint("googleOauth", __name__, url_prefix = "/googleOauth")
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
@@ -59,12 +62,15 @@ def callback():
     # print(request.url)
     # flow.fetch_token(authorization_response = request.url)
     # flow.fetch_token(authorization_response = request.url)
-
+    args = parser_url.parse_args()
+    url = args['url']
+    split_url = url.split("?")[1]
+    parsed_url = urllib.parse.parse_qs(split_url)
     data = {
             'client_id': CLIENT_ID,
             'client_secret': CLIENT_SECRET,
             'redirect_uri': "http://127.0.0.1:5000/",
-            'code': request.args["access_code"],
+            'code': parsed_url["code"],
             'grant_type': 'authorization_code',
 
     }
