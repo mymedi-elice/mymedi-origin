@@ -49,7 +49,7 @@ def login_is_required(function):
 
 @googleOauth.route("/login")
 def login():
-    authorization_url, state = flow.authorization_url()
+    authorization_url, state = flow.authorization_url(access_type="offline", include_granted_scopes='true')
     session["state"] = state
     print("session 표시", session)
     return redirect(authorization_url)
@@ -73,7 +73,7 @@ def callback():
     data = {
             'client_id': CLIENT_ID,
             'client_secret': CLIENT_SECRET,
-            'redirect_uri': "http://127.0.0.1:3000/",
+            'redirect_uri': "http://localhost:3000/",
             'code': parsed_url["code"][0],
             'grant_type': 'authorization_code',
     }
@@ -106,23 +106,23 @@ def callback():
 
     # sub 값 지정해야합니다!!!
     # 사용자의 sub, name 정보를 db에 저장한다.
-    db_class = db.Database()
+    # db_class = db.Database()
 
-    # 이미 등록된 유저라면 db에 저장하지 않는다.
-    sql = "SELECT id FROM user WHERE sub = %s"
-    row = db_class.executeOne(sql, (sub))
+    # # 이미 등록된 유저라면 db에 저장하지 않는다.
+    # sql = "SELECT id FROM user WHERE sub = %s"
+    # row = db_class.executeOne(sql, (sub))
 
-    # db에 등록되지 않은 유저라면 db에 저장
-    if row is None:
-        sql = "INSERT INTO user (sub) VALUES (%s)"
-        db_class.execute(sql, (sub,))
-        db_class.commit()
+    # # db에 등록되지 않은 유저라면 db에 저장
+    # if row is None:
+    #     sql = "INSERT INTO user (sub) VALUES (%s)"
+    #     db_class.execute(sql, (sub,))
+    #     db_class.commit()
 
     # sub 정보를 기반으로 jwt access token을 발급한다.
     # access_token = create_access_token(identity = sub)
 
     # return redirect('/googleOauth/protected_area')
-    return jsonify(status = 200)
+    return response.json()
 
     # 프론트에서 로그인한 사용자에 대한 access_token을 localStorage에 저장한다.
     # return jsonify(status = "success", result = {"name": name, "access_token": access_token})
