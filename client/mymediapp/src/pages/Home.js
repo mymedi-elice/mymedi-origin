@@ -164,46 +164,65 @@ export default function Home() {
     console.log("log out");
   };
 
-  const [firstRes, setFirstRes] = useState();
-  const [popup, setPopup] = useState();
-  const [saveState, setSaveState] = useState();
-  const [saveUrl, setSaveUrl] = useState();
-  let loginPopup;
+  // const [popup, setPopup] = useState();
+  // const [saveState, setSaveState] = useState();
+  // const [saveUrl, setSaveUrl] = useState();
+  // let loginPopup;
   const handleLogin = async () => {
     // history.push(serverUrl + "/googleOauth/login");
-    const res = await axios.get(serverUrl + "/googleOauth/login");
-    console.log(res);
-    if (res.data.status === 200) {
-      loginPopup = window.open(
-        res.data.authorization_url,
-        "popUpWindow",
-        "height=500,width=500,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes"
-      );
+    window.location.replace(serverUrl + "/googleOauth/login");
+    // const res = await axios.get(serverUrl + "/googleOauth/login");
 
-      setPopup(loginPopup.location.href);
-      // if (loginPopup) {
-      //   loginPopup.onbeforeunload = () => {
-      //     handleRedirect();
-      //   };
-      //}
-      setFirstRes(res.data.status);
-      // setAuthUrl(res.data.authorization_url);
-    }
+    // console.log(res);
+    // if (res.data.status === 200) {
+    //   loginPopup = window.open(
+    //     res.data.authorization_url,
+    //     "popUpWindow",
+    //     "height=500,width=500,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes"
+    //   );
+
+    //   //1. rest 구현
+    //   //2. 디버거
+    //   setPopup(loginPopup.location.href);
+    //   // if (loginPopup) {
+    //   //   loginPopup.onbeforeunload = () => {
+    //   //     handleRedirect();
+    //   //   };
+    //   //}
+    //   setFirstRes(res.data.status);
+    //   // setAuthUrl(res.data.authorization_url);
+    // }
   };
 
-  const handleRedirect = async () => {
+  const handleSendCode = async (code) => {
     console.log("실행");
-    if (firstRes === 200) {
-      const res2 = await axios.get(serverUrl + "/googleOauth/getUrl", {
-        url: loginPopup.location.href,
-      });
-      console.log(res2);
-    }
+    const res2 = await axios.get(serverUrl + "/googleOauth/callback", {
+      access_code: code,
+    });
+    console.log(res2);
   };
 
   useEffect(() => {
-    handleRedirect();
-  }, [popup]);
+    if (window.location.search) {
+      console.log(window.location.search);
+      const code = parseQuery(window.location.search)["code"];
+      console.log(code);
+      handleSendCode(code);
+    }
+  }, []);
+
+  function parseQuery(queryString) {
+    var query = {};
+    var pairs = (queryString[0] === "?"
+      ? queryString.substr(1)
+      : queryString
+    ).split("&");
+    for (var i = 0; i < pairs.length; i++) {
+      var pair = pairs[i].split("=");
+      query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || "");
+    }
+    return query;
+  }
 
   return (
     <div>
