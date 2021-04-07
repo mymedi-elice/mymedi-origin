@@ -1,0 +1,15 @@
+{
+    "language" : "language",
+    "navbar" : {
+        "calendar": "Calendar",
+        "matching": "Translator",
+        "mypage": "MyPage",
+        "login": "Google Login",
+        "logout": "Logout"
+    },
+    "home" : {
+        "card": {
+            "calendarTitle": "MyMedi Calendar"
+        }
+    }
+}
