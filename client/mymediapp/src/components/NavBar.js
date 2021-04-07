@@ -69,7 +69,7 @@ export default function NavBar(props) {
                 size={"sm"}
                 mr={4}
                 leftIcon={<AddIcon />}
-                ref={props.googleLogin}
+                onClick={props.handleLogin}
               >
                 {props.logButton}
               </Button>
