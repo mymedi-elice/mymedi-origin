@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import Home from "./pages/Home";
+import "./App.css";
+import { Route, Switch } from "react-router-dom";
+// import { withCookies, useCookies } from "react-cookie";
+import { cookiesContext } from "./context";
 
 function App() {
+  // const [cookies, setCookies] = useCookies(["user"]);
+  const [hasCookie, setHasCookie] = useState(false);
+
+  const cookiesValue = { hasCookie, setHasCookie };
+
+  // useEffect(() => {
+  //   if (cookies.user && cookies.user !== "undefined") {
+  //     setHasCookie(true);
+  //   }
+  // }, [cookies]);
+
+  // console.log(cookies);
+  // console.log(setCookies);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main>
+      <Switch>
+        <Route path="/" exact>
+          <cookiesContext.Provider value={cookiesValue}>
+            <div>
+              <Home></Home>
+            </div>
+          </cookiesContext.Provider>
+        </Route>
+      </Switch>
+    </main>
   );
 }
 

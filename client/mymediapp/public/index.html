@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<html itemscope itemtype="http://schema.org/Article"></html>
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
@@ -9,6 +10,8 @@
       name="description"
       content="Web site created using create-react-app"
     />
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="391584993200-vq1qduetqntj6nngdks9intt5ha1s0f4.apps.googleusercontent.com.apps.googleusercontent.com">
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -28,6 +31,7 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!-- 이부분 client id를 직접 쓰지 않고 config 파일에서 가져오려면 어떻게..?  -->
     <div id="root"></div>
     <!--
       This HTML file is a template.
