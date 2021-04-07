@@ -4,9 +4,9 @@ import React, {
   useEffect,
   useCallback,
   useContext,
-  useHistory,
 } from "react";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 import { googleClientID, scopes, serverUrl } from "../config";
 import {
   ChakraProvider,
@@ -178,7 +178,7 @@ export default function Home() {
         }}
         links={isLoggedIn ? validUserLinks : []}
         logButton={isLoggedIn ? t("navbar.logout") : t("navbar.login")}
-        handleLogin={handleLogin}
+        handleLoginUrl={serverUrl + "/googleOauth/login"}
         logstat={isLoggedIn}
         handleLogout={handleLogout}
       ></NavBar>
