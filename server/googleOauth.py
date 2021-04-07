@@ -24,12 +24,12 @@ googleOauth = Blueprint("googleOauth", __name__, url_prefix = "/googleOauth")
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 # google client id, client secrets file
-GOOGLE_CLIENT_ID = "407922643860-88f2ocd6cu73t655ua5qm37enbg7mhjj.apps.googleusercontent.com"
+GOOGLE_CLIENT_ID = "391584993200-vq1qduetqntj6nngdks9intt5ha1s0f4.apps.googleusercontent.com"
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
 
 flow = Flow.from_client_secrets_file(
     client_secrets_file = client_secrets_file,
-    scopes = ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/calendar.readonly", "openid"],
+    scopes = ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/calendar.readonly"],
     redirect_uri = "http://127.0.0.1:5000/googleOauth/callback"
     )
 
@@ -45,12 +45,16 @@ def login_is_required(function):
 def login():
     authorization_url, state = flow.authorization_url()
     session["state"] = state
+    print(session)
     return redirect(authorization_url)
 
 @googleOauth.route("/callback")
 def callback():
+    print("실행")
     flow.fetch_token(authorization_response = request.url)
-
+    print("check")
+    # print(request)
+    print(session['state'], request.args['state'])
     if not session['state'] == request.args['state']:
         abort(500) # State does not match!
 
@@ -104,9 +108,9 @@ def logout():
         message = "Logout Success!"
     )
 
-@googleOauth.route("/")
-def index():
-    return "Hello World <a href = '/googleOauth/login'><button>Login</button></a>"
+# @googleOauth.route("/")
+# def index():
+#     return "Hello World <a href = '/googleOauth/login'><button>Login</button></a>"
 
 @googleOauth.route("/protected_area")
 @login_is_required
