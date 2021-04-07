@@ -1,7 +1,7 @@
 import os
 import pathlib
 import requests
-
+from flask_restful import reqparse
 from flask import Blueprint, jsonify, request, Flask, session, abort, redirect
 
 # db
@@ -14,6 +14,7 @@ from pip._vendor import cachecontrol
 import google.auth.transport.requests
 
 from config import CLIENT_SECRET, CLIENT_ID
+import urllib.parse
 
 # flask_jwt_extended를 사용하여 서버와 클라이언트 사이에서 토큰으로 인증
 # from flask_jwt_extended import create_access_token
@@ -48,7 +49,6 @@ def login():
     authorization_url, state = flow.authorization_url()
     session["state"] = state
     print("session 표시", session)
-
     return redirect(authorization_url)
 
 GOOGLE_TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token'

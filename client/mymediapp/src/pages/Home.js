@@ -194,35 +194,31 @@ export default function Home() {
     // }
   };
 
-  const handleSendCode = async (code) => {
+  const handleSendCode = async (url) => {
     console.log("실행");
-    const res2 = await axios.get(serverUrl + "/googleOauth/callback", {
-      access_code: code,
-    });
+    const res2 = await axios.get(serverUrl + "/googleOauth/callback", url);
     console.log(res2);
   };
 
   useEffect(() => {
     if (window.location.search) {
       console.log(window.location.search);
-      const code = parseQuery(window.location.search)["code"];
-      console.log(code);
-      handleSendCode(code);
+      handleSendCode(window.location.href);
     }
   }, []);
 
-  function parseQuery(queryString) {
-    var query = {};
-    var pairs = (queryString[0] === "?"
-      ? queryString.substr(1)
-      : queryString
-    ).split("&");
-    for (var i = 0; i < pairs.length; i++) {
-      var pair = pairs[i].split("=");
-      query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || "");
-    }
-    return query;
-  }
+  // function parseQuery(queryString) {
+  //   var query = {};
+  //   var pairs = (queryString[0] === "?"
+  //     ? queryString.substr(1)
+  //     : queryString
+  //   ).split("&");
+  //   for (var i = 0; i < pairs.length; i++) {
+  //     var pair = pairs[i].split("=");
+  //     query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || "");
+  //   }
+  //   return query;
+  // }
 
   return (
     <div>
