@@ -164,33 +164,61 @@ export default function Home() {
     console.log("log out");
   };
 
-  const [firstRes, setFirstRes] = useState();
-  const [authUrl, setAuthUrl] = useState();
+  // const [popup, setPopup] = useState();
+  // const [saveState, setSaveState] = useState();
+  // const [saveUrl, setSaveUrl] = useState();
+  // let loginPopup;
   const handleLogin = async () => {
     // history.push(serverUrl + "/googleOauth/login");
-    const res = await axios.get(serverUrl + "/googleOauth/login");
-    console.log(res);
-    if (res.data.status === 200) {
-      window.open(
-        res.data.authorization_url,
-        "popUpWindow",
-        "height=500,width=500,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes"
-      );
-      setFirstRes(res.data.status);
-      setAuthUrl(res.data.authorization_url);
-    }
+    window.location.replace(serverUrl + "/googleOauth/login");
+    // const res = await axios.get(serverUrl + "/googleOauth/login");
+
+    // console.log(res);
+    // if (res.data.status === 200) {
+    //   loginPopup = window.open(
+    //     res.data.authorization_url,
+    //     "popUpWindow",
+    //     "height=500,width=500,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes"
+    //   );
+
+    //   //1. rest 구현
+    //   //2. 디버거
+    //   setPopup(loginPopup.location.href);
+    //   // if (loginPopup) {
+    //   //   loginPopup.onbeforeunload = () => {
+    //   //     handleRedirect();
+    //   //   };
+    //   //}
+    //   setFirstRes(res.data.status);
+    //   // setAuthUrl(res.data.authorization_url);
+    // }
   };
 
-  const handleRedirect = async () => {
-    const res2 = await axios.get(serverUrl + "/googleOauth/callback");
+  const handleSendCode = async (url) => {
+    console.log("실행");
+    const res2 = await axios.get(serverUrl + "/googleOauth/callback", url);
     console.log(res2);
   };
 
   useEffect(() => {
-    if (firstRes === 200) {
-      handleRedirect();
+    if (window.location.search) {
+      console.log(window.location.search);
+      handleSendCode(window.location.href);
     }
-  }, [firstRes]);
+  }, []);
+
+  // function parseQuery(queryString) {
+  //   var query = {};
+  //   var pairs = (queryString[0] === "?"
+  //     ? queryString.substr(1)
+  //     : queryString
+  //   ).split("&");
+  //   for (var i = 0; i < pairs.length; i++) {
+  //     var pair = pairs[i].split("=");
+  //     query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || "");
+  //   }
+  //   return query;
+  // }
 
   return (
     <div>

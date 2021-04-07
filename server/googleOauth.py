@@ -1,7 +1,7 @@
 import os
 import pathlib
 import requests
-
+from flask_restful import reqparse
 from flask import Blueprint, jsonify, request, Flask, session, abort, redirect
 
 # db
@@ -12,6 +12,9 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
+
+from config import CLIENT_SECRET, CLIENT_ID
+import urllib.parse
 
 # flask_jwt_extended를 사용하여 서버와 클라이언트 사이에서 토큰으로 인증
 # from flask_jwt_extended import create_access_token
@@ -30,7 +33,7 @@ client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret
 flow = Flow.from_client_secrets_file(
     client_secrets_file = client_secrets_file,
     scopes = ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/calendar.readonly"],
-    redirect_uri = "http://127.0.0.1:5000/googleOauth/callback"
+    redirect_uri = "http://localhost:3000/"
     )
 
 def login_is_required(function):
@@ -45,37 +48,54 @@ def login_is_required(function):
 def login():
     authorization_url, state = flow.authorization_url()
     session["state"] = state
-    print(session)
-    return jsonify(status = 200, authorization_url = authorization_url)
+    print("session 표시", session)
+    return redirect(authorization_url)
+
+GOOGLE_TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token'
 
 @googleOauth.route("/callback")
 def callback():
     print("실행")
-    flow.fetch_token(authorization_response = request.url)
-    print("check")
-    # print(request)
-    print(session['state'], request.args['state'])
-    if not session['state'] == request.args['state']:
-        abort(500) # State does not match!
+    # print(request.url)
+    # flow.fetch_token(authorization_response = request.url)
+    # flow.fetch_token(authorization_response = request.url)
 
-    credentials = flow.credentials
-    request_session = requests.session()
-    cached_session = cachecontrol.CacheControl(request_session)
-    token_request = google.auth.transport.requests.Request(session = cached_session)
+    data = {
+            'client_id': CLIENT_ID,
+            'client_secret': CLIENT_SECRET,
+            'redirect_uri': "http://127.0.0.1:5000/",
+            'code': request.args["access_code"],
+            'grant_type': 'authorization_code',
 
-    id_info = id_token.verify_oauth2_token(
-        id_token = credentials._id_token,
-        request = token_request,
-        audience = GOOGLE_CLIENT_ID
-    )
+    }
+
+    response = requests.post(GOOGLE_TOKEN_ENDPOINT,data=data)
+    print(response)
+    # print(session['state'], request.args['state'])
+    # if not session['state'] == request.args['state']:
+    #     abort(500) # State does not match!
+
+    # credentials = flow.credentials
+    # print(credentials._id_token)
+    # request_session = requests.session()
+    # print(request_session)
+    # cached_session = cachecontrol.CacheControl(request_session)
+    # token_request = google.auth.transport.requests.Request(session = cached_session)
+
+    # id_info = id_token.verify_oauth2_token(
+    #     id_token = credentials._id_token,
+    #     request = token_request,
+    #     audience = GOOGLE_CLIENT_ID
+    # )
 
     # session
-    session['google_id'] = id_info.get("sub")
+    # session['google_id'] = id_info.get("sub")
 
-    # 구글 인증을 받은 사용자에게 sub, name 정보를 요청받는다.
-    sub = id_info.get("sub")
+    # # 구글 인증을 받은 사용자에게 sub, name 정보를 요청받는다.
+    # sub = id_info.get("sub")
     # print(sub)
 
+    # sub 값 지정해야합니다!!!
     # 사용자의 sub, name 정보를 db에 저장한다.
     db_class = db.Database()
 
