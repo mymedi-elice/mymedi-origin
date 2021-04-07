@@ -164,7 +164,8 @@ export default function Home() {
     console.log("log out");
   };
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault();
     history.push(serverUrl + "/googleOauth/login");
   };
 

@@ -73,7 +73,14 @@ export default function NavBar(props) {
               // >
               //   {props.logButton}
               // </Button>
-              <a href={props.handleLoginUrl}>{props.logButton}</a>
+              <a
+                href={props.handleLoginUrl}
+                onClick={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                {props.logButton}
+              </a>
             ) : (
               <Button
                 variant={"solid"}
