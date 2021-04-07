@@ -63,25 +63,25 @@ export default function NavBar(props) {
           </HStack>
           <Flex alignItems={"center"}>
             {!props.logstat ? (
-              // <Button
-              //   variant={"solid"}
-              //   colorScheme={"teal"}
-              //   size={"sm"}
-              //   mr={4}
-              //   leftIcon={<AddIcon />}
-              //   onClick={props.handleLogin}
-              // >
-              //   {props.logButton}
-              // </Button>
-              <a
-                href={props.handleLoginUrl}
-                onClick={(e) => {
-                  e.preventDefault();
-                }}
+              <Button
+                variant={"solid"}
+                colorScheme={"teal"}
+                size={"sm"}
+                mr={4}
+                leftIcon={<AddIcon />}
+                onClick={props.handleLogin}
               >
                 {props.logButton}
-              </a>
+              </Button>
             ) : (
+              // <a
+              //   href={props.handleLoginUrl}
+              //   onClick={(e) => {
+              //     e.preventDefault();
+              //   }}
+              // >
+              //   {props.logButton}
+              // </a>
               <Button
                 variant={"solid"}
                 colorScheme={"teal"}

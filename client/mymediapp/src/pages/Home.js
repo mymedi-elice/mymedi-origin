@@ -164,9 +164,10 @@ export default function Home() {
     console.log("log out");
   };
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    history.push(serverUrl + "/googleOauth/login");
+  const handleLogin = async () => {
+    // history.push(serverUrl + "/googleOauth/login");
+    const res = await axios.get(serverUrl + "/googleOauth/login");
+    console.log(res);
   };
 
   return (
@@ -179,7 +180,8 @@ export default function Home() {
         }}
         links={isLoggedIn ? validUserLinks : []}
         logButton={isLoggedIn ? t("navbar.logout") : t("navbar.login")}
-        handleLoginUrl={serverUrl + "/googleOauth/login"}
+        // handleLoginUrl={serverUrl + "/googleOauth/login"}
+        handleLogin={handleLogin}
         logstat={isLoggedIn}
         handleLogout={handleLogout}
       ></NavBar>
