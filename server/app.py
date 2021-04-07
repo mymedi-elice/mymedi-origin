@@ -6,6 +6,13 @@ from flask_jwt_extended import JWTManager
 from config import JWT_SECRET_KEY
 
 app = Flask(__name__)
+
+api = Api(app, version='1.0', title='mymedi API',
+          description='다문화가정을 위한 의료알림',)
+ns = api.namespace('calc', description='mymedi API 목록')
+app.config.SWAGGER_UI_DOC_EXPANSION = 'list'
+api.add_namespace(auth_api)
+
 app.secret_key = "mymedi"
 CORS(app)
 

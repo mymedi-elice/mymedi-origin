@@ -16,6 +16,14 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 
 auth = Blueprint("auth", __name__, url_prefix = '/auth')
+auth_api = Namespace('auth_api', path='/auth')
+
+@auth_api.route('/resource1')
+    class FirstResource(Resource):
+        @auth_api.expect(parser)
+        def get(self):
+            result = {'result_msg': 'Success'}
+            return result, 200
 
 parser_accessToken = reqparse.RequestParser()
 parser_accessToken.add_argument('idToken')
