@@ -170,19 +170,24 @@ export default function Home() {
     // history.push(serverUrl + "/googleOauth/login");
     const res = await axios.get(serverUrl + "/googleOauth/login");
     console.log(res);
-    if (res.data.status === "200") {
+    if (res.data.status === 200) {
+      window.open(
+        res.data.authorization_url,
+        "popUpWindow",
+        "height=500,width=500,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes"
+      );
       setFirstRes(res.data.status);
       setAuthUrl(res.data.authorization_url);
     }
   };
 
   const handleRedirect = async () => {
-    const res2 = await axios.get(serverUrl + "/googleOauth/callback", authUrl);
+    const res2 = await axios.get(serverUrl + "/googleOauth/callback");
     console.log(res2);
   };
 
   useEffect(() => {
-    if (firstRes === "200") {
+    if (firstRes === 200) {
       handleRedirect();
     }
   }, [firstRes]);
