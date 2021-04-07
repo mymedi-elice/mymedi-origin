@@ -164,11 +164,28 @@ export default function Home() {
     console.log("log out");
   };
 
+  const [firstRes, setFirstRes] = useState();
+  const [authUrl, setAuthUrl] = useState();
   const handleLogin = async () => {
     // history.push(serverUrl + "/googleOauth/login");
     const res = await axios.get(serverUrl + "/googleOauth/login");
     console.log(res);
+    if (res.data.status === "200") {
+      setFirstRes(res.data.status);
+      setAuthUrl(res.data.authorization_url);
+    }
   };
+
+  const handleRedirect = async () => {
+    const res2 = await axios.get(serverUrl + "/googleOauth/callback", authUrl);
+    console.log(res2);
+  };
+
+  useEffect(() => {
+    if (firstRes === "200") {
+      handleRedirect();
+    }
+  }, [firstRes]);
 
   return (
     <div>
