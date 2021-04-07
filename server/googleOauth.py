@@ -65,18 +65,21 @@ def callback():
     args = parser_url.parse_args()
     url = args['url']
     split_url = url.split("?")[1]
+
+    split_again = split_url.split("&")
     parsed_url = urllib.parse.parse_qs(split_url)
+    print(parsed_url)
+    print(parsed_url["code"][0])
     data = {
             'client_id': CLIENT_ID,
             'client_secret': CLIENT_SECRET,
-            'redirect_uri': "http://127.0.0.1:5000/",
-            'code': parsed_url["code"],
+            'redirect_uri': "http://127.0.0.1:3000/",
+            'code': parsed_url["code"][0],
             'grant_type': 'authorization_code',
-
     }
 
     response = requests.post(GOOGLE_TOKEN_ENDPOINT,data=data)
-    print(response)
+    print(response.json())
     # print(session['state'], request.args['state'])
     # if not session['state'] == request.args['state']:
     #     abort(500) # State does not match!
