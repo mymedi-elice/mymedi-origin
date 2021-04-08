@@ -120,14 +120,22 @@ def callback():
         sql = "INSERT INTO user (sub, email, country) VALUES (%s, %s, %s)"
         db_class.execute(sql, (sub, email, country))
         db_class.commit()
+        return jsonify(
+            status = 200,
+            sub = sub,
+            access_token = access_token,
+            refresh_token = refresh_token,
+            user = True # 이 사이트에 처음 로그인한 사용자
+        )
+    else:
+        return jsonify(
+            status = 200,
+            sub = sub,
+            access_token = access_token,
+            refresh_token = refresh_token,
+            user = False # 이 사이트에 접속한 내역이 있는 사용자
+        )
 
-
-    return jsonify(
-        status = 200,
-        sub = sub,
-        access_token = access_token,
-        refresh_token = refresh_token
-    )
 
 # We are using the `refresh=True` options in jwt_required to only allow
 # refresh tokens to access this route.
