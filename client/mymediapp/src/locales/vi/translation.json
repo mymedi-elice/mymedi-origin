@@ -1,4 +1,8 @@
 {
+    "answer" :{
+        "yes":"Vâng",
+        "no": "Không"
+    },
     "language" : "ngôn ngữ",
     "navbar" : {
         "calendar": "lịch",
@@ -6,6 +10,10 @@
         "mypage": "Thông tin của tôi",
         "login": "đăng nhập Google",
         "logout": "đăng xuất"
+    },
+    "dialogToMypage":{
+        "title": "Chào mừng đến với MyMedi!",
+        "contents": "Bạn có muốn nhập thông tin thành viên của mình để được cung cấp dịch vụ tốt hơn không?"
     },
     "home" : {
         "card": {

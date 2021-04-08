@@ -125,7 +125,7 @@ def callback():
             sub = sub,
             access_token = access_token,
             refresh_token = refresh_token,
-            user = True # 이 사이트에 처음 로그인한 사용자
+            user = False # 이 사이트에 처음 로그인한 사용자
         )
     else:
         return jsonify(
@@ -133,7 +133,7 @@ def callback():
             sub = sub,
             access_token = access_token,
             refresh_token = refresh_token,
-            user = False # 이 사이트에 접속한 내역이 있는 사용자
+            user = True # 이 사이트에 접속한 내역이 있는 사용자
         )
 
 

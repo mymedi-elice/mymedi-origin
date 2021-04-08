@@ -1,43 +1,36 @@
-import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
-import { serverUrl } from "../config";
-
+import {
+  Box,
+  Center,
+  Divider,
+  Grid,
+  GridItem,
+  HStack,
+  StackDivider,
+} from "@chakra-ui/layout";
+import { useContext, useState } from "react";
 import MainLayout from "../components/MainLayout";
-import { useTranslation } from "react-i18next";
+import { logContext } from "../context";
 
-export default function Home() {
-  const { t } = useTranslation();
-  const [isLoggedIn, setIsLoggedIn] = useState();
-
-  useEffect(() => {
-    if (localStorage.getItem("access_token")) {
-      isLoggedInServer();
-    }
-  }, []);
-
-  const isLoggedInServer = useCallback(async () => {
-    const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
-    const res = await axios.get(serverUrl + "/auth/protected", {
-      headers: {
-        Authorization: AuthStr,
-      },
-    });
-
-    if (res.data.status === 200) {
-      setIsLoggedIn(true);
-    } else {
-      //일단은 이렇게 했지만
-      //이제 로그아웃 시키는게 아니라 로그인 연장 모달을 띄우게 하는 걸로 기능 고치기
-      //refresh token을 사용하므로 화면 변화는 없다!
-      setIsLoggedIn(false);
-      localStorage.removeItem("access_token");
-      console.log("log out");
-    }
-  }, []);
+export default function MyPage() {
+  const { isLoggedIn, setIsLoggedIn } = useContext(logContext);
+  const [showFavorites, setShowFavorites] = useState();
+  const [showUserInfo, setShowUserInfo] = useState();
+  const [fixUserInfo, setFixUserInfo] = useState();
+  const [signOut, setSignOut] = useState();
 
   return (
-    <MainLayout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}>
-      {t("language")}
-    </MainLayout>
+    <div>
+      <MainLayout>
+        <Grid
+          h="800px"
+          templateRows="repeat(1, 1fr)"
+          templateColumns="repeat(5, 1fr)"
+        >
+          <GridItem rowSpan={1} colSpan={1}></GridItem>
+          <Divider orientation="vertical" />
+          <GridItem rowSpan={1} colSpan={1}></GridItem>
+        </Grid>
+      </MainLayout>
+    </div>
   );
 }
