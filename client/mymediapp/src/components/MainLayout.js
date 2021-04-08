@@ -28,7 +28,7 @@ import { cookiesContext } from "../context";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import { useTranslation } from "react-i18next";
-import reactRouterDom from "react-router-dom";
+import reactRouterDom, { useHistory } from "react-router-dom";
 
 export default function MainLayout(props) {
   const { t } = useTranslation();
@@ -39,6 +39,7 @@ export default function MainLayout(props) {
     props.setIsLoggedIn(v);
   };
   const [openDialog, setOpenDialog] = useState(false);
+  const history = useHistory();
 
   // useEffect(() => {
   //   if (localStorage.getItem("access_token")) {
@@ -51,6 +52,7 @@ export default function MainLayout(props) {
     if (window.location.search && !isLoggedIn) {
       console.log(window.location.search);
       handleSendCode(window.location.href);
+      history.push({ search: "" });
     }
     // if (localStorage.getItem("access_token")) {
     //   isLoggedInServer();

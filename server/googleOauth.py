@@ -151,7 +151,7 @@ def refresh():
 
 # 로그인된 사용자에 대한 검증
 @googleOauth.route('/protected')
-@jwt_required
+@jwt_required()
 def protected():
     current_user = get_jwt_identity()
     if current_user:
