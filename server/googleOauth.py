@@ -143,7 +143,7 @@ def callback():
 @jwt_required(refresh = True)
 def refresh():
     identity = get_jwt_identity()
-    access_token = create_access_token(identity = identity)
+    access_token = create_access_token(identity = sub)
     return jsonify(
         status = 200,
         access_token = access_token
@@ -154,6 +154,7 @@ def refresh():
 @jwt_required
 def protected():
     current_user = get_jwt_identity()
+    print(current_user)
     if current_user:
         return jsonify(
             status = 200,
