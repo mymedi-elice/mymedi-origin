@@ -17,6 +17,7 @@ function App() {
       isLoggedInServer();
     }
   }, []);
+  //이부분 이렇게 하지 말고 각 페이지마다 isloggedinserver 하기 커스텀 훅 만들기!
 
   const isLoggedInServer = useCallback(async () => {
     console.log("로그인 되어있는지 확인");
