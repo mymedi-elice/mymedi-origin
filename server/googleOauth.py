@@ -113,11 +113,11 @@ def callback():
     db_class = db.Database()
 
     # 이미 등록된 사용자라면 db에 저장하지 않고, 등록되지 않은 유저라면 db에 저장
-    sql = "SELECT id FROM user WHERE sub = %s"
+    sql = "SELECT sub FROM user_info WHERE sub = %s"
     row = db_class.executeOne(sql, (sub))
 
     if row is None:
-        sql = "INSERT INTO user (sub, email, country) VALUES (%s, %s, %s)"
+        sql = "INSERT INTO user_info (sub, email, country) VALUES (%s, %s, %s)"
         db_class.execute(sql, (sub, email, country))
         db_class.commit()
         return jsonify(
@@ -143,7 +143,7 @@ def callback():
 @jwt_required(refresh = True)
 def refresh():
     identity = get_jwt_identity()
-    access_token = create_access_token(identity = identity)
+    access_token = create_access_token(identity = sub)
     return jsonify(
         status = 200,
         access_token = access_token
@@ -154,6 +154,7 @@ def refresh():
 @jwt_required()
 def protected():
     current_user = get_jwt_identity()
+    print(current_user)
     if current_user:
         return jsonify(
             status = 200,
