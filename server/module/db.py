@@ -10,7 +10,8 @@ class Database():
             port=DATABASE['port'],
             db=DATABASE['db'],
             charset='utf8',
-            autocommit = True
+            autocommit = True,
+            password = DATABASE['password']
             )
         self.cursor= self.db.cursor(pymysql.cursors.DictCursor)
 

@@ -2,6 +2,8 @@ venv
 __pycache__
 client_secret.json
 config.py
+googleOauth(old).py
+CLIENT_SECRETS_FILE.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,node,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,node,vscode

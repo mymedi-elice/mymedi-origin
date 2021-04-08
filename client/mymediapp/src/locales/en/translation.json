@@ -1,11 +1,19 @@
 {
+    "answer" :{
+        "yes":"Yes",
+        "no": "No"
+    },
     "language" : "language",
     "navbar" : {
         "calendar": "Calendar",
-        "matching": "Translator",
+        "search": "Hospital search",
         "mypage": "MyPage",
         "login": "Google Login",
         "logout": "Logout"
+    },
+    "dialogToMypage":{
+        "title": "Welcome to MyMedi!",
+        "contents": "Would you like to fill up your profile to enjoy a better service?"
     },
     "home" : {
         "card": {
