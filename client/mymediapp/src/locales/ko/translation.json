@@ -2,7 +2,7 @@
     "language" : "언어",
     "navbar" : {
         "calendar": "달력",
-        "matching": "통역사",
+        "search": "병원 검색",
         "mypage": "내 정보",
         "login": "Google 로그인",
         "logout": "로그아웃"

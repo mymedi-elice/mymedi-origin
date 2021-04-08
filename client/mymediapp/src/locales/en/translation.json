@@ -2,7 +2,7 @@
     "language" : "language",
     "navbar" : {
         "calendar": "Calendar",
-        "matching": "Translator",
+        "search": "Hospital search",
         "mypage": "MyPage",
         "login": "Google Login",
         "logout": "Logout"

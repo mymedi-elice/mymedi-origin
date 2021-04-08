@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import {
   Box,
   Flex,
@@ -74,14 +73,6 @@ export default function NavBar(props) {
                 {props.logButton}
               </Button>
             ) : (
-              // <a
-              //   href={props.handleLoginUrl}
-              //   onClick={(e) => {
-              //     e.preventDefault();
-              //   }}
-              // >
-              //   {props.logButton}
-              // </a>
               <Button
                 variant={"solid"}
                 colorScheme={"teal"}
@@ -119,7 +110,7 @@ export default function NavBar(props) {
         ) : null}
       </Box>
 
-      <Box p={4}>Main Content Here</Box>
+      {/* <Box p={4}>Main Content Here</Box> */}
     </>
   );
 }

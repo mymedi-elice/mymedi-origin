@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Home from "./pages/Home";
+import MyPage from "./pages/MyPage";
 import "./App.css";
 import { Route, Switch } from "react-router-dom";
 // import { withCookies, useCookies } from "react-cookie";
@@ -24,10 +25,11 @@ function App() {
       <Switch>
         <Route path="/" exact>
           <cookiesContext.Provider value={cookiesValue}>
-            <div>
-              <Home></Home>
-            </div>
+            <Home></Home>
           </cookiesContext.Provider>
+        </Route>
+        <Route path="/myPage">
+          <MyPage></MyPage>
         </Route>
       </Switch>
     </main>

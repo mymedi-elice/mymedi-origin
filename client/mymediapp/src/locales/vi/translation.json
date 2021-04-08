@@ -2,7 +2,7 @@
     "language" : "ngôn ngữ",
     "navbar" : {
         "calendar": "lịch",
-        "matching": "người phiên dịch",
+        "search": "khám bệnh viện",
         "mypage": "Thông tin của tôi",
         "login": "đăng nhập Google",
         "logout": "đăng xuất"
