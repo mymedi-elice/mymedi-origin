@@ -40,7 +40,10 @@ export default function MainLayout(props) {
   };
   const [openDialog, setOpenDialog] = useState(false);
   const history = useHistory();
-
+  const isPending = props.isPending;
+  const setIsPending = (v) => {
+    props.setIsPending(v);
+  };
   // useEffect(() => {
   //   if (localStorage.getItem("access_token")) {
   //     isLoggedInServer();
@@ -79,24 +82,6 @@ export default function MainLayout(props) {
     [t("navbar.mypage"), "/mypage"],
   ];
 
-  // const isLoggedInServer = useCallback(async () => {
-  //   const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
-  //   const res = await axios.get(serverUrl + "/auth/protected", {
-  //     headers: {
-  //       Authorization: AuthStr,
-  //     },
-  //   });
-  //   if (res.data.status === 200) {
-  //     setIsLoggedIn(true);
-  //   } else {
-  //     //일단은 이렇게 했지만
-  //     //이제 로그아웃 시키는게 아니라 로그인 연장 모달을 띄우게 하는 걸로 기능 고치기
-  //     setIsLoggedIn(false);
-  //     localStorage.removeItem("access_token");
-  //     console.log("log out");
-  //   }
-  // }, []);
-
   const handleLogout = () => {
     setIsLoggedIn(false);
     localStorage.removeItem("access_token");
@@ -109,21 +94,27 @@ export default function MainLayout(props) {
   };
 
   const handleSendCode = async (url) => {
+    setIsPending(true);
     const res2 = await axios.get(serverUrl + "/googleOauth/callback", {
       params: {
         url: url,
       },
     });
     if (res2.data.status === 200) {
+      //이렇게 로그인 하면 로그인 버튼이 로그아웃으로 전환하는게 한박자 느림...
+      //고칠 수 있는 방법?
+      //응답 기다리는 동안 로딩버튼 만들기?
+      setIsPending(false);
       setIsLoggedIn(true);
       localStorage.setItem("access_token", res2.data.access_token);
       localStorage.setItem("refresh_token", res2.data.refresh_token);
       if (res2.data.user === false) {
         setOpenDialog(true);
+        //이때 바로 mypage 가면 로그인 버튼이 로그아웃으로 바뀌지 않는다.
       } else {
         console.log("회원정보 입력 필요x");
       }
-      //첫 로그인이면 회원정보 입력 페이지로 보내기 위한 모달 띄우기?
+      //첫 로그인이면 회원정보 입력 페이지로 보내기 위한 모달 띄우기
     } else {
       console.log("로그인 실패");
     }
@@ -136,7 +127,7 @@ export default function MainLayout(props) {
     yes: t("answer.yes"),
     no: t("answer.no"),
   };
-
+  console.log(isLoggedIn);
   return (
     <div>
       <NavBar
@@ -147,7 +138,9 @@ export default function MainLayout(props) {
         }}
         links={Links}
         logButton={isLoggedIn ? t("navbar.logout") : t("navbar.login")}
+        onClickLogButton={isLoggedIn ? handleLogout : handleLogin}
         logstat={isLoggedIn}
+        pending={isPending}
         handleLogin={handleLogin}
         handleLogout={handleLogout}
       ></NavBar>

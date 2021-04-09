@@ -117,8 +117,8 @@ def callback():
     row = db_class.executeOne(sql, (sub))
 
     if row is None:
-        sql = "INSERT INTO user_info (sub, email, country) VALUES (%s, %s, %s)"
-        db_class.execute(sql, (sub, email, country))
+        sql = "INSERT INTO user_info (sub) VALUES (%s)"
+        db_class.execute(sql, (sub))
         db_class.commit()
         return jsonify(
             status = 200,
