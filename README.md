@@ -71,7 +71,7 @@
 
 
 ## 4. 프로젝트 구성도
-  - 와이어프레임/스토리보드 추가
+[](https://ovenapp.io/view/aUfENOzE0qnnn0G8vwqDNidx4j5kiEM0/Johv1)
 
 ## 5. 프로젝트 팀원 역할 분담
 
