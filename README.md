@@ -1,4 +1,4 @@
- ## 1. 프로젝트 소개
+`` ## 1. 프로젝트 소개
 
 ### 1) 사용한 데이터셋
 
@@ -71,7 +71,7 @@
 
 
 ## 4. 프로젝트 구성도
-[](https://ovenapp.io/view/aUfENOzE0qnnn0G8vwqDNidx4j5kiEM0/Johv1)
+[프로젝트 구성도 링크](https://ovenapp.io/view/aUfENOzE0qnnn0G8vwqDNidx4j5kiEM0/Johv1)
 
 ## 5. 프로젝트 팀원 역할 분담
 
