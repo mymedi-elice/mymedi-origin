@@ -8,6 +8,7 @@
         "calendar": "Calendar",
         "search": "Hospital search",
         "mypage": "MyPage",
+        "intro": "Introduction",
         "login": "Google Login",
         "logout": "Logout"
     },

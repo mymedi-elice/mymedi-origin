@@ -5,17 +5,30 @@ import { logContext } from "../context";
 
 import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
+import useConfirmLogin from "../components/useConfirmLogin";
 
 export default function Home() {
   const { t } = useTranslation();
-  const { isLoggedIn, setIsLoggedIn } = useContext(logContext);
+  const [isConfirmed, isLoggedInServer] = useConfirmLogin();
+  const [isLoggedIn, setIsLoggedIn] = useState();
+  const [isPending, setIsPending] = useState(false);
+  useEffect(() => {
+    if (localStorage.getItem("access_token")) {
+      setIsPending(true);
+      isLoggedInServer();
+    }
+  }, []);
 
-  //   useEffect(() => {
-  //     if (localStorage.getItem("access_token")) {
-  //       isLoggedInServer();
-  //     }
-  //   }, []);
-
+  useEffect(() => {
+    setIsLoggedIn(isConfirmed);
+    // setIsPending(false);
+    if (isConfirmed) {
+      setIsPending(false);
+    } else {
+      // setIsPending(false);
+      //로그인 에러...
+    }
+  }, [isConfirmed]);
   //   const isLoggedInServer = useCallback(async () => {
   //     console.log("로그인 되어있는지 확인");
 
@@ -39,7 +52,12 @@ export default function Home() {
   //   }, []);
 
   return (
-    <MainLayout isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}>
+    <MainLayout
+      isLoggedIn={isLoggedIn}
+      setIsLoggedIn={setIsLoggedIn}
+      isPending={isPending}
+      setIsPending={setIsPending}
+    >
       {t("language")}
     </MainLayout>
   );

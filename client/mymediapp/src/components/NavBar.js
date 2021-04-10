@@ -14,15 +14,14 @@ import {
   useColorModeValue,
   Stack,
   propNames,
-  Link,
+  Spinner,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import MenuElement from "./Menu";
-import { Link as ReachLink } from "@reach/router";
+import { Link } from "react-router-dom";
 
 const NavLink = (props) => (
   <Link
-    as={ReachLink}
     px={2}
     py={1}
     rounded={"md"}
@@ -52,7 +51,6 @@ export default function NavBar(props) {
           />
           <HStack spacing={8} alignItems={"center"}>
             <Link
-              as={ReachLink}
               to="/"
               px={2}
               py={1}
@@ -76,14 +74,13 @@ export default function NavBar(props) {
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
-            {!props.logstat ? (
+            {props.pending ? (
               <Button
+                isLoading
                 variant={"solid"}
                 colorScheme={"teal"}
                 size={"sm"}
                 mr={4}
-                leftIcon={<AddIcon />}
-                onClick={props.handleLogin}
               >
                 {props.logButton}
               </Button>
@@ -93,7 +90,7 @@ export default function NavBar(props) {
                 colorScheme={"teal"}
                 size={"sm"}
                 mr={4}
-                onClick={props.handleLogout}
+                onClick={props.onClickLogButton}
               >
                 {props.logButton}
               </Button>
