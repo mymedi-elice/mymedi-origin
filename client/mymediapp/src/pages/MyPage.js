@@ -40,9 +40,13 @@ export default function MyPage() {
 
   useEffect(() => {
     setIsLoggedIn(isConfirmed);
+
     if (isConfirmed) {
+      //여기에 마이페이지에 뿌려줄 회원정보 get 요청 보내는 함수 실행
       setIsPending(false);
-      //여기에 회원정보 get 요청 보내는 함수 실행
+    } else {
+      //재로그인 요청
+      // setIsPending(false);
     }
   }, [isConfirmed]);
 
