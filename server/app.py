@@ -7,7 +7,7 @@ from config import JWT_SECRET_KEY
 
 app = Flask(__name__)
 app.secret_key = "mymedi"
-CORS(app, origins=['http://localhost:3000'])
+CORS(app)
 
 # flask_jwt_extended를 위한 secret_key 설정
 app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY # 나중에 config 파일에 넣어서 비공개로 설정
@@ -28,4 +28,4 @@ from googleCalendar import googleCalendar
 app.register_blueprint(googleCalendar)
 
 if __name__ == "__main__":
-    app.run(debug = True)
+    app.run(port = 5000, debug = True)

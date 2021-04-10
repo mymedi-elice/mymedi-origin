@@ -4,7 +4,7 @@ import requests
 import urllib.parse
 
 from flask_restful import reqparse
-from flask import Blueprint, jsonify, request, Flask, redirect
+from flask import Blueprint, jsonify, request, Flask, redirect, session
 
 # flask_jwt_extended를 사용하여 서버와 클라이언트 사이에서 토큰으로 인증
 from flask_jwt_extended import create_access_token
@@ -21,7 +21,7 @@ import google.auth.transport.requests
 # db
 from module import db
 
-from config import CLIENT_SECRET, CLIENT_ID, CLIENT_SECRETS_FILE, REDIRECT_URI
+from config import CLIENT_SECRET, CLIENT_ID, CLIENT_SECRETS_FILE
 
 # Blueprint 설정
 googleOauth = Blueprint("googleOauth", __name__, url_prefix = "/googleOauth")
@@ -41,7 +41,7 @@ GOOGLE_USER_INFO_ENDPOINT = 'https://www.googleapis.com/oauth2/v3/userinfo'
 flow = Flow.from_client_secrets_file(
     client_secrets_file = client_secrets_file,
     scopes = ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/calendar.readonly", 'openid'],
-    redirect_uri = REDIRECT_URI
+    redirect_uri = "http://localhost:3000"
     )
 
 # Google Oauth로 로그인을 하기 위한 authorization_url로 이동
@@ -51,7 +51,7 @@ def login():
         access_type = "offline",
         include_granted_scopes = 'true'
     )
-    print('authorization_url: ', authorization_url)
+    # print('authorization_url: ', authorization_url)
     return redirect(authorization_url)
 
 # authorization으로 이동해서 google로 로그인하면
@@ -84,10 +84,15 @@ def callback():
     response = requests.post(GOOGLE_TOKEN_ENDPOINT, data = data)
     response_json = response.json()
     google_access_token = response_json['access_token'] # google refresh 토큰을 발급받기 위함
+    # if google_access_token:
+    #     print('google access token')
+    #     with open('token.json', 'w') as token:
+    #         token.write(google_access_token)
     google_id_token = response_json['id_token']
 
     # id_token을 이용해서 Google User의 sub, email 받아오기
     id_info = requests.get(GOOGLE_ID_TOKEN_ENDPOINT, params = {'id_token': google_id_token}).json()
+    print('id_info: ', id_info)
 
     # Specify the CLIENT_ID of the app that accesses the backend:
     if id_info['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
