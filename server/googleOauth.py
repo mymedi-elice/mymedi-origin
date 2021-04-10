@@ -21,7 +21,7 @@ import google.auth.transport.requests
 # db
 from module import db
 
-from config import CLIENT_SECRET, CLIENT_ID, CLIENT_SECRETS_FILE
+from config import CLIENT_SECRET, CLIENT_ID, CLIENT_SECRETS_FILE, REDIRECT_URI
 
 # Blueprint 설정
 googleOauth = Blueprint("googleOauth", __name__, url_prefix = "/googleOauth")
@@ -41,7 +41,7 @@ GOOGLE_USER_INFO_ENDPOINT = 'https://www.googleapis.com/oauth2/v3/userinfo'
 flow = Flow.from_client_secrets_file(
     client_secrets_file = client_secrets_file,
     scopes = ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/calendar.readonly", 'openid'],
-    redirect_uri = "http://localhost:3000"
+    redirect_uri = REDIRECT_URI
     )
 
 # Google Oauth로 로그인을 하기 위한 authorization_url로 이동
@@ -71,6 +71,7 @@ def callback():
     split_again = split_url.split("&")
     parsed_url = urllib.parse.parse_qs(split_url)
     authorization_code = parsed_url['code'][0]
+    print('authorization_code:', authorization_code)
 
     data = {
         'client_id': CLIENT_ID,
@@ -83,6 +84,7 @@ def callback():
     # authorization_code를 id_token, access_token으로 변경
     response = requests.post(GOOGLE_TOKEN_ENDPOINT, data = data)
     response_json = response.json()
+    print(response_json)
     google_access_token = response_json['access_token'] # google refresh 토큰을 발급받기 위함
     # if google_access_token:
     #     print('google access token')

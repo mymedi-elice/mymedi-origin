@@ -59,9 +59,8 @@ def get_credentials():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'client_secret_jaemin.json', SCOPES
+                'client_secret.json', SCOPES
             )
-            flow.redirect_uri = "http://localhost:8080"
             print("suc")
             creds = flow.run_local_server(host = 'localhost', port = 8080)
         with open('token.json', 'w') as token:
