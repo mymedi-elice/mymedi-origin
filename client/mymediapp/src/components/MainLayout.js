@@ -79,7 +79,7 @@ export default function MainLayout(props) {
 
   const Links = [
     [t("navbar.intro"), "/intro"],
-    [t("navbar.calendar"), "/#"],
+    [t("navbar.calendar"), "/calendar"],
     [t("navbar.search"), "/#"],
     [t("navbar.mypage"), "/mypage"],
   ];
