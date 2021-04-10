@@ -43,10 +43,11 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
 from flask import Blueprint, jsonify, request
+from config import CLIENT_SECRETS_FILE
 
 googleCalendar = Blueprint("googleCalendar", __name__, url_prefix="/calendar")
 
-SCOPES = ['https://www.googleapis.com/auth/calendar/readonly']
+SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 # Google Calendar API를 사용하기 위한 모듈
 
@@ -59,9 +60,9 @@ def get_credentials():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'client_secret.json', SCOPES
+                CLIENT_SECRETS_FILE, SCOPES
             )
-            print("suc")
+            print("success")
             creds = flow.run_local_server(host = 'localhost', port = 8080)
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
