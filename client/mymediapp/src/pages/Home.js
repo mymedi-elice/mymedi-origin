@@ -25,7 +25,6 @@ export default function Home() {
     if (isConfirmed) {
       setIsPending(false);
     } else {
-      // setIsPending(false);
       //로그인 에러...
     }
   }, [isConfirmed]);

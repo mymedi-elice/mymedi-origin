@@ -20,5 +20,55 @@
         "card": {
             "calendarTitle": "Lịch MyMedi"
         }
+    },
+    "intro":{
+        "title":"Tại sao MyMedi?",
+        "sum-intro":"MyMedi là một dịch vụ quản lý lịch trình y tế dành cho các gia đình đa văn hóa ở vùng mù y tế.",
+        "sub1":{
+            "title":"Tại sao lại nhắm mục tiêu đến các gia đình đa văn hóa?",
+            "contents":"Kết quả phân tích dữ liệu đã khẳng định rằng tỷ lệ tiêm chủng của trẻ em từ các gia đình đa văn hóa thấp hơn so với trẻ em từ các gia đình khác.",
+            "imageAlt":"가정형태별 아동의 예방접종률",
+            "hashtags":{
+                "1":"Trẻ em từ các gia đình đa văn hóa",
+                "2":"Con cái gia đình chung (trong nước)",
+                "3":"Con cái gia đình chung (ở nước ngoài)"
+            }
+        },
+        "sub2":{
+            "title":"Tại sao nó lại thấp?",
+            "contents":{
+                "1":"Nguyên nhân là do hạn chế về ngôn ngữ và bỏ lỡ thời điểm do không biết lịch tiêm chủng được khuyến cáo.",
+                "2":"Ngoài ra, người ta cũng xác nhận rằng sức khỏe / phúc lợi là vấn đề ưu tiên hàng đầu tiếp theo trong tham vấn người nước ngoài của Hàn Quốc, trong khi các vấn đề chính là nhập cư và lao động."
+            },
+            "imageAlt":"Thống kê nội dung tư vấn cho người nước ngoài cư trú tại Hàn Quốc",
+            "hashtags":{
+                "1":"Nhập cư",
+                "2":"Lao động",
+                "3":"Y tế / Phúc lợi",
+                "4":"quản lý",
+                "5":"Giáo dục"
+            }
+        },
+        "sub3":{
+            "title":"Tại sao lại là dịch vụ web?",
+            "contents": "Phương pháp tư vấn ưa thích nhất tại Trung tâm Toàn cầu Seoul là điện thoại di động. Từ đó có thể thấy xu hướng thích gọi điện thoại hơn do được cung cấp thông tin và tư vấn trực tiếp bằng nhiều ngôn ngữ. Vì vậy, chúng tôi quyết định xây dựng một dịch vụ web hỗ trợ quốc tế hóa.",
+            "imageAlt":"Thống kê về phương pháp tham vấn của Trung tâm toàn cầu Seoul",
+            "hashtags":{
+                "1": "Cuộc gọi điện thoại",
+                "2": "Đến gặp trực tiếp",
+                "3": "E-mail"
+            }
+        },
+        "sub4":{
+            "title":"Quốc tế hóa được hỗ trợ bằng những ngôn ngữ nào?",
+            "contents":"Ngoài tiếng Hàn và tiếng Anh, tiếng Việt đã được thêm vào bằng cách tham khảo bảng xếp hạng quốc tịch của các gia đình đa văn hóa trên toàn quốc.",
+            "imageAlt":"Thống kê về quốc tịch của các gia đình đa văn hóa",
+            "hashtags":{
+                "1": "Việt Nam",
+                "2": "Trung Quốc",
+                "3": "Tiếng Trung (tiếng Hàn)",
+                "4": "Philippines"
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@ import {
   AlertDialogCloseButton,
   Button,
   useDisclosure,
+  Center,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
@@ -150,7 +151,7 @@ export default function MainLayout(props) {
         setOpenDialog={setOpenDialog}
         data={dialogToMypage}
       ></AlertToMypage>
-      {props.children}
+      <Center>{props.children}</Center>
       <Footer></Footer>
     </div>
   );
