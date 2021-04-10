@@ -1,4 +1,4 @@
-import { AddIcon, MinusIcon } from "@chakra-ui/icons";
+import { AddIcon, CloseIcon, MinusIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,
@@ -115,7 +115,7 @@ export default function UserInfoFrom() {
                                   }
                                 }}
                               >
-                                <MinusIcon></MinusIcon>
+                                <CloseIcon boxSize={2}></CloseIcon>
                               </Button>
                             </Flex>
                             <FamilyForm
@@ -126,37 +126,39 @@ export default function UserInfoFrom() {
                           </Box>
                         );
                       })}
-                      <Button
-                        size="xs"
-                        colorScheme="teal"
-                        variant="outline"
-                        mt="10"
-                        onClick={() => {
-                          if (
-                            family_info.length > 0 &&
-                            family_info[family_info.length - 1].name
-                          ) {
-                            arrayHelpers.push({
-                              name: "",
-                              gender: "",
-                              birth: "",
-                              vaccine: [],
-                            });
-                          } else if (family_info.length === 0) {
-                            arrayHelpers.push({
-                              name: "",
-                              gender: "",
-                              birth: "",
-                              vaccine: [],
-                            });
-                          } else {
-                            //에러메세지 띄워주기
-                          }
-                        }}
-                      >
-                        <AddIcon></AddIcon>
-                        추가
-                      </Button>
+                      <Center>
+                        <Button
+                          size="xs"
+                          colorScheme="teal"
+                          variant="outline"
+                          mt="3"
+                          onClick={() => {
+                            if (
+                              family_info.length > 0 &&
+                              family_info[family_info.length - 1].name
+                            ) {
+                              arrayHelpers.push({
+                                name: "",
+                                gender: "",
+                                birth: "",
+                                vaccine: [],
+                              });
+                            } else if (family_info.length === 0) {
+                              arrayHelpers.push({
+                                name: "",
+                                gender: "",
+                                birth: "",
+                                vaccine: [],
+                              });
+                            } else {
+                              //에러메세지 띄워주기
+                            }
+                          }}
+                        >
+                          <AddIcon boxSize={2}></AddIcon>
+                          추가
+                        </Button>
+                      </Center>
                     </>
                   );
                 }}

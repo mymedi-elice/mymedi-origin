@@ -17,6 +17,7 @@ import {
   AlertDialogCloseButton,
   Button,
   useDisclosure,
+  Center,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
@@ -78,7 +79,7 @@ export default function MainLayout(props) {
 
   const Links = [
     [t("navbar.intro"), "/intro"],
-    [t("navbar.calendar"), "/#"],
+    [t("navbar.calendar"), "/calendar"],
     [t("navbar.search"), "/#"],
     [t("navbar.mypage"), "/mypage"],
   ];
@@ -150,7 +151,7 @@ export default function MainLayout(props) {
         setOpenDialog={setOpenDialog}
         data={dialogToMypage}
       ></AlertToMypage>
-      {props.children}
+      <Center>{props.children}</Center>
       <Footer></Footer>
     </div>
   );

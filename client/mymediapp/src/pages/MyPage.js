@@ -46,7 +46,7 @@ export default function MyPage() {
       setIsPending(false);
     } else {
       //재로그인 요청
-      // setIsPending(false);
+      // 재로그인 요청한 곳에서 로그인 되면 setIsPending(false);
     }
   }, [isConfirmed]);
 
