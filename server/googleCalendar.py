@@ -74,7 +74,7 @@ def get_upcoming_10_events(credentials, service):
             end = event['end'].get('dateTime', event['end'].get('date'))
             location = event['location']
             summary = event['summary']
-            temp['id'] = event_id; temp['start'] = start; temp['end'] = end; temp['location'] = location; temp['summary'] = summary
+            temp['id'] = event_id; temp['start'] = start; temp['end'] = end; temp['location'] = location; temp['summary'] = summary;
             result.append(temp)
         return result
 
@@ -86,49 +86,53 @@ def get_event(credentials, service, get_id):
     start = event['start'].get('dateTime', event['start'].get('date'))
     end = event['end'].get('dateTime', event['end'].get('date'))
     location = event['location']
-    temp['id'] = eventId; temp['start'] = start; temp['end'] = end; temp['location'] = location; temp['summary'] = summary
+    temp['id'] = eventId; temp['start'] = start; temp['end'] = end; temp['location'] = location; temp['summary'] = summary;
     return temp
 
-def insert_event(credentials, service):
+def insert_event(credentials, service, summary, location, description, date, time):
     event = {
-        'summary': '독감 백신 예방접종', # 일정 제목
-        'location': '관악구보건소, 대한민국 서울특별시 관악구 청룡동 관악로 145', # 일정 장소
-        'description': '', # 일정 설명
+        'summary': summary, # 일정 제목
+        'location': location, # 일정 장소
+        'description': description, # 일정 설명
         'start': { # 시작 날짜
-            'dateTime': '2021-04-14T09:00:00',
+            'dateTime': date+'T'+time,
             'timeZone': 'Asia/Seoul',
         },
         'end': { # 종료 날짜
-            'dateTime': '2021-04-14T10:00:00',
+            'dateTime': date+'T'+time,
             'timeZone': 'Asia/Seoul',
         },
         'reminders': { # 알림 설정
             'useDefault': False
         },
     }
+    temp = {}
+    temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
     inserted_event = service.events().insert(calendarId = 'primary', body = event).execute()
-    return inserted_event
+    return temp
 
-def update_event(credentials, service, update_id):
+def update_event(credentials, service, update_id, summary, location, description, date, time):
     get_event = service.events().get(calendarId = 'primary', eventId = update_id).execute()
     update_event = {
-        'summary': '신종플루 백신 예방접종', # 일정 제목
-        'location': '관악구보건소, 대한민국 서울특별시 관악구 청룡동 관악로 145', # 일정 장소
-        'description': '', # 일정 설명
+        'summary': summary, # 일정 제목
+        'location': location, # 일정 장소
+        'description': description, # 일정 설명
         'start': { # 시작 날짜
-            'dateTime': '2021-04-14T09:00:00',
+            'dateTime': date+'T'+time,
             'timeZone': 'Asia/Seoul',
         },
         'end': { # 종료 날짜
-            'dateTime': '2021-04-14T10:00:00',
+            'dateTime': date+'T'+time,
             'timeZone': 'Asia/Seoul',
         },
         'reminders': { # 알림 설정
             'useDefault': False
         },
     }
+    temp = {}
+    temp['id'] = update_id; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
     updated_event = service.events().update(calendarId = 'primary', eventId = update_id, body = update_event).execute()
-    return updated_event
+    return temp
 
 
 
@@ -165,10 +169,11 @@ def callCalendar():
 
 @googleCalendar.route('/get')
 def showCalendar():
+    args = parser_googleCalendar.parse_args()
     creds = get_credentials()
     service = build_service()
 
-    eventId = "1p2fml5rek5vbuqgopdnnjne4a"
+    eventId = args['_id']
     result = get_event(creds, service, eventId)
 
     return jsonify(
@@ -176,40 +181,41 @@ def showCalendar():
         result = result
     )
 
-@googleCalendar.route('/insert')
+@googleCalendar.route('/insert', methods = ['POST'])
 def insertCalendar():
+    args = parser_googleCalendar.parse_args()
     creds = get_credentials()
     service = build_service()
-    result = insert_event(creds, service)
+
+    result = insert_event(creds, service, args['summary'], args['location'], args['description'], args['date'], args['time'])
     # print('Event created: %s' % (event.get('htmlLink')))
     return jsonify(
         status = 200,
         result = result
     )
 
-@googleCalendar.route('/update')
+@googleCalendar.route('/update', methods = ['PUT'])
 def updateCalendar():
+    args = parser_googleCalendar.parse_args()
     creds = get_credentials()
     service = build_service()
 
-    update_id = "th3aaf823t9cc1qc0e2hhqs8mk"
-
-    result = update_event(creds, service, update_id)
+    result = update_event(creds, service, args['_id'], args['summary'], args['location'], args['description'], args['date'], args['time'])
 
     return jsonify(
         status = 200,
         result = result
         )
 
-@googleCalendar.route('/delete')
+@googleCalendar.route('/delete', methods = ['DELETE'])
 def deleteCalendar():
+    args = parser_googleCalendar.parse_args()
     creds = get_credentials()
     service = build_service()
-    delete_id = "th3aaf823t9cc1qc0e2hhqs8mk"
-    service.events().delete(calendarId = 'primary', eventId = delete_id).execute()
+    service.events().delete(calendarId = 'primary', eventId = args['_id']).execute()
     return jsonify(
         status = 200,
-        deletedId = delete_id
+        deleted_id = args['_id']
     )
 
 
