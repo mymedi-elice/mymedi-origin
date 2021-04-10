@@ -1,39 +1,3 @@
-# from __future__ import print_function
-# import os.path
-# from googleapiclient.discovery import build
-# from google_auth_oauthlib.flow import InstalledAppFlow
-# from google.auth.transport.requests import Request
-# from google.oauth2.credentials import Credentials
-
-# import requests
-# import logging
-# from datetime import datetime, timedelta
-
-# from flask import Blueprint, jsonify, request
-
-# googleCalendar = Blueprint("googleCalendar", __name__, url_prefix="/calendar")
-# access_token = "ya29.a0AfH6SMD9LDmctt9NzYl8njU2GtdCU7IoWcVAtIHN9Qqjrl3MqKKliokDJNva_VZoesmC4B5mtLNO2FdBOH98h8UZyrEElll6mBpadCzrWZEhHMRbw8JNI89FMFbgAv6rJxBnvBeNQ5zCNxwGVtYrz09LDl9PQQ"
-# # Google Calendar API를 사용하기 위한 모듈
-
-# def get_calendar_id(access_token):
-#     headers = {'Authorization': f'Bearer {access_token}'}
-#     response = requests.get(
-#         'https://www.googleapis.com/calendar/v3/user/me/calendarList',
-#         headers = headers
-#     )
-#     logging.info('calendar response %s %s', response.status_code, response.text)
-#     print(response)
-#     return response
-
-
-
-# @googleCalendar.route('/')
-# def callCalendar():
-#     get_calendar_id(access_token)
-#     return jsonify(
-#         status = 200
-#     )
-
 from __future__ import print_function
 import datetime
 import os.path
@@ -43,9 +7,17 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
 from flask import Blueprint, jsonify, request
+from flask_restful import reqparse, abort, Api, Resource
+from flask_jwt_extended import jwt_required
+
 from config import CLIENT_SECRETS_FILE
 
-googleCalendar = Blueprint("googleCalendar", __name__, url_prefix="/calendar")
+# Google Calendar API
+googleCalendar = Blueprint("googleCalendar", __name__, url_prefix='/calendar')
+
+# Google Calendar RESTful API
+# bp = Blueprint("googleCalendar", __name__, url_prefix="/calendar")
+# api = Api(bp)
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
@@ -97,15 +69,79 @@ def get_upcoming_10_events(credentials, service):
     else:
         for event in events:
             temp = {}
+            event_id = event['id']
             start = event['start'].get('dateTime', event['start'].get('date'))
             end = event['end'].get('dateTime', event['end'].get('date'))
             location = event['location']
             summary = event['summary']
-            temp['start'] = start; temp['end'] = end; temp['location'] = location; temp['summary'] = summary
+            temp['id'] = event_id; temp['start'] = start; temp['end'] = end; temp['location'] = location; temp['summary'] = summary
             result.append(temp)
         return result
 
+def get_event(credentials, service, get_id):
+    temp = {}
+    eventId = get_id
+    event = service.events().get(calendarId = 'primary', eventId = eventId).execute()
+    summary = event['summary']
+    start = event['start'].get('dateTime', event['start'].get('date'))
+    end = event['end'].get('dateTime', event['end'].get('date'))
+    location = event['location']
+    temp['id'] = eventId; temp['start'] = start; temp['end'] = end; temp['location'] = location; temp['summary'] = summary
+    return temp
+
+def insert_event(credentials, service):
+    event = {
+        'summary': '독감 백신 예방접종', # 일정 제목
+        'location': '관악구보건소, 대한민국 서울특별시 관악구 청룡동 관악로 145', # 일정 장소
+        'description': '', # 일정 설명
+        'start': { # 시작 날짜
+            'dateTime': '2021-04-14T09:00:00',
+            'timeZone': 'Asia/Seoul',
+        },
+        'end': { # 종료 날짜
+            'dateTime': '2021-04-14T10:00:00',
+            'timeZone': 'Asia/Seoul',
+        },
+        'reminders': { # 알림 설정
+            'useDefault': False
+        },
+    }
+    inserted_event = service.events().insert(calendarId = 'primary', body = event).execute()
+    return inserted_event
+
+def update_event(credentials, service, update_id):
+    get_event = service.events().get(calendarId = 'primary', eventId = update_id).execute()
+    update_event = {
+        'summary': '신종플루 백신 예방접종', # 일정 제목
+        'location': '관악구보건소, 대한민국 서울특별시 관악구 청룡동 관악로 145', # 일정 장소
+        'description': '', # 일정 설명
+        'start': { # 시작 날짜
+            'dateTime': '2021-04-14T09:00:00',
+            'timeZone': 'Asia/Seoul',
+        },
+        'end': { # 종료 날짜
+            'dateTime': '2021-04-14T10:00:00',
+            'timeZone': 'Asia/Seoul',
+        },
+        'reminders': { # 알림 설정
+            'useDefault': False
+        },
+    }
+    updated_event = service.events().update(calendarId = 'primary', eventId = update_id, body = update_event).execute()
+    return updated_event
+
+
+
 # Google Calendar API
+
+parser_googleCalendar = reqparse.RequestParser()
+parser_googleCalendar.add_argument('_id')
+parser_googleCalendar.add_argument('summary')
+parser_googleCalendar.add_argument('description')
+parser_googleCalendar.add_argument('date')
+parser_googleCalendar.add_argument('time')
+parser_googleCalendar.add_argument('location')
+
 
 @googleCalendar.route('/')
 def callCalendar():
@@ -126,3 +162,112 @@ def callCalendar():
         status = 400,
         error = error
     )
+
+@googleCalendar.route('/get')
+def showCalendar():
+    creds = get_credentials()
+    service = build_service()
+
+    eventId = "1p2fml5rek5vbuqgopdnnjne4a"
+    result = get_event(creds, service, eventId)
+
+    return jsonify(
+        status = 200,
+        result = result
+    )
+
+@googleCalendar.route('/insert')
+def insertCalendar():
+    creds = get_credentials()
+    service = build_service()
+    result = insert_event(creds, service)
+    # print('Event created: %s' % (event.get('htmlLink')))
+    return jsonify(
+        status = 200,
+        result = result
+    )
+
+@googleCalendar.route('/update')
+def updateCalendar():
+    creds = get_credentials()
+    service = build_service()
+
+    update_id = "th3aaf823t9cc1qc0e2hhqs8mk"
+
+    result = update_event(creds, service, update_id)
+
+    return jsonify(
+        status = 200,
+        result = result
+        )
+
+@googleCalendar.route('/delete')
+def deleteCalendar():
+    creds = get_credentials()
+    service = build_service()
+    delete_id = "th3aaf823t9cc1qc0e2hhqs8mk"
+    service.events().delete(calendarId = 'primary', eventId = delete_id).execute()
+    return jsonify(
+        status = 200,
+        deletedId = delete_id
+    )
+
+
+# Google Calendar RESTful API
+
+# parser_googleCalendar = reqparse.RequestParser()
+# parser_googleCalendar.add_argument('summary')
+# parser_googleCalendar.add_argument('start_date')
+# parser_googleCalendar.add_argument('end')
+# parser_googleCalendar.add_argument('location')
+
+# class googleCalendar(Resource):
+
+#     # @jwt_required()
+#     def get(self):
+#         creds = get_credentials()
+#         service = build_service()
+
+#         error = None
+#         if not creds:
+#             error = 'There is no authorization from google account'
+#         else:
+#             return jsonify(
+#                 status = 200,
+#                 result = get_upcoming_10_events(creds, service)
+#             )
+
+#         return jsonify(
+#             status = 400,
+#             error = result
+#         )
+
+#     # @jwt_required()
+#     def post(self):
+#         # args = parser_googleCalendar.parse_args()
+#         # summary = args['summary']
+#         # startDate = args['startDate'] # YYYY-MM-DD
+#         # endDate = args['endDate'] # YYYY-MM-DD
+#         # location = args['location'] # 도로명 주소
+
+#         event = {
+#         'summary': '독감 백신 예방접종', # 일정 제목
+#         'location': '관악구보건소, 대한민국 서울특별시 관악구 청룡동 관악로 145', # 일정 장소
+#         'description': '', # 일정 설명
+#         'start': { # 시작 날짜
+#             'dateTime': '2021-04-14T09:00:00',
+#             'timeZone': 'Asia/Seoul',
+#         },
+#         'end': { # 종료 날짜
+#             'dateTime': '2021-04-14T10:00:00',
+#             'timeZone': 'Asia/Seoul',
+#         },
+#     }
+
+#         event = service.events().insert(calendarId = 'primary', body = event).execute()
+#         print('Event created: %s' % (event.get('htmlLink')))
+#         return jsonify(
+#             status = 200
+#         )
+
+# api.add_resource(googleCalendar, '/')
