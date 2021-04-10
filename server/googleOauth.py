@@ -4,7 +4,7 @@ import requests
 import urllib.parse
 
 from flask_restful import reqparse
-from flask import Blueprint, jsonify, request, Flask, redirect
+from flask import Blueprint, jsonify, request, Flask, redirect, session
 
 # flask_jwt_extended를 사용하여 서버와 클라이언트 사이에서 토큰으로 인증
 from flask_jwt_extended import create_access_token
@@ -51,7 +51,7 @@ def login():
         access_type = "offline",
         include_granted_scopes = 'true'
     )
-    print('authorization_url: ', authorization_url)
+    # print('authorization_url: ', authorization_url)
     return redirect(authorization_url)
 
 # authorization으로 이동해서 google로 로그인하면
@@ -71,6 +71,7 @@ def callback():
     split_again = split_url.split("&")
     parsed_url = urllib.parse.parse_qs(split_url)
     authorization_code = parsed_url['code'][0]
+    print('authorization_code:', authorization_code)
 
     data = {
         'client_id': CLIENT_ID,
@@ -83,11 +84,17 @@ def callback():
     # authorization_code를 id_token, access_token으로 변경
     response = requests.post(GOOGLE_TOKEN_ENDPOINT, data = data)
     response_json = response.json()
+    print(response_json)
     google_access_token = response_json['access_token'] # google refresh 토큰을 발급받기 위함
+    # if google_access_token:
+    #     print('google access token')
+    #     with open('token.json', 'w') as token:
+    #         token.write(google_access_token)
     google_id_token = response_json['id_token']
 
     # id_token을 이용해서 Google User의 sub, email 받아오기
     id_info = requests.get(GOOGLE_ID_TOKEN_ENDPOINT, params = {'id_token': google_id_token}).json()
+    print('id_info: ', id_info)
 
     # Specify the CLIENT_ID of the app that accesses the backend:
     if id_info['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
