@@ -1,3 +1,4 @@
+# google calendar
 from __future__ import print_function
 import datetime
 import os.path
@@ -6,6 +7,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
+# flask api
 from flask import Blueprint, jsonify, request
 from flask_restful import reqparse, abort, Api, Resource
 from flask_jwt_extended import jwt_required
@@ -183,13 +185,28 @@ def showCalendar():
     creds = get_credentials()
     service = build_service()
 
-    eventId = args['_id']
-    result = get_event(creds, service, eventId)
+    error = None
 
-    return jsonify(
-        status = 200,
-        result = result
-    )
+    if not creds:
+        error = 'There is no authorization from google account'
+
+    elif not args['_id']:
+        error = 'Please enter the selected event id yot want to show'
+
+    if error is None:
+        eventId = args['_id']
+        result = get_event(creds, service, eventId)
+
+        return jsonify(
+            status = 200,
+            result = result
+        )
+
+    else:
+        return jsonify(
+                status = 500,
+                error = error
+            )
 
 @googleCalendar.route('/insert', methods = ['POST'])
 # @jwt_required()
@@ -198,11 +215,34 @@ def insertCalendar():
     creds = get_credentials()
     service = build_service()
 
-    result = insert_event(creds, service, args['summary'], args['location'], args['description'], args['date'], args['time'])
-    # print('Event created: %s' % (event.get('htmlLink')))
+    error = None
+
+    if not creds:
+        error = "There is no authorization from google account"
+
+    elif not args['summary']:
+        error = 'Please enter the content of summary from the selected event id yot want to add'
+
+    elif not args['location']:
+        error = 'Please enter the content of location from the selected event id yot want to add'
+
+    elif not args['time']:
+        error = 'Please enter the content of time from the selected event id yot want to add'
+
+    elif not args['date']:
+        error = 'Please enter the content of date from the selected event id yot want to add'
+
+    if error is None:
+        result = insert_event(creds, service, args['summary'], args['location'], args['description'], args['date'], args['time'])
+        # print('Event created: %s' % (event.get('htmlLink')))
+        return jsonify(
+            status = 200,
+            result = result
+        )
+
     return jsonify(
-        status = 200,
-        result = result
+        status = 500,
+        error = error
     )
 
 @googleCalendar.route('/update', methods = ['PUT'])
@@ -212,12 +252,38 @@ def updateCalendar():
     creds = get_credentials()
     service = build_service()
 
-    result = update_event(creds, service, args['_id'], args['summary'], args['location'], args['description'], args['date'], args['time'])
+    error = None
+
+    if not creds:
+        error = "There is no authorization from google account"
+
+    elif not args['_id']:
+        error = 'Please enter the event id'
+
+    elif not args['summary']:
+        error = 'Please enter the content of summary from the selected event id you want to update'
+
+    elif not args['location']:
+        error = 'Please enter the content of location from the selected event id yot want to update'
+
+    elif not args['date']:
+        error = 'Please enter the content of date from the selected event id you want to update'
+
+    elif not args['time']:
+        error = 'Please enter the content of time from the selected event id you want to update'
+
+    if error is None:
+        result = update_event(creds, service, args['_id'], args['summary'], args['location'], args['description'], args['date'], args['time'])
+
+        return jsonify(
+            status = 200,
+            result = result
+            )
 
     return jsonify(
-        status = 200,
-        result = result
-        )
+        status = 500,
+        error = error
+    )
 
 @googleCalendar.route('/delete', methods = ['DELETE'])
 # @jwt_required()
@@ -225,10 +291,22 @@ def deleteCalendar():
     args = parser_googleCalendar.parse_args()
     creds = get_credentials()
     service = build_service()
-    service.events().delete(calendarId = 'primary', eventId = args['_id']).execute()
+
+    error = None
+
+    if not args['_id']:
+        error = 'Please enter the event id you want to delete'
+
+    if error is None:
+        service.events().delete(calendarId = 'primary', eventId = args['_id']).execute()
+        return jsonify(
+            status = 200,
+            deleted_id = args['_id']
+        )
+
     return jsonify(
-        status = 200,
-        deleted_id = args['_id']
+        status = 500,
+        error = error
     )
 
 
