@@ -28,7 +28,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./date-picker.css";
 import * as Yup from "yup";
-import { DayTable } from "@fullcalendar/daygrid";
 
 export default function UserInfoFrom() {
   const vaccines = [
@@ -464,12 +463,12 @@ const DatePickerComponent = (props) => {
         if (month.length === 1) {
           month = "0" + month;
         }
-        // let day = date.getDate() + "";
-        // if (day.length === 1) {
-        //   day = "0" + day;
-        // }
-        // console.log(year + "-" + month + "-" + day);
-        // date = year + "-" + month + "-" + day;
+        let day = date.getDate() + "";
+        if (day.length === 1) {
+          day = "0" + day;
+        }
+        console.log(year + "-" + month + "-" + day);
+        date = year + "-" + month + "-" + day;
         if (props.index === undefined) {
           props.birth.setValues({ ...props.birth.values, birth: date });
         } else {
