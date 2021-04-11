@@ -34,6 +34,10 @@ export default function CalendarPage() {
     }
   }, [isConfirmed]);
 
+  const handleDateClick = (e) => {
+    console.log(e);
+  };
+
   return (
     <MainLayout
       isLoggedIn={isLoggedIn}
@@ -43,9 +47,10 @@ export default function CalendarPage() {
     >
       <Box maxWidth="800px" maxHeight="800px" p={20}>
         <FullCalendar
-          plugins={[dayGridPlugin]}
+          plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           height="auto"
+          dateClick={handleDateClick}
         ></FullCalendar>
       </Box>
     </MainLayout>
