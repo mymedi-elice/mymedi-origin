@@ -70,11 +70,15 @@ def get_upcoming_10_events(credentials, service):
         for event in events:
             temp = {}
             event_id = event['id']
-            start = event['start'].get('dateTime', event['start'].get('date'))
-            end = event['end'].get('dateTime', event['end'].get('date'))
+            datetime = event['start'].get('dateTime', event['start'].get('date'))
+            # print('datetime: ', datetime)
+            date = datetime.split('T')[0]
+            # print('date: ', date)
+            time = datetime.split('T')[1].split('+')[0]
+            # print('time: ', time)
             location = event['location']
             summary = event['summary']
-            temp['id'] = event_id; temp['start'] = start; temp['end'] = end; temp['location'] = location; temp['summary'] = summary;
+            temp['id'] = event_id; temp['date'] = date; temp['time'] = time; temp['location'] = location; temp['summary'] = summary;
             result.append(temp)
         return result
 
@@ -83,10 +87,14 @@ def get_event(credentials, service, get_id):
     eventId = get_id
     event = service.events().get(calendarId = 'primary', eventId = eventId).execute()
     summary = event['summary']
-    start = event['start'].get('dateTime', event['start'].get('date'))
-    end = event['end'].get('dateTime', event['end'].get('date'))
+    datetime = event['start'].get('dateTime', event['start'].get('date'))
+    print('datetime: ', datetime)
+    date = datetime.split('T')[0]
+    print('date: ', date)
+    time = datetime.split('T')[1].split('+')[0]
+    print('time: ', time)
     location = event['location']
-    temp['id'] = eventId; temp['start'] = start; temp['end'] = end; temp['location'] = location; temp['summary'] = summary;
+    temp['id'] = eventId; temp['date'] = date; temp['time'] = time; temp['location'] = location; temp['summary'] = summary;
     return temp
 
 def insert_event(credentials, service, summary, location, description, date, time):
@@ -148,6 +156,7 @@ parser_googleCalendar.add_argument('location')
 
 
 @googleCalendar.route('/')
+# @jwt_required()
 def callCalendar():
     creds = get_credentials()
     service = build_service()
@@ -168,6 +177,7 @@ def callCalendar():
     )
 
 @googleCalendar.route('/get')
+# @jwt_required()
 def showCalendar():
     args = parser_googleCalendar.parse_args()
     creds = get_credentials()
@@ -182,6 +192,7 @@ def showCalendar():
     )
 
 @googleCalendar.route('/insert', methods = ['POST'])
+# @jwt_required()
 def insertCalendar():
     args = parser_googleCalendar.parse_args()
     creds = get_credentials()
@@ -195,6 +206,7 @@ def insertCalendar():
     )
 
 @googleCalendar.route('/update', methods = ['PUT'])
+# @jwt_required()
 def updateCalendar():
     args = parser_googleCalendar.parse_args()
     creds = get_credentials()
@@ -208,6 +220,7 @@ def updateCalendar():
         )
 
 @googleCalendar.route('/delete', methods = ['DELETE'])
+# @jwt_required()
 def deleteCalendar():
     args = parser_googleCalendar.parse_args()
     creds = get_credentials()
