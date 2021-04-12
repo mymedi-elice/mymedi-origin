@@ -143,8 +143,8 @@ def insert_event(service, summary, location, description, date, time):
         },
     }
     temp = {}
-    temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
     inserted_event = service.events().insert(calendarId = 'primary', body = event).execute()
+    temp['id'] = inserted_event['id']; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
     return temp
 
 def update_event(service, update_id, summary, location, description, date, time):

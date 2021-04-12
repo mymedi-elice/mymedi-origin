@@ -7,6 +7,7 @@ from config import CLIENT_SECRETS_FILE
 # google calendar api module
 import calendarmodule as calendar
 
+# google calendar user authorization
 creds = calendar.get_credentials()
 service = calendar.build_service()
 
