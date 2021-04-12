@@ -50,6 +50,7 @@ import useConfirmLogin from "../components/useConfirmLogin";
 import { Field, Form, Formik } from "formik";
 import { CheckIcon, DeleteIcon, EditIcon, TimeIcon } from "@chakra-ui/icons";
 import DatePickerComponent from "../components/DatePickerComponent";
+import { date } from "yup/lib/locale";
 
 export default function CalendarPage() {
   const { t } = useTranslation();
@@ -103,6 +104,7 @@ export default function CalendarPage() {
             end: eachEvent.date,
             time: eachEvent.time,
             location: eachEvent.location,
+            description: eachEvent.description,
             color: color,
           }; //조건문으로 달리할 수 있다.
         });
@@ -128,8 +130,10 @@ export default function CalendarPage() {
         data.title = event.title;
         data.start = event.start;
         data.end = event.end;
+        date.time = event.time;
         data.color = event.color;
         data.location = event.location;
+        data.description = event.description;
       }
     });
     console.log(data);
@@ -223,8 +227,6 @@ const ShowEventModal = (props) => {
   const show = props.data.show;
   let data = props.data.data;
 
-  const validateTitle = () => {};
-
   return (
     <Modal
       isCentered
@@ -244,11 +246,12 @@ const ShowEventModal = (props) => {
               <VStack align="left" spacing="0px">
                 <Box>{data.title}</Box>
                 <Text fontSize="sm">
-                  {data.start} ~ {data.end}
+                  {data.start} {data.time}
                 </Text>
               </VStack>
             </Stack>
             <Box>{data.location}</Box>
+            <Box>{data.description}</Box>
           </VStack>
         </ModalBody>
         <ModalFooter>
