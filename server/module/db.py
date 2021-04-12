@@ -62,9 +62,9 @@ try:
 
 except Error as e:
     print("Error while connecting to MySQL using Connection pool ", e)
-# finally:
-#     # closing database connection.
-#     if connection_object.is_connected():
-#         cursor.close()
-#         connection_object.close()
-#         print("MySQL connection is closed")
+finally:
+    # closing database connection.
+    if connection_object.is_connected():
+        cursor.close()
+        connection_object.close()
+        print("MySQL connection is closed")
