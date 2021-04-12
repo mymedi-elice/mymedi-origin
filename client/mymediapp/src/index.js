@@ -4,11 +4,26 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import "./i18n";
 
+const theme = extendTheme({
+  components: {
+    Popover: {
+      variants: {
+        picker: {
+          popper: {
+            maxWidth: "unset",
+            width: "unset",
+          },
+        },
+      },
+    },
+  },
+});
+
 ReactDOM.render(
-  <ChakraProvider>
+  <ChakraProvider theme={theme}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
