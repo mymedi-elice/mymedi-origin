@@ -378,7 +378,7 @@ const CalendarForm = (props) => {
   const curDate = props.curDate;
   console.log(props);
   let defaultTime;
-  if (props.show.data.time) {
+  if (props.show.data) {
     defaultTime = props.show.data.time;
   }
 
