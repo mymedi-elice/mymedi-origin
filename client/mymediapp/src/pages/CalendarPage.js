@@ -84,7 +84,7 @@ export default function CalendarPage() {
   }, [isConfirmed]);
 
   const getAllEvents = useCallback(async () => {
-    const res = await axios.get(serverUrl + "/calendar");
+    const res = await axios.get(serverUrl + "/calendar/");
     if (res.status === 200) {
       const eventData = res.data.result;
       //아래 코드는 eventData가 있을때만 실행
@@ -99,8 +99,9 @@ export default function CalendarPage() {
           return {
             id: eachEvent.id,
             title: eachEvent.summary,
-            start: eachEvent.start,
-            end: eachEvent.end,
+            start: eachEvent.date,
+            end: eachEvent.date,
+            time: eachEvent.time,
             location: eachEvent.location,
             color: color,
           }; //조건문으로 달리할 수 있다.
@@ -137,30 +138,44 @@ export default function CalendarPage() {
   };
 
   const handleDeleteEvent = useCallback(async (id, allEvents) => {
+    let array = [...allEvents];
+    let deleteInd;
+    allEvents.forEach((event, eventInd) => {
+      if (event.id === id) {
+        deleteInd = eventInd;
+      }
+    });
+    array.splice(deleteInd, 1);
+    setAllEvents(array);
     const res = await axios.delete(serverUrl + "/calendar/delete", {
       params: { _id: id },
     });
     console.log(res);
-    if (res.data.status === 200) {
-      let array = [...allEvents];
-      let deleteInd;
-      allEvents.forEach((event, eventInd) => {
-        if (event.id === id) {
-          deleteInd = eventInd;
-        }
-      });
-      array.splice(deleteInd, 1);
-      setAllEvents(array);
-    }
+
+    // if (res.data.status === 200) {
+    //   let array = [...allEvents];
+    //   let deleteInd;
+    //   allEvents.forEach((event, eventInd) => {
+    //     if (event.id === id) {
+    //       deleteInd = eventInd;
+    //     }
+    //   });
+    //   array.splice(deleteInd, 1);
+    //   setAllEvents(array);
+    // }
   }, []);
 
   const handleAddEvent = useCallback(async (data, allEvents) => {
-    const res = await axios.post(serverUrl + "/calendar/insert", {
-      params: data,
-    });
+    let title = data.title;
+    let sendData = { ...data };
+    delete sendData["title"];
+    sendData.summary = title;
+
+    const res = await axios.post(serverUrl + "/calendar/insert", sendData);
     console.log(res);
     if (res.data.status === 200) {
-      data.id = res.data.id;
+      //응답 기다리는데 너무 오래걸림..어떻게 하지?
+      data.id = res.data.result.id;
       console.log(data);
       let addedArray = allEvents.concat(data);
       setAllEvents(addedArray);

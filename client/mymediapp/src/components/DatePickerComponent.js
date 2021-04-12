@@ -5,7 +5,8 @@ export default function DatePickerComponent(props) {
   const [startDate, setStartDate] = useState(
     new Date(props.default.split("-"))
   );
-  console.log(startDate);
+  //   console.log(startDate);
+  //datepicker가 엄청 많이 렌더링 되는데 이거 왜이러지...????
   //   console.log(props);
   //   if (props.default) {
   //     let year,
