@@ -24,6 +24,7 @@ SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 parser_googleCalendar = reqparse.RequestParser()
 parser_googleCalendar.add_argument('_id')
+parser_googleCalendar.add_argument('colorId')
 parser_googleCalendar.add_argument('summary')
 parser_googleCalendar.add_argument('description')
 parser_googleCalendar.add_argument('date')
@@ -90,6 +91,9 @@ def insertCalendar():
     if not creds:
         error = "There is no authorization from google account"
 
+    elif not args['colorId']:
+        error = 'Please enter the content of colorId from the selected event id you want to add'
+
     elif not args['summary']:
         error = 'Please enter the content of summary from the selected event id yot want to add'
 
@@ -103,7 +107,7 @@ def insertCalendar():
         error = 'Please enter the content of date from the selected event id yot want to add'
 
     if error is None:
-        result = calendar.insert_event(service, args['summary'], args['location'], args['description'], args['date'], args['time'])
+        result = calendar.insert_event(service, args['colorId'], args['summary'], args['location'], args['description'], args['date'], args['time'])
         # print('Event created: %s' % (event.get('htmlLink')))
         return jsonify(
             status = 200,
@@ -129,6 +133,9 @@ def updateCalendar():
     elif not args['_id']:
         error = 'Please enter the event id'
 
+    elif not args['colorId']:
+        error = 'Please enter the content of colorId from the selected event id you want to update'
+
     elif not args['summary']:
         error = 'Please enter the content of summary from the selected event id you want to update'
 
@@ -142,7 +149,7 @@ def updateCalendar():
         error = 'Please enter the content of time from the selected event id you want to update'
 
     if error is None:
-        result = calendar.update_event(service, args['_id'], args['summary'], args['location'], args['description'], args['date'], args['time'])
+        result = calendar.update_event(service, args['_id'], args['colorId'], args['summary'], args['location'], args['description'], args['date'], args['time'])
 
         return jsonify(
             status = 200,

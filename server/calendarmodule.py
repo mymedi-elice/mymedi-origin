@@ -11,6 +11,20 @@ from config import CLIENT_SECRETS_FILE
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
+color = {
+        '1': '#7986cb',
+        '2': '#33b679',
+        '3': '#8e24aa',
+        '4': '#e67c73',
+        '5': '#f6c026',
+        '6': '#f5511d',
+        '7': '#039be5',
+        '8': '#616161',
+        '9': '#3f51b5',
+        '10': '#0b8043',
+        '11': '#d60000',
+        }
+
 def get_credentials():
     creds = None
     if os.path.exists('token.json'):
@@ -36,6 +50,15 @@ def build_service():
 def get_now_date():
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     return nows
+
+def color_hexcode(color, colorId):
+    selected_hexcode = color[colorId]
+    return selected_hexcode
+
+def hexcode_color(color, hexcode):
+    color = {v:k for k,v in color.items()}
+    selected_color = color[hexcode]
+    return selected_color
 
 def get_upcoming_10_events(credentials, service):
     print('Getting the upcoming 10 events')
@@ -86,6 +109,10 @@ def get_all_event(service):
                 event_id = event['id']; temp['id'] = event_id
                 datetime = event['start'].get('dateTime', event['start'].get('date'))
                 try:
+                    colorId = color_hexcode(event['colorId'])
+                except:
+                    colorId = "#039be5"
+                try:
                     summary = event['summary']
                 except:
                     summary = None
@@ -105,7 +132,7 @@ def get_all_event(service):
                     time = datetime.split('T')[1].split('+')[0]
                 except:
                     time = None
-                temp['id'] = event_id; temp['summary'] = summary; temp['description'] = description; temp['location'] = location; temp['date'] = date; temp['time'] = time
+                temp['id'] = event_id; temp['colorId'] = colorId; temp['summary'] = summary; temp['description'] = description; temp['location'] = location; temp['date'] = date; temp['time'] = time
                 result.append(temp)
             return result
 
@@ -125,8 +152,9 @@ def get_event(service, get_id):
     temp['id'] = eventId; temp['date'] = date; temp['time'] = time; temp['location'] = location; temp['summary'] = summary; temp['description'] = description
     return temp
 
-def insert_event(service, summary, location, description, date, time):
+def insert_event(service, hexcode, summary, location, description, date, time):
     event = {
+        'colorId': hexcode_color(color, hexcode), # 일정 색깔
         'summary': summary, # 일정 제목
         'location': location, # 일정 장소
         'description': description, # 일정 설명
@@ -144,12 +172,13 @@ def insert_event(service, summary, location, description, date, time):
     }
     temp = {}
     inserted_event = service.events().insert(calendarId = 'primary', body = event).execute()
-    temp['id'] = inserted_event['id']; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
+    temp['id'] = inserted_event['id']; temp['colorId'] = hexcode; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
     return temp
 
-def update_event(service, update_id, summary, location, description, date, time):
+def update_event(service, update_id, hexcode, summary, location, description, date, time):
     get_event = service.events().get(calendarId = 'primary', eventId = update_id).execute()
     update_event = {
+        'colorId': hexcode_color(color, hexcode), # 일정 색깔
         'summary': summary, # 일정 제목
         'location': location, # 일정 장소
         'description': description, # 일정 설명
@@ -166,6 +195,6 @@ def update_event(service, update_id, summary, location, description, date, time)
         },
     }
     temp = {}
-    temp['id'] = update_id; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
+    temp['id'] = update_id; temp['colorId'] = hexcode; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
     updated_event = service.events().update(calendarId = 'primary', eventId = update_id, body = update_event).execute()
     return temp
