@@ -52,9 +52,6 @@ def get_now_date():
     return now
 
 def get_upcoming_10_events(credentials, service):
-    creds = credentials
-    service = service
-
     print('Getting the upcoming 10 events')
 
     events_result = service.events().list(calendarId='primary', timeMin=get_now_date(),
@@ -83,6 +80,35 @@ def get_upcoming_10_events(credentials, service):
             temp['id'] = event_id; temp['date'] = date; temp['time'] = time; temp['location'] = location; temp['summary'] = summary;
             result.append(temp)
         return result
+
+def get_all_event(service):
+    page_token = None
+    msg = None
+    result = []
+    while True:
+        events_result = service.events().list(
+            calendarId = 'primary',
+            pageToken = page_token
+        ).execute()
+        events = events_result.get('items', [])
+        if not events:
+            msg = "There are no events"
+            return msg
+        else:
+            for event in events:
+                temp = {}
+                event_id = event['id']
+                datetime = event['start'].get('dateTime', event['start'].get('date'))
+                # print('datetime: ', datetime)
+                date = datetime.split('T')[0]
+                # print('date: ', date)
+                time = datetime.split('T')[1].split('+')[0]
+                # print('time: ', time)
+                location = event['location']
+                summary = event['summary']
+                temp['id'] = event_id; temp['date'] = date; temp['time'] = time; temp['location'] = location; temp['summary'] = summary;
+                result.append(temp)
+            return result
 
 def get_event(credentials, service, get_id):
     temp = {}
@@ -170,7 +196,7 @@ def callCalendar():
     else:
         return jsonify(
             status = 200,
-            result = get_upcoming_10_events(creds, service)
+            result = get_all_event(service)
         )
 
     return jsonify(
