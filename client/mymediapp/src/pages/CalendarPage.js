@@ -10,6 +10,10 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
+  FormLabel,
+  Icon,
+  IconButton,
   Input,
   Modal,
   ModalBody,
@@ -18,12 +22,18 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Stack,
+  Text,
+  Textarea,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
 
 import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
 import useConfirmLogin from "../components/useConfirmLogin";
+import { Field, Form, Formik } from "formik";
+import { CheckIcon, DeleteIcon, EditIcon, TimeIcon } from "@chakra-ui/icons";
 
 export default function CalendarPage() {
   const { t } = useTranslation();
@@ -32,9 +42,12 @@ export default function CalendarPage() {
   const [isPending, setIsPending] = useState(false);
   const [allEvents, setAllEvents] = useState();
   const [focusedEvent, setFocusedEvent] = useState({ show: false, data: {} });
-  const [showEvent, setShowEvent] = useState();
-  const [addEvent, setAddEvent] = useState();
-  const [deleteEvent, setDeleteEvent] = useState();
+
+  const [showAddModal, setShowAddModal] = useState();
+  // const [showEvent, setShowEvent] = useState();
+  // const [addEvent, setAddEvent] = useState();
+  // const [deleteEvent, setDeleteEvent] = useState();
+  // const [isChange, setIsChange] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -54,34 +67,73 @@ export default function CalendarPage() {
     }
   }, [isConfirmed]);
 
+  // useEffect(() => {
+  //   if (isConfirmed) {
+  //     console.log("값 바뀜");
+  //     getAllEvents();
+  //   }
+  // }, [focusedEvent.data]);
+
   const getAllEvents = useCallback(async () => {
     const res = await axios.get(serverUrl + "/calendar");
     if (res.status === 200) {
       const eventData = res.data.result;
-      const formatEvents = eventData.map((eachEvent) => {
-        return {
-          title: eachEvent.summary,
-          start: eachEvent.start,
-          end: eachEvent.end,
-          id: eachEvent.id,
-          color: "green",
-        }; //조건문으로 달리할 수 있다.
-      });
-
-      setAllEvents(formatEvents);
+      //아래 코드는 eventData가 있을때만 실행
+      if (eventData !== "No upcoming events found from now") {
+        const formatEvents = eventData.map((eachEvent) => {
+          return {
+            id: eachEvent.id,
+            title: eachEvent.summary,
+            start: eachEvent.start,
+            end: eachEvent.end,
+            location: eachEvent.location,
+            color: "green",
+          }; //조건문으로 달리할 수 있다.
+        });
+        setAllEvents(formatEvents);
+      }
     }
   }, []); //나중에 이벤트가 더해질때마다 이 함수를 부르도록 useEffect 새로 쓰기
 
   const handleDateClick = (e) => {
     console.log(e);
+    setShowAddModal(true);
     //일정 등록을 위한 모달이 켜지게 한다. 확인을 누르면 axios post를 보낸다.
   };
   const handleEventClick = (e) => {
     console.log(e.event._def);
     //우리가 쓰는 id -> e.event._def.publicId
-    const data = { id: e.event._def.publicId, title: e.event._def.title };
+    const eventId = e.event._def.publicId;
+    let data = {};
+    allEvents.forEach((event) => {
+      if (event.id === eventId) {
+        data.id = eventId;
+        data.title = event.title;
+        data.start = event.start;
+        data.end = event.end;
+        data.color = event.color;
+        data.location = event.location;
+      }
+    });
+    console.log(data);
+    // const data = { id: e.event._def.publicId, title: e.event._def.title };
     setFocusedEvent({ show: true, data: data });
   };
+
+  const handleDeleteEvent = useCallback(async (id) => {
+    const res = axios.delete(serverUrl + "/calendar/delete", {
+      params: { _id: id },
+    });
+    console.log(res);
+    // if (res.[[PromiseResult]] === 200) {
+    //   getAllEvents();
+    // }
+  }, []);
+
+  const handleAddEvent = useCallback(async (data) => {
+    const res = axios.post(serverUrl + "/calendar/insert", { params: data });
+    console.log(res);
+  }, []);
 
   return (
     <MainLayout
@@ -100,10 +152,15 @@ export default function CalendarPage() {
           eventClick={handleEventClick}
         ></FullCalendar>
       </Box>
-
+      <AddEventModal
+        show={showAddModal}
+        handleShow={setShowAddModal}
+        handleAdd={handleAddEvent}
+      ></AddEventModal>
       <ShowEventModal
         data={focusedEvent}
-        handle={setFocusedEvent}
+        handleData={setFocusedEvent}
+        handleDelete={handleDeleteEvent}
       ></ShowEventModal>
     </MainLayout>
   );
@@ -114,29 +171,132 @@ const ShowEventModal = (props) => {
   //수정, 삭제 버튼
   //들어갈 내용은 모두 변수로 관리하기
   //안에 폼 만들기
+  const show = props.data.show;
+  let data = props.data.data;
+
+  const validateTitle = () => {};
+
   return (
     <Modal
       isCentered
       onClose={() => {
-        props.handle({ ...props.data, show: false });
+        props.handleData({ ...props.data, show: false });
       }}
-      isOpen={props.data.show}
+      isOpen={show}
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          <Input
-            maxWidth="200px"
-            size="sm"
-            value={props.data.data.title}
-          ></Input>
-        </ModalHeader>
+        <ModalHeader></ModalHeader>
         <ModalCloseButton />
-        <ModalBody>{props.data.data.title}</ModalBody>
+        <ModalBody>
+          <VStack align="left" spacing="15px">
+            <Stack direction="row" spacing="15px">
+              <Box w="15px" h="15px" bg={data.color} m="4px"></Box>
+              <VStack align="left" spacing="0px">
+                <Box>{data.title}</Box>
+                <Text fontSize="sm">
+                  {data.start} ~ {data.end}
+                </Text>
+              </VStack>
+            </Stack>
+            <Box>{data.location}</Box>
+          </VStack>
+        </ModalBody>
         <ModalFooter>
-          <Button>수정</Button>
-          <Button>삭제</Button>
+          <IconButton variant="ghost" aria-label="update" icon={<EditIcon />} />
+          <IconButton
+            variant="ghost"
+            aria-label="delete"
+            icon={<DeleteIcon />}
+            onClick={() => {
+              props.handleDelete(data.id);
+              props.handleData({ show: false, data: {} });
+            }}
+          />
         </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+const AddEventModal = (props) => {
+  const validateTitle = (value) => {
+    let error;
+    if (!value) {
+      error = "일정 제목을 적어주세요";
+    }
+    return error;
+  };
+  return (
+    <Modal
+      isCentered
+      onClose={() => {
+        props.handleShow(false);
+      }}
+      isOpen={props.show}
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader></ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Formik
+            initialValues={{
+              title: "",
+              date: "",
+              time: "",
+              location: "",
+              description: "",
+            }}
+            onSubmit={(values, actions) => {
+              console.log(values);
+              // props.handleAdd(values);
+              props.handleShow(false);
+            }}
+          >
+            {(props) => (
+              <Form>
+                <VStack>
+                  <Field name="title" validate={validateTitle}>
+                    {({ field, form }) => (
+                      <FormControl
+                        isInvalid={form.errors.title && form.touched.title}
+                      >
+                        <Input
+                          {...field}
+                          id="title"
+                          placeholder="일정 제목 추가"
+                        ></Input>
+                      </FormControl>
+                    )}
+                  </Field>
+                  {/* <Field name="date">
+                    <TimeIcon />
+                  </Field>
+                  <Field name="location"></Field> */}
+                  <Field name="description">
+                    {({ field, form }) => (
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          id="description"
+                          placeholder="설명 추가"
+                        ></Textarea>
+                      </FormControl>
+                    )}
+                  </Field>
+                  <IconButton
+                    variant="ghost"
+                    aria-label="save"
+                    icon={<CheckIcon />}
+                    type="submit"
+                  />
+                </VStack>
+              </Form>
+            )}
+          </Formik>
+        </ModalBody>
+        <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   );
