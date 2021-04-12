@@ -37,6 +37,23 @@ def get_now_date():
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     return nows
 
+def colorhexcode(colorId):
+    color = {
+        '1': '#7986cb',
+        '2': '#33b679',
+        '3': '#8e24aa',
+        '4': '#e67c73',
+        '5': '#f6c026',
+        '6': '#f5511d',
+        '7': '#039be5',
+        '8': '#616161',
+        '9': '#3f51b5',
+        '10': '#0b8043',
+        '11': '#d60000',
+        }
+    selected_color = color[colorId]
+    return selected_color
+
 def get_upcoming_10_events(credentials, service):
     print('Getting the upcoming 10 events')
 
@@ -86,6 +103,10 @@ def get_all_event(service):
                 event_id = event['id']; temp['id'] = event_id
                 datetime = event['start'].get('dateTime', event['start'].get('date'))
                 try:
+                    colorId = colorhexcode(event['colorId'])
+                except:
+                    colorId = "#039be5"
+                try:
                     summary = event['summary']
                 except:
                     summary = None
@@ -105,7 +126,7 @@ def get_all_event(service):
                     time = datetime.split('T')[1].split('+')[0]
                 except:
                     time = None
-                temp['id'] = event_id; temp['summary'] = summary; temp['description'] = description; temp['location'] = location; temp['date'] = date; temp['time'] = time
+                temp['id'] = event_id; temp['colorId'] = colorId; temp['summary'] = summary; temp['description'] = description; temp['location'] = location; temp['date'] = date; temp['time'] = time
                 result.append(temp)
             return result
 
