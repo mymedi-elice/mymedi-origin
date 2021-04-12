@@ -79,7 +79,7 @@ export default function Introduction() {
   const sub4 = {
     title: t("intro.sub4.title"),
     contents1: t("intro.sub4.contents"),
-    imageUrl: "https://ifh.cc/g/B5HBhe.png",
+    imageUrl: "https://ifh.cc/g/D57XCi.png",
     imageAlt: t("intro.sub4.imageAlt"),
     hastags: [
       [t("intro.sub4.hashtags.1"), "pink"],

@@ -37,7 +37,8 @@ export default function UserInfoFrom() {
     "코로나 1차",
     "코로나 2차",
     "폐렴구균",
-  ];
+  ]; //부모 컴포넌트에서 axio get으로 가져오기
+
   const schema = Yup.object().shape({
     name: Yup.string().required("이름을 입력해주세요."),
     gender: Yup.string(),
@@ -51,7 +52,7 @@ export default function UserInfoFrom() {
         vaccine: Yup.array().of(Yup.string()),
       })
     ),
-  });
+  }); //작동을 안해...
 
   return (
     <Center>
@@ -76,6 +77,8 @@ export default function UserInfoFrom() {
           // 사용자 정보로 initial value 넣어주기
           onSubmit={(values, actions) => {
             console.log(values);
+            //사용자 정보가 있는지 없는지 확인하기
+            //axios.post (사용자 정보 저장)
             setTimeout(() => {
               alert(JSON.stringify(values, null, 2));
               actions.setSubmitting(false);
@@ -346,7 +349,10 @@ function FamilyForm(props) {
                   생년월일
                 </FormLabel>
                 <Box maxWidth="sm">
-                  <DatePickerComponent birth={form}></DatePickerComponent>
+                  <DatePickerComponent
+                    birth={form}
+                    index={index}
+                  ></DatePickerComponent>
                 </Box>
               </FormControl>
             )}
@@ -388,7 +394,7 @@ const range = (start, stop, step) =>
     .map((x, y) => x + y * step);
 
 const DatePickerComponent = (props) => {
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState();
   const curDate = new Date();
   // useEffect(() => {
   //   props.birth.setValues({ ...props.birth.values, birth: curDate });
@@ -449,10 +455,20 @@ const DatePickerComponent = (props) => {
       )}
       selected={startDate}
       onChange={(date) => {
-        console.log(props);
-        console.log(props.birth.values);
+        console.log(props); // field
+        console.log(props.birth.values); // field data
         setStartDate(date);
-        console.log(props.index);
+        const year = date.getFullYear();
+        let month = date.getMonth() + 1 + "";
+        if (month.length === 1) {
+          month = "0" + month;
+        }
+        let day = date.getDate() + "";
+        if (day.length === 1) {
+          day = "0" + day;
+        }
+        console.log(year + "-" + month + "-" + day);
+        date = year + "-" + month + "-" + day;
         if (props.index === undefined) {
           props.birth.setValues({ ...props.birth.values, birth: date });
         } else {
