@@ -59,27 +59,7 @@ export default function MyPage() {
         setIsPending={setIsPending}
       >
         <Box>마이 페이지</Box>
-        {/* <Sidebar
-          variant={variants?.navigation}
-          isOpen={isSidebarOpen}
-          onClose={toggleSidebar}
-        ></Sidebar> */}
-        <UserInfoForm></UserInfoForm>
-        {/* <Grid
-          h="800px"
-          templateRows="repeat(1, 1fr)"
-          templateColumns="repeat(5, 1fr)"
-          alignItems="center"
-        >
-          <GridItem rowSpan={1} colSpan={1}>
-            <VStack align="stretch">
-              <Box></Box>
-            </VStack>
-          </GridItem>
-          <Divider h="90%" orientation="vertical" />
-
-
-        </Grid> */}
+        <UserInfoForm />
       </MainLayout>
     </div>
   );
