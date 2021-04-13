@@ -173,6 +173,7 @@ export default function CalendarPage() {
     //   array.splice(deleteInd, 1);
     //   setAllEvents(array);
     // }
+    //오래걸림...
   }, []);
 
   const handleAddEvent = useCallback(async (data, allEvents) => {
@@ -185,6 +186,7 @@ export default function CalendarPage() {
     console.log(res);
     if (res.data.status === 200) {
       //응답 기다리는데 너무 오래걸림..어떻게 하지?
+
       data.id = res.data.result.id;
       console.log(data);
       let addedArray = allEvents.concat(data);
@@ -552,7 +554,7 @@ const TimePicker = (props) => {
   // const [meridiem, setMeridiem] = useState();
   // const [hour, setHour] = useState();
   // const [minute, setMinute] = useState();
-  const [inputTime, setInputTime] = useState({});
+
   let defaultMeridiem, defaultHour, defaultMinute;
   if (props.defaultTime) {
     defaultHour = Number(props.defaultTime.split(":")[0]);
@@ -570,6 +572,11 @@ const TimePicker = (props) => {
     //   minute: defaultHour,
     // });
   }
+  const [inputTime, setInputTime] = useState({
+    meridiem: defaultMeridiem,
+    hour: defaultHour,
+    minute: defaultHour,
+  });
 
   return (
     <Stack direction="row">
@@ -619,14 +626,14 @@ const TimePicker = (props) => {
             let time;
             let formatHour;
             let formatMinute;
-            if (inputTime.meridiem) {
+            if (inputTime.meridiem !== undefined) {
               formatHour = Number(e) + Number(inputTime.meridiem);
 
               if (formatHour < 10) {
                 formatHour = formatHour + "";
                 formatHour = "0" + formatHour;
               }
-              if (inputTime.minute) {
+              if (inputTime.minute !== undefined) {
                 formatMinute = inputTime.minute + "";
                 if (inputTime.minute < 10) {
                   formatMinute = "0" + formatMinute;
@@ -639,7 +646,8 @@ const TimePicker = (props) => {
               time = formatHour + ":" + formatMinute + ":00";
               props.form.setValues({ ...props.form.values, time: time });
             }
-            console.log(e);
+            console.log(props.form.values);
+            console.log(inputTime);
             setInputTime({ ...inputTime, hour: e });
           }}
         >
@@ -663,7 +671,10 @@ const TimePicker = (props) => {
             let time;
             let formatHour;
             let formatMinute;
-            if (inputTime.meridiem && inputTime.hour) {
+            if (
+              inputTime.meridiem !== undefined &&
+              inputTime.hour !== undefined
+            ) {
               formatHour = Number(inputTime.hour) + Number(inputTime.meridiem);
 
               if (formatHour < 10) {
@@ -680,7 +691,7 @@ const TimePicker = (props) => {
               time = formatHour + ":" + formatMinute + ":00";
               props.form.setValues({ ...props.form.values, time: time });
             }
-            console.log(time);
+            console.log(inputTime);
             setInputTime({ ...inputTime, minute: e });
             console.log(props.form.values);
           }}
