@@ -115,9 +115,10 @@ def get_all_event(service):
                 event_id = event['id']; temp['id'] = event_id
                 datetime = event['start'].get('dateTime', event['start'].get('date'))
                 try:
-                    colorId = color_hexcode(event['colorId'])
+                    colorId = event['colorId']
                 except:
                     colorId = "#039be5"
+                colorId = color_hexcode(color, colorId)
                 try:
                     summary = event['summary']
                 except:
@@ -138,7 +139,7 @@ def get_all_event(service):
                     time = datetime.split('T')[1].split('+')[0]
                 except:
                     time = None
-                temp['id'] = event_id; temp['colorId'] = colorId; temp['summary'] = summary; temp['description'] = description; temp['location'] = location; temp['date'] = date; temp['time'] = time
+                temp['id'] = event_id; temp['color'] = colorId; temp['summary'] = summary; temp['description'] = description; temp['location'] = location; temp['date'] = date; temp['time'] = time
                 result.append(temp)
             return result
 
@@ -178,7 +179,7 @@ def insert_event(service, hexcode, summary, location, description, date, time):
     }
     temp = {}
     inserted_event = service.events().insert(calendarId = 'primary', body = event).execute()
-    temp['id'] = inserted_event['id']; temp['colorId'] = hexcode; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
+    temp['id'] = inserted_event['id']; temp['color'] = hexcode; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
     return temp
 
 def update_event(service, update_id, hexcode, summary, location, description, date, time):
@@ -201,6 +202,6 @@ def update_event(service, update_id, hexcode, summary, location, description, da
         },
     }
     temp = {}
-    temp['id'] = update_id; temp['colorId'] = hexcode; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
+    temp['id'] = update_id; temp['color'] = hexcode; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
     updated_event = service.events().update(calendarId = 'primary', eventId = update_id, body = update_event).execute()
     return temp
