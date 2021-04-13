@@ -117,7 +117,7 @@ def get_all_event(service):
                 try:
                     colorId = event['colorId']
                 except:
-                    colorId = "#039be5"
+                    colorId = "#039BE5"
                 colorId = color_hexcode(color, colorId)
                 try:
                     summary = event['summary']
