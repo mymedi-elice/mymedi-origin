@@ -138,7 +138,7 @@ def get_all_event(service):
                     time = datetime.split('T')[1].split('+')[0]
                 except:
                     time = None
-                temp['id'] = event_id; temp['colorId'] = colorId; temp['summary'] = summary; temp['description'] = description; temp['location'] = location; temp['date'] = date; temp['time'] = time
+                temp['id'] = event_id; temp['color'] = colorId; temp['summary'] = summary; temp['description'] = description; temp['location'] = location; temp['date'] = date; temp['time'] = time
                 result.append(temp)
             return result
 
