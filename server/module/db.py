@@ -41,7 +41,8 @@ try:
                                                   host='localhost',
                                                   database='mymedi',
                                                   user='root',
-                                                  charset="utf8"
+                                                  charset="utf8",
+                                                  password="0000"
                                                   )
 
     print("Printing connection pool properties ")

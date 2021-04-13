@@ -97,20 +97,17 @@ export default function MainLayout(props) {
 
   const handleSendCode = async (url) => {
     setIsPending(true);
-    const res2 = await axios.get(serverUrl + "/googleOauth/callback", {
+    const res = await axios.get(serverUrl + "/googleOauth/callback", {
       params: {
         url: url,
       },
     });
-    if (res2.data.status === 200) {
-      //이렇게 로그인 하면 로그인 버튼이 로그아웃으로 전환하는게 한박자 느림...
-      //고칠 수 있는 방법?
-      //응답 기다리는 동안 로딩버튼 만들기?
+    if (res.data.status === 200) {
       setIsPending(false);
       setIsLoggedIn(true);
-      localStorage.setItem("access_token", res2.data.access_token);
-      localStorage.setItem("refresh_token", res2.data.refresh_token);
-      if (res2.data.user === false) {
+      localStorage.setItem("access_token", res.data.access_token);
+      localStorage.setItem("refresh_token", res.data.refresh_token);
+      if (res.data.user === false) {
         setOpenDialog(true);
         //이때 바로 mypage 가면 로그인 버튼이 로그아웃으로 바뀌지 않는다.
       } else {
@@ -120,7 +117,6 @@ export default function MainLayout(props) {
     } else {
       console.log("로그인 실패");
     }
-    console.log(res2);
   };
 
   const dialogToMypage = {
@@ -145,14 +141,14 @@ export default function MainLayout(props) {
         pending={isPending}
         handleLogin={handleLogin}
         handleLogout={handleLogout}
-      ></NavBar>
+      />
       <AlertToMypage
         openDialog={openDialog}
         setOpenDialog={setOpenDialog}
         data={dialogToMypage}
-      ></AlertToMypage>
+      />
       <Center>{props.children}</Center>
-      <Footer></Footer>
+      <Footer />
     </div>
   );
 }
