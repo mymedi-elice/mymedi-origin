@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `mymedi`.`comment` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `content` MEDIUMTEXT NULL,
   `rating` INT NULL,
-  `creating_date` DATETIME NULL,
+  `creating_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   `user_info_id` INT NOT NULL,
   `hospital_id` INT NOT NULL,
   PRIMARY KEY (`id`),
@@ -120,7 +120,8 @@ DROP TABLE IF EXISTS `mymedi`.`get_vaccine` ;
 
 CREATE TABLE IF NOT EXISTS `mymedi`.`get_vaccine` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `get_vaccine` TINYINT NULL,
+  `get_vaccine` TINYINT NULL DEFAULT 1,
+  `get_date` DATETIME NULL,
   `family_info_id` INT NULL,
   `user_info_id` INT NULL,
   `vaccine_id` INT NOT NULL,
@@ -128,11 +129,6 @@ CREATE TABLE IF NOT EXISTS `mymedi`.`get_vaccine` (
   INDEX `fk_get_vaccine_family_info1_idx` (`family_info_id` ASC) VISIBLE,
   INDEX `fk_get_vaccine_user_info1_idx` (`user_info_id` ASC) VISIBLE,
   INDEX `fk_get_vaccine_vaccine1_idx` (`vaccine_id` ASC) VISIBLE,
-  CONSTRAINT `fk_get_vaccine_family_info1`
-    FOREIGN KEY (`family_info_id`)
-    REFERENCES `mymedi`.`family_info` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `fk_get_vaccine_user_info1`
     FOREIGN KEY (`user_info_id`)
     REFERENCES `mymedi`.`user_info` (`id`)

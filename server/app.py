@@ -21,6 +21,9 @@ app.register_blueprint(test)
 from auth import auth
 app.register_blueprint(auth)
 
+from user_info import user_info
+app.register_blueprint(user_info)
+
 from googleOauth import googleOauth
 app.register_blueprint(googleOauth)
 
