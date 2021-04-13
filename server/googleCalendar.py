@@ -85,7 +85,7 @@ def showCalendar():
 # @jwt_required()
 def insertCalendar():
     args = parser_googleCalendar.parse_args()
-
+    print(args['color'])
     error = None
 
     if not creds:
