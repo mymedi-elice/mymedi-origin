@@ -549,12 +549,12 @@ const ColorPicker = (props) => {
 };
 
 const TimePicker = (props) => {
-  const [meridiem, setMeridiem] = useState();
-  const [hour, setHour] = useState();
-  const [minute, setMinute] = useState();
+  // const [meridiem, setMeridiem] = useState();
+  // const [hour, setHour] = useState();
+  // const [minute, setMinute] = useState();
+  const [inputTime, setInputTime] = useState({});
   let defaultMeridiem, defaultHour, defaultMinute;
   if (props.defaultTime) {
-    console.log(props.defaultTime.split(":"));
     defaultHour = Number(props.defaultTime.split(":")[0]);
     defaultMinute = Number(props.defaultTime.split(":")[1]);
 
@@ -564,8 +564,12 @@ const TimePicker = (props) => {
     } else {
       defaultMeridiem = 0;
     }
+    // setInputTime({
+    //   meridiem: defaultMeridiem,
+    //   hour: defaultHour,
+    //   minute: defaultHour,
+    // });
   }
-  console.log(defaultHour, defaultMeridiem, defaultMinute);
 
   return (
     <Stack direction="row">
@@ -578,16 +582,16 @@ const TimePicker = (props) => {
           let time;
           let formatHour;
           let formatMinute;
-          if (hour) {
-            formatHour = Number(hour) + Number(e.target.value);
+          if (inputTime.hour) {
+            formatHour = Number(inputTime.hour) + Number(e.target.value);
 
             if (formatHour < 10) {
               formatHour = formatHour + "";
               formatHour = "0" + formatHour;
             }
-            if (minute) {
-              if (minute < 10) {
-                formatMinute = minute + "";
+            if (inputTime.minute) {
+              if (inputTime.minute < 10) {
+                formatMinute = inputTime.minute + "";
                 formatMinute = "0" + formatMinute;
               }
             } else {
@@ -597,7 +601,7 @@ const TimePicker = (props) => {
             props.form.setValues({ ...props.form.values, time: time });
           }
           console.log(time);
-          setMeridiem(e.target.value);
+          setInputTime({ ...inputTime, meridiem: e.target.value });
         }}
       >
         <option value={0}>오전</option>
@@ -615,26 +619,28 @@ const TimePicker = (props) => {
             let time;
             let formatHour;
             let formatMinute;
-            if (meridiem) {
-              formatHour = Number(e) + Number(meridiem);
+            if (inputTime.meridiem) {
+              formatHour = Number(e) + Number(inputTime.meridiem);
 
               if (formatHour < 10) {
                 formatHour = formatHour + "";
                 formatHour = "0" + formatHour;
               }
-              if (minute) {
-                formatMinute = minute + "";
-                if (minute < 10) {
+              if (inputTime.minute) {
+                formatMinute = inputTime.minute + "";
+                if (inputTime.minute < 10) {
                   formatMinute = "0" + formatMinute;
                 }
               } else {
                 formatMinute = "00";
               }
+
+              console.log(time);
               time = formatHour + ":" + formatMinute + ":00";
               props.form.setValues({ ...props.form.values, time: time });
             }
-            console.log(time);
-            setHour(e);
+            console.log(e);
+            setInputTime({ ...inputTime, hour: e });
           }}
         >
           <NumberInputField />
@@ -657,8 +663,8 @@ const TimePicker = (props) => {
             let time;
             let formatHour;
             let formatMinute;
-            if (meridiem && hour) {
-              formatHour = Number(hour) + Number(meridiem);
+            if (inputTime.meridiem && inputTime.hour) {
+              formatHour = Number(inputTime.hour) + Number(inputTime.meridiem);
 
               if (formatHour < 10) {
                 formatHour = formatHour + "";
@@ -675,7 +681,8 @@ const TimePicker = (props) => {
               props.form.setValues({ ...props.form.values, time: time });
             }
             console.log(time);
-            setMinute(e);
+            setInputTime({ ...inputTime, minute: e });
+            console.log(props.form.values);
           }}
         >
           <NumberInputField />
