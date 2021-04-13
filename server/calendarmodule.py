@@ -178,7 +178,7 @@ def insert_event(service, hexcode, summary, location, description, date, time):
     }
     temp = {}
     inserted_event = service.events().insert(calendarId = 'primary', body = event).execute()
-    temp['id'] = inserted_event['id']; temp['colorId'] = hexcode; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
+    temp['id'] = inserted_event['id']; temp['color'] = hexcode; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
     return temp
 
 def update_event(service, update_id, hexcode, summary, location, description, date, time):
@@ -201,6 +201,6 @@ def update_event(service, update_id, hexcode, summary, location, description, da
         },
     }
     temp = {}
-    temp['id'] = update_id; temp['colorId'] = hexcode; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
+    temp['id'] = update_id; temp['color'] = hexcode; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
     updated_event = service.events().update(calendarId = 'primary', eventId = update_id, body = update_event).execute()
     return temp
