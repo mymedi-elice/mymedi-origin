@@ -115,9 +115,10 @@ def get_all_event(service):
                 event_id = event['id']; temp['id'] = event_id
                 datetime = event['start'].get('dateTime', event['start'].get('date'))
                 try:
-                    colorId = color_hexcode(event['colorId'])
+                    colorId = event['colorId']
                 except:
                     colorId = "#039be5"
+                colorId = color_hexcode(color, colorId)
                 try:
                     summary = event['summary']
                 except:
