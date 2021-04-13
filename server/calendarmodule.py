@@ -51,13 +51,19 @@ def get_now_date():
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     return nows
 
+def dict_key_upper(data):
+    if isinstance(data, dict):
+        return {k.upper(): v for k,v in data.items()}
+
 def color_hexcode(color, colorId):
     selected_hexcode = color[colorId]
     return selected_hexcode
 
 def hexcode_color(color, hexcode):
     color = {v:k for k,v in color.items()}
-    selected_color = color[hexcode]
+    changed_color = dict_key_upper(color)
+    print(changed_color)
+    selected_color = changed_color[hexcode]
     return selected_color
 
 def get_upcoming_10_events(credentials, service):
