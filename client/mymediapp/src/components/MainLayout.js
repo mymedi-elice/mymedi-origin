@@ -103,6 +103,7 @@ export default function MainLayout(props) {
       },
     });
     if (res.data.status === 200) {
+      console.log(res);
       setIsPending(false);
       setIsLoggedIn(true);
       localStorage.setItem("access_token", res.data.access_token);

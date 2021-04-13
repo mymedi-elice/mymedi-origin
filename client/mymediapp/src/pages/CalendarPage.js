@@ -181,6 +181,7 @@ export default function CalendarPage() {
     let sendData = { ...data };
     delete sendData["title"];
     sendData.summary = title;
+    console.log(sendData);
 
     const res = await axios.post(serverUrl + "/calendar/insert", sendData);
     console.log(res);
@@ -485,8 +486,8 @@ const ColorPicker = (props) => {
   const colors = [
     "#D50000",
     "#E67C73",
-    "#F4511E",
-    "#F6BF26",
+    "#F5511D",
+    "#F6C026",
     "#33B679",
     "#0B8043",
     "#039BE5",
