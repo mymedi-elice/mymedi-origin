@@ -27,5 +27,8 @@ app.register_blueprint(user_info)
 from googleOauth import googleOauth
 app.register_blueprint(googleOauth)
 
+from googleCalendar import googleCalendar
+app.register_blueprint(googleCalendar)
+
 if __name__ == "__main__":
-    app.run(debug = True)
+    app.run(port = 5000, debug = True)

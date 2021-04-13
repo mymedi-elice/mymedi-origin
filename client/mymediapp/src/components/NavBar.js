@@ -1,10 +1,8 @@
-import { ReactNode } from "react";
 import {
   Box,
   Flex,
   Avatar,
   HStack,
-  Link,
   IconButton,
   Button,
   Menu,
@@ -16,11 +14,13 @@ import {
   useColorModeValue,
   Stack,
   propNames,
+  Spinner,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import MenuElement from "./Menu";
+import { Link } from "react-router-dom";
 
-const NavLink = ({ children }) => (
+const NavLink = (props) => (
   <Link
     px={2}
     py={1}
@@ -29,9 +29,9 @@ const NavLink = ({ children }) => (
       textDecoration: "none",
       bg: useColorModeValue("gray.200", "gray.700"),
     }}
-    href={"#"}
+    to={props.goto}
   >
-    {children}
+    {props.children}
   </Link>
 );
 
@@ -50,26 +50,37 @@ export default function NavBar(props) {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems={"center"}>
-            <Box>Logo</Box>
+            <Link
+              to="/"
+              px={2}
+              py={1}
+              rounded={"md"}
+              _hover={{
+                textDecoration: "none",
+              }}
+            >
+              <Box>Logo</Box>
+            </Link>
             <HStack
               as={"nav"}
               spacing={4}
               display={{ base: "none", md: "flex" }}
             >
-              {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+              {Links.map(([text, link]) => (
+                <NavLink key={text} goto={link}>
+                  {text}
+                </NavLink>
               ))}
             </HStack>
           </HStack>
           <Flex alignItems={"center"}>
-            {!props.logstat ? (
+            {props.pending ? (
               <Button
+                isLoading
                 variant={"solid"}
                 colorScheme={"teal"}
                 size={"sm"}
                 mr={4}
-                leftIcon={<AddIcon />}
-                ref={props.googleLogin}
               >
                 {props.logButton}
               </Button>
@@ -79,7 +90,7 @@ export default function NavBar(props) {
                 colorScheme={"teal"}
                 size={"sm"}
                 mr={4}
-                onClick={props.handleLogout}
+                onClick={props.onClickLogButton}
               >
                 {props.logButton}
               </Button>
@@ -103,15 +114,17 @@ export default function NavBar(props) {
         {isOpen ? (
           <Box pb={4}>
             <Stack as={"nav"} spacing={4}>
-              {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+              {Links.map(([text, link]) => (
+                <NavLink key={text} goto={link}>
+                  {text}
+                </NavLink>
               ))}
             </Stack>
           </Box>
         ) : null}
       </Box>
 
-      <Box p={4}>Main Content Here</Box>
+      {/* <Box p={4}>Main Content Here</Box> */}
     </>
   );
 }

@@ -1,7 +1,12 @@
 venv
 __pycache__
 client_secret.json
+client_secret_jaemin.json
 config.py
+googleOauth(old).py
+googleCalendar(old).py
+CLIENT_SECRETS_FILE.json
+token.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,node,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,node,vscode
