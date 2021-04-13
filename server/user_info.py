@@ -12,6 +12,7 @@ user_info = Blueprint("userinfo", __name__)
 api = Api(user_info)
 
 parser = reqparse.RequestParser()
+parser.add_argument('sub')
 parser.add_argument('id')
 parser.add_argument('username')
 parser.add_argument('gender')
@@ -35,9 +36,18 @@ Delete API : 회원정보를 제거
 """
 
 class UserInfo(Resource):
-    def get(self, id=None):
+    def get(self):
         conn = connection_pool.get_connection()
         cursor = conn.cursor()
+        args = parser.parse_args()
+        # args = {'sub': '23123123123'}
+        sub = args['sub']
+        conn = connection_pool.get_connection()
+        cursor = conn.cursor()
+        sql = "SELECT id FROM `user_info` WHERE `sub` = %s"
+        cursor.execute(sql, (sub,))
+        id_tuple = cursor.fetchone()
+        id = id_tuple[0]
         sql = "SELECT username FROM `user_info` WHERE `id` = %s"
         cursor.execute(sql, (id,))
         result = cursor.fetchone()
@@ -84,11 +94,18 @@ class UserInfo(Resource):
         else:
             return jsonify(status = 200, result = result) #null값
 
-    def put(self, id):
+    def put(self):
         args = parser.parse_args()
         params = request.get_json()
         conn = connection_pool.get_connection()
         cursor = conn.cursor()
+        sub = args['sub']
+        conn = connection_pool.get_connection()
+        cursor = conn.cursor()
+        sql = "SELECT id FROM `user_info` WHERE `sub` = %s"
+        cursor.execute(sql, (sub,))
+        id_tuple = cursor.fetchone()
+        id = id_tuple[0]
         username = params['name']
         birthday = params['birth']
         gender = params['gender']
@@ -117,10 +134,18 @@ class UserInfo(Resource):
         else:
             family = params['family_info']
 
-    def post(self, id):
+    def post(self):
         args = parser.parse_args()
         conn = connection_pool.get_connection()
         cursor = conn.cursor()
+        args = parser.parse_args()
+        sub = args['sub']
+        conn = connection_pool.get_connection()
+        cursor = conn.cursor()
+        sql = "SELECT id FROM `user_info` WHERE `sub` = %s"
+        cursor.execute(sql, (sub,))
+        id_tuple = cursor.fetchone()
+        id = id_tuple[0]
         params = request.get_json()
         family = params['family_info']
         sql = "SELECT username FROM `user_info` WHERE `id` = %s"
@@ -152,9 +177,17 @@ class UserInfo(Resource):
 
             return jsonify(status = "success")
 
-    def delete(self, id):
+    def delete(self):
         conn = connection_pool.get_connection()
         cursor = conn.cursor()
+        args = parser.parse_args()
+        sub = args['sub']
+        conn = connection_pool.get_connection()
+        cursor = conn.cursor()
+        sql = "SELECT id FROM `user_info` WHERE `sub` = %s"
+        cursor.execute(sql, (sub,))
+        id_tuple = cursor.fetchone()
+        id = id_tuple[0]
         vaccine_sql = "DELETE FROM `get_vaccine` WHERE `user_info_id` = %s"
         cursor.execute(vaccine_sql, (id,))
         family_sql = "DELETE FROM `family_info` WHERE `user_info_id` = %s"
@@ -167,5 +200,5 @@ class UserInfo(Resource):
 
 api.add_resource(
     UserInfo,
-    "/userinfo/<id>"
+    "/userinfo/"
 )
