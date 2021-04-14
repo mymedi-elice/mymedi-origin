@@ -1,17 +1,7 @@
-import {
-  Box,
-  Center,
-  Divider,
-  Grid,
-  GridItem,
-  HStack,
-  StackDivider,
-  VStack,
-} from "@chakra-ui/layout";
+import { Box } from "@chakra-ui/layout";
 import { useBreakpointValue } from "@chakra-ui/react";
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import MainLayout from "../components/MainLayout";
-import { logContext } from "../context";
 import useConfirmLogin from "../components/useConfirmLogin";
 import { useTranslation } from "react-i18next";
 import UserInfoForm from "../components/UserInfoForm";

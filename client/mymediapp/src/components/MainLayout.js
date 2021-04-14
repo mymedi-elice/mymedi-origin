@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useContext,
-  useRef,
-} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { serverUrl } from "../config";
 import {
@@ -21,20 +15,18 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
-// import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import i18n from "i18next";
-
-import { cookiesContext } from "../context";
 
 import NavBar from "./NavBar";
 import Footer from "./Footer";
-import { useTranslation } from "react-i18next";
-import reactRouterDom, { useHistory } from "react-router-dom";
+
+import { useHistory } from "react-router-dom";
 
 export default function MainLayout(props) {
   const { t } = useTranslation();
   const [language, setLanguage] = useState();
-  // const [isLoggedIn, setIsLoggedIn] = useState();
+
   const isLoggedIn = props.isLoggedIn;
   const setIsLoggedIn = (v) => {
     props.setIsLoggedIn(v);
@@ -45,12 +37,6 @@ export default function MainLayout(props) {
   const setIsPending = (v) => {
     props.setIsPending(v);
   };
-  // useEffect(() => {
-  //   if (localStorage.getItem("access_token")) {
-  //     isLoggedInServer();
-  //   }
-  // }, []);
-  //이 내용을 app.js에서 실행시키고 다른 세부 페이지 컴포넌트들에서는 실행시키지 않아도 괜찮을까?
 
   useEffect(() => {
     if (window.location.search && !isLoggedIn) {
@@ -58,9 +44,6 @@ export default function MainLayout(props) {
       handleSendCode(window.location.href);
       history.push({ search: "" });
     }
-    // if (localStorage.getItem("access_token")) {
-    //   isLoggedInServer();
-    // }
   }, [isLoggedIn]);
 
   useEffect(() => {

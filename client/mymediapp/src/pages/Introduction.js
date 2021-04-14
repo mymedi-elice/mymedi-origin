@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect } from "react";
 
 import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
 import useConfirmLogin from "../components/useConfirmLogin";
 import {
-  Badge,
   Box,
   Center,
   Flex,

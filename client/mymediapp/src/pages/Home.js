@@ -1,7 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
-import axios from "axios";
-import { serverUrl } from "../config";
-import { logContext } from "../context";
+import React, { useState, useEffect } from "react";
 
 import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
