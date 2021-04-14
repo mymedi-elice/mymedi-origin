@@ -39,37 +39,22 @@ export default function SearchHospital() {
     if (isConfirmed) {
       setIsPending(false);
     } else {
-      //로그인 에러...
+      //로그인 에러
     }
   }, [isConfirmed]);
 
-  const getAllEvents = useCallback(async () => {
-    const res = await axios.get(serverUrl + "/calendar/");
-    if (res.status === 200) {
-      const eventData = res.data.result;
-      //아래 코드는 eventData가 있을때만 실행
-      if (eventData !== "No upcoming events found from now") {
-        const formatEvents = eventData.map((eachEvent) => {
-          let color;
-          if (eachEvent.color) {
-            color = eachEvent.color;
-          } else {
-            color = "#039BE5";
-          }
-          return {
-            id: eachEvent.id,
-            title: eachEvent.summary,
-            start: eachEvent.date,
-            end: eachEvent.date,
-            time: eachEvent.time,
-            location: eachEvent.location,
-            description: eachEvent.description,
-            color: color,
-          }; //조건문으로 달리할 수 있다.
-        });
-        setAllHospital(formatEvents);
-      }
+  const getHospital = useCallback(async () => {
+    const data = await axios.get(serverUrl + "/hospital/");
+    setAllHospital(data.data.data);
+  }, []);
+  console.log('a',allHospital);
+
+  useEffect(() => {
+    if (localStorage.getItem("access_token")) {
+      setIsPending(true);
+      isLoggedInServer();
     }
+    getHospital();
   }, []);
 
   useEffect(() => {
@@ -79,6 +64,18 @@ export default function SearchHospital() {
       level: 3
     };
     const map = new kakao.maps.Map(container, options);
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch('제주특별자치도 제주시 첨단로 242', function(result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+        var marker = new kakao.maps.Marker({
+          map: map,
+          position: coords,
+          title: "제주도"
+        });
+        map.setCenter(coords);
+      }
+    })
   }, []);
   return (
     <MainLayout
@@ -102,6 +99,7 @@ export default function SearchHospital() {
                 width: '500px',
                 height: '500px'
               }}></div>
+              <div></div>
               <Spacer />
               <Box maxWidth="400px" alignItems="baseline" ml={5}>
               </Box>
