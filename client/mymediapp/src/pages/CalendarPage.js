@@ -686,7 +686,7 @@ const TimePicker = (props) => {
           </NumberInputStepper>
         </NumberInput>
       </Box>
-      <Text p="3px">시</Text>
+      <Text p="3px">:</Text>
       <Box maxWidth="80px">
         <NumberInput
           defaultValue={defaultMinute}
@@ -729,7 +729,6 @@ const TimePicker = (props) => {
           </NumberInputStepper>
         </NumberInput>
       </Box>
-      <Text p="3px">분</Text>
     </Stack>
   );
 };
