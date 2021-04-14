@@ -34,6 +34,7 @@ export default function MyPage() {
   }, [isConfirmed]);
 
   const getUserInfo = useCallback(async () => {
+    console.log("get request");
     const res = await axios.get(serverUrl + "/userinfo/", {
       headers: {
         Authorization: AuthStr,

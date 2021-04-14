@@ -17,7 +17,8 @@ const SidebarContent = () => (
     {/* <Link>
       <Box w="100%">즐겨찾기</Box>
     </Link> */}
-    <Link to="/mypage">
+    <Link to="/mypage/update/1">
+      {/* <Link to="/mypage"> 로 고치기*/}
       <Box w="100%">회원 정보</Box>
     </Link>
     <Link to="/mypage/signout">

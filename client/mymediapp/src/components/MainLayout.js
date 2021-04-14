@@ -156,7 +156,7 @@ const AlertToMypage = (props) => {
             <Button ref={cancelRef} onClick={onClose}>
               {props.data.no}
             </Button>
-            <Link to="/myPage">
+            <Link to="/mypage/update/0">
               <Button colorScheme="red" ml={3} onClick={onClose}>
                 {props.data.yes}
               </Button>

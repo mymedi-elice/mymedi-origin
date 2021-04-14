@@ -23,12 +23,12 @@ function App() {
             <Home />
           </LanguageContext.Provider>
         </Route>
-        <Route path="/myPage" exact>
+        <Route path="/mypage" exact>
           <LanguageContext.Provider value={languageValue}>
             <MyPage />
           </LanguageContext.Provider>
         </Route>
-        <Route path="/mypage/update">
+        <Route path="/mypage/update/:user">
           <LanguageContext.Provider value={languageValue}>
             <MyPageUpdate />
           </LanguageContext.Provider>
