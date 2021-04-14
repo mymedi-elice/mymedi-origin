@@ -20,16 +20,13 @@ class Vaccine(Resource):
         conn = connection_pool.get_connection()
         cursor = conn.cursor()
 
-        get_vaccine = []
         korean_sql = "SELECT id, korean FROM `vaccine`"
         cursor.execute(korean_sql,)
         korean = cursor.fetchall()
         korean_data = []
-        #유저,가족의 해당 id 가져와서 get_vaccine에서 1인 vaccine_id로 리스트 생성(get_vaccine)
         for ko in korean:
-            if ko[0] not in get_vaccine:
-                data = {"id":ko[0], "name":ko[1]}
-                korean_data.append(data)
+            data = {"id":ko[0], "name":ko[1]}
+            korean_data.append(data)
 
         vietnam_sql = "SELECT id, vietnam FROM `vaccine`"
         cursor.execute(vietnam_sql,)
