@@ -1,12 +1,4 @@
-import {
-  Menu,
-  MenuItem,
-  MenuList,
-  MenuButton,
-  Image,
-  ChevronDownIcon,
-  Button,
-} from "@chakra-ui/react";
+import { MenuItem, MenuList, Image } from "@chakra-ui/react";
 
 import React from "react";
 
@@ -15,16 +7,19 @@ export default function MenuElement(props) {
     {
       id: "1",
       language: "Korean",
+      languageToShow: "한국어",
       flagImage: "https://www.countryflags.io/kr/flat/64.png",
     },
     {
       id: "2",
       language: "English",
+      languageToShow: "English",
       flagImage: "https://www.countryflags.io/um/flat/64.png",
     },
     {
       id: "3",
       language: "Vietnamese",
+      languageToShow: "Tiếng Việt",
       flagImage: "https://www.countryflags.io/vn/flat/64.png",
     },
   ];
@@ -47,7 +42,7 @@ export default function MenuElement(props) {
               alt={country.language}
               mr="12px"
             />
-            <span>{country.language}</span>
+            <span>{country.languageToShow}</span>
           </MenuItem>
         );
       })}

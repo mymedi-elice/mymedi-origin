@@ -10,7 +10,6 @@ import {
   AlertDialogOverlay,
   AlertDialogCloseButton,
   Button,
-  useDisclosure,
   Center,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
@@ -40,15 +39,12 @@ export default function MainLayout(props) {
 
   useEffect(() => {
     if (window.location.search && !isLoggedIn) {
-      console.log(window.location.search);
       handleSendCode(window.location.href);
       history.push({ search: "" });
     }
   }, [isLoggedIn]);
 
   useEffect(() => {
-    console.log(language);
-
     const languageDict = {
       Korean: "ko",
       English: "en",
@@ -72,7 +68,6 @@ export default function MainLayout(props) {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     window.location.replace(window.location.href);
-    console.log("log out");
   };
 
   const handleLogin = () => {
@@ -87,20 +82,14 @@ export default function MainLayout(props) {
       },
     });
     if (res.data.status === 200) {
-      console.log(res);
       setIsPending(false);
       setIsLoggedIn(true);
       localStorage.setItem("access_token", res.data.access_token);
       localStorage.setItem("refresh_token", res.data.refresh_token);
       if (res.data.user === false) {
         setOpenDialog(true);
-        //이때 바로 mypage 가면 로그인 버튼이 로그아웃으로 바뀌지 않는다.
-      } else {
-        console.log("회원정보 입력 필요x");
+        //첫 로그인이면 회원정보 입력 페이지로 보내기 위한 모달이 띄워진다.
       }
-      //첫 로그인이면 회원정보 입력 페이지로 보내기 위한 모달 띄우기
-    } else {
-      console.log("로그인 실패");
     }
   };
 
@@ -110,14 +99,14 @@ export default function MainLayout(props) {
     yes: t("answer.yes"),
     no: t("answer.no"),
   };
-  console.log(isLoggedIn);
+
   return (
     <div>
       <NavBar
         language={t("language")}
         handleMenuClick={(item) => {
-          setLanguage(item);
           console.log(item);
+          setLanguage(item);
         }}
         links={Links}
         logButton={isLoggedIn ? t("navbar.logout") : t("navbar.login")}
