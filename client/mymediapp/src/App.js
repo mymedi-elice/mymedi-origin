@@ -5,6 +5,7 @@ import "./App.css";
 import { Route, Switch } from "react-router-dom";
 import Introduction from "./pages/Introduction";
 import CalendarPage from "./pages/CalendarPage";
+import SearchHospital from "./pages/SearchHospital";
 // import { logContext } from "./context";
 // import axios from "axios";
 // import { serverUrl } from "./config";
@@ -24,6 +25,9 @@ function App() {
         </Route>
         <Route path="/calendar">
           <CalendarPage></CalendarPage>
+        </Route>
+        <Route path="/map">
+          <SearchHospital></SearchHospital>
         </Route>
       </Switch>
     </main>
