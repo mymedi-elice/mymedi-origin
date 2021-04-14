@@ -371,6 +371,7 @@ function FamilyForm(props) {
                   return (
                     <WrapItem key={ind}>
                       <Checkbox {...field} value={vaccine} margin={"2.5"}>
+                        {/* value 를 이름이 아니라  vaccine id로 넣기  */}
                         <Text fontSize="sm">{vaccine}</Text>
                       </Checkbox>
                     </WrapItem>

@@ -61,10 +61,9 @@ export default function CalendarPage() {
   const [focusedEvent, setFocusedEvent] = useState({ show: false, data: {} });
 
   const [showAddModal, setShowAddModal] = useState({ show: false, date: "" });
-  // const [showEvent, setShowEvent] = useState();
-  // const [addEvent, setAddEvent] = useState();
-  // const [deleteEvent, setDeleteEvent] = useState();
-  // const [isChange, setIsChange] = useState(false);
+  //TODO:
+  //회원정보 api에서도 get을 해야한다(일정 소유자를 지정하기 위해 가족을 띄워줘야함)
+  const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -85,7 +84,11 @@ export default function CalendarPage() {
   }, [isConfirmed]);
 
   const getAllEvents = useCallback(async () => {
-    const res = await axios.get(serverUrl + "/calendar/");
+    const res = await axios.get(serverUrl + "/calendar/", {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
     if (res.status === 200) {
       const eventData = res.data.result;
       //아래 코드는 eventData가 있을때만 실행
@@ -157,8 +160,14 @@ export default function CalendarPage() {
     });
     array.splice(deleteInd, 1);
     setAllEvents(array);
+    // const res = await axios.delete(serverUrl + "/calendar/delete", {
+    //   params: { _id: id },
+    // });
     const res = await axios.delete(serverUrl + "/calendar/delete", {
       params: { _id: id },
+      headers: {
+        Authorization: AuthStr,
+      },
     });
     console.log(res);
 
@@ -174,6 +183,7 @@ export default function CalendarPage() {
     //   setAllEvents(array);
     // }
     //오래걸림...
+    //res 응답 돌아올때까지 저장 중이라는 toast 띄워주기
   }, []);
 
   const handleAddEvent = useCallback(async (data, allEvents) => {
@@ -183,11 +193,14 @@ export default function CalendarPage() {
     sendData.summary = title;
     console.log(sendData);
 
-    const res = await axios.post(serverUrl + "/calendar/insert", sendData);
+    const res = await axios.post(serverUrl + "/calendar/insert", sendData, {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
     console.log(res);
     if (res.data.status === 200) {
-      //응답 기다리는데 너무 오래걸림..어떻게 하지?
-
+      //응답 기다리는 동안 loading 처리 필요(혹은 기다리지 말고 띄운 다음 toast 처리)
       data.id = res.data.result.id;
       console.log(data);
       let addedArray = allEvents.concat(data);
@@ -213,7 +226,11 @@ export default function CalendarPage() {
     console.log(sendData);
     newAllEvents[replaceInd] = data;
     setAllEvents(newAllEvents);
-    const res = await axios.put(serverUrl + "/calendar/update", sendData);
+    const res = await axios.put(serverUrl + "/calendar/update", sendData, {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
     console.log(res);
   }, []);
 
@@ -252,10 +269,6 @@ export default function CalendarPage() {
 }
 
 const ShowEventModal = (props) => {
-  //수정 가능한 input 형식으로, initialvalue는 이벤트 정보로 해서 만들기.
-  //수정, 삭제 버튼
-  //들어갈 내용은 모두 변수로 관리하기
-  //안에 폼 만들기
   const [edit, setEdit] = useState(false);
   const show = props.data.show;
   let data = props.data.data;
@@ -484,7 +497,7 @@ const CalendarForm = (props) => {
 const ColorPicker = (props) => {
   const [color, setColor] = useState(props.handle.values.color);
   const colors = [
-    "#D50000",
+    "#D60000",
     "#E67C73",
     "#F5511D",
     "#F6C026",

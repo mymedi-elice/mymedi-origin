@@ -88,6 +88,7 @@ export default function MainLayout(props) {
     setIsLoggedIn(false);
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+    window.location.replace(window.location.href);
     console.log("log out");
   };
 
