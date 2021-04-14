@@ -349,8 +349,11 @@ function FamilyForm(props) {
                 {vaccines.map((vaccine) => {
                   return (
                     <WrapItem key={vaccine.id}>
-                      <Checkbox {...field} value={vaccine.id} margin={"2.5"}>
-                        {/* value 를 이름이 아니라  vaccine id로 넣기  */}
+                      <Checkbox
+                        {...field}
+                        value={vaccine.id + ""}
+                        margin={"2.5"}
+                      >
                         <Text fontSize="sm">{vaccine.name}</Text>
                       </Checkbox>
                     </WrapItem>
