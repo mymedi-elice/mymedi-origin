@@ -103,14 +103,24 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `mymedi`.`vaccine`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `mymedi`.`vaccine` ;
+DROP TABLE IF EXISTS `vaccine`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vaccine` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `korean` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `vietnam` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `english` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `name` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE IF NOT EXISTS `mymedi`.`vaccine` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE)
-ENGINE = InnoDB;
+LOCK TABLES `vaccine` WRITE;
+/*!40000 ALTER TABLE `vaccine` DISABLE KEYS */;
+INSERT INTO `vaccine` VALUES (1,'결핵','bệnh lao','tuberculosis','BCG'),(2,'B형간염','viêm gan B','Hepatitis B','HepB'),(3,'디프테리아/파상풍/백일해','bạch hầu / uốn ván /  ho gà.','Tetanus/ Diphtheria/ Pertussis','DTaP/Tdap/Td'),(4,'폴리오','Bại Liệt','Polio','IPV'),(5,'b형 헤모필루스인플루엔자','Haemophilus Influenzae Tuýp b\n','Haemophilus influenzae type B','Hib'),(6,'폐렴구균','phế cầu Viêm phổi','pneumococcus','PCV/ PPSV'),(7,'홍역/유행성이하선염/풍진','bệnh sởi/ quai bị/bệnh ban đào','Measles/ Mumps / Rubella','MMR'),(8,'수두',' thủy đậu ','varicella','VAR'),(9,'A형 간염','viêm gan A','Hepatitis A','HepA'),(10,'일본뇌염','Viêm não Nhật Bản','Japanese encephalitis','IJEV/ LJEV'),(11,'사람유두종바이러스 감염증','Virus gây u nhú ở người','Human papilloma virus infection','HPV'),(12,'인플루엔자','Bệnh Cúm','influenza','IIV'),(13,'로타바이러스 감염증','lây truyền rota virus','rota virus infection','RV1/ RV5');
+/*!40000 ALTER TABLE `vaccine` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 -- -----------------------------------------------------
