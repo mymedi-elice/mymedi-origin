@@ -124,11 +124,13 @@ def callback():
     sql = "SELECT sub FROM user_info WHERE sub = %s"
     cursor.execute(sql, (sub,))
     row = cursor.fetchone()
+    print('sub: ', sub)
+    print('row: ', row)
 
     if row is None:
-        sql = "INSERT INTO user_info (sub) VALUES (%s)"
-        cursor.execute(sql, (sub,))
-        cursor.commit()
+        sql = "INSERT INTO `user_info` (`sub`) VALUES (%s)"
+        cursor.execute(sql, (sub, ))
+        conn.commit()
         return jsonify(
             status = 200,
             sub = sub,

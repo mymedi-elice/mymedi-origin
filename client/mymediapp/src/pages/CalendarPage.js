@@ -484,7 +484,7 @@ const CalendarForm = (props) => {
 const ColorPicker = (props) => {
   const [color, setColor] = useState(props.handle.values.color);
   const colors = [
-    "#D50000",
+    "#D60000",
     "#E67C73",
     "#F5511D",
     "#F6C026",
