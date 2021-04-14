@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
 import useConfirmLogin from "../components/useConfirmLogin";
+import { Box, Wrap, WrapItem } from "@chakra-ui/layout";
+import { LanguageContext } from "../context";
 
 export default function Home() {
   const { t } = useTranslation();
   const [isConfirmed, isLoggedInServer] = useConfirmLogin();
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [isPending, setIsPending] = useState(false);
+  const { language, setLanguage } = useContext(LanguageContext);
+
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
       setIsPending(true);
@@ -57,6 +61,14 @@ export default function Home() {
       setIsLoggedIn={setIsLoggedIn}
       isPending={isPending}
       setIsPending={setIsPending}
-    ></MainLayout>
+      language={language}
+      setLanguage={setLanguage}
+    >
+      <Wrap>
+        <WrapItem>
+          <Box></Box>
+        </WrapItem>
+      </Wrap>
+    </MainLayout>
   );
 }

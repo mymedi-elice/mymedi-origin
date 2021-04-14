@@ -22,11 +22,13 @@ import Footer from "./Footer";
 
 import { useHistory } from "react-router-dom";
 
-const color = {};
-
 export default function MainLayout(props) {
   const { t } = useTranslation();
-  const [language, setLanguage] = useState();
+  // const [language, setLanguage] = useState();
+  const language = props.language;
+  const setLanguage = (l) => {
+    props.setLanguage(l);
+  };
 
   const isLoggedIn = props.isLoggedIn;
   const setIsLoggedIn = (v) => {
@@ -48,9 +50,9 @@ export default function MainLayout(props) {
 
   useEffect(() => {
     const languageDict = {
-      Korean: "ko",
-      English: "en",
-      Vietnamese: "vi",
+      korean: "ko",
+      english: "en",
+      vietnamese: "vi",
     };
 
     if (language) {
@@ -107,7 +109,6 @@ export default function MainLayout(props) {
       <NavBar
         language={t("language")}
         handleMenuClick={(item) => {
-          console.log(item);
           setLanguage(item);
         }}
         links={Links}

@@ -27,15 +27,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./date-picker.css";
 import * as Yup from "yup";
 
-export default function UserInfoFrom() {
-  const vaccines = [
-    "인플루엔자",
-    "파상풍",
-    "간염",
-    "코로나 1차",
-    "코로나 2차",
-    "폐렴구균",
-  ]; //TODO : 부모 컴포넌트에서 axio get으로 가져오기
+export default function UserInfoFrom(props) {
+  const vaccines = props.vaccines;
 
   // const schema = Yup.object().shape({
   //   name: Yup.string().required("이름을 입력해주세요."),
@@ -92,6 +85,7 @@ export default function UserInfoFrom() {
                 name="family_info"
                 render={(arrayHelpers) => {
                   const family_info = arrayHelpers.form.values.family_info;
+
                   return (
                     <>
                       {family_info.map((member, ind) => {
@@ -260,11 +254,16 @@ function InfoForm(props) {
                 예방 접종 내역
               </FormLabel>
               <Wrap maxWidth="md">
-                {vaccines.map((vaccine, ind) => {
+                {vaccines.map((vaccine) => {
+                  console.log(field);
                   return (
-                    <WrapItem key={ind}>
-                      <Checkbox {...field} value={vaccine} margin={"2.5"}>
-                        <Text fontSize="sm">{vaccine}</Text>
+                    <WrapItem key={vaccine.id}>
+                      <Checkbox
+                        {...field}
+                        value={vaccine.id + ""}
+                        margin={"2.5"}
+                      >
+                        <Text fontSize="sm">{vaccine.name}</Text>
                       </Checkbox>
                     </WrapItem>
                   );
@@ -347,12 +346,12 @@ function FamilyForm(props) {
                 예방 접종 내역
               </FormLabel>
               <Wrap maxWidth="md">
-                {vaccines.map((vaccine, ind) => {
+                {vaccines.map((vaccine) => {
                   return (
-                    <WrapItem key={ind}>
-                      <Checkbox {...field} value={vaccine} margin={"2.5"}>
+                    <WrapItem key={vaccine.id}>
+                      <Checkbox {...field} value={vaccine.id} margin={"2.5"}>
                         {/* value 를 이름이 아니라  vaccine id로 넣기  */}
-                        <Text fontSize="sm">{vaccine}</Text>
+                        <Text fontSize="sm">{vaccine.name}</Text>
                       </Checkbox>
                     </WrapItem>
                   );

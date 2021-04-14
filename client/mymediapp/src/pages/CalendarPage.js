@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import axios from "axios";
 import { serverUrl } from "../config";
 
@@ -49,6 +49,7 @@ import { Field, Form, Formik } from "formik";
 import { CheckIcon, DeleteIcon, EditIcon, TimeIcon } from "@chakra-ui/icons";
 import DatePickerComponent from "../components/DatePickerComponent";
 import { date } from "yup/lib/locale";
+import { LanguageContext } from "../context";
 
 export default function CalendarPage() {
   const { t } = useTranslation();
@@ -63,6 +64,7 @@ export default function CalendarPage() {
   //회원정보 api에서도 get을 해야한다(일정 소유자를 지정하기 위해 가족을 띄워줘야함)
   const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
 
+  const { language, setLanguage } = useContext(LanguageContext);
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
       setIsPending(true);
@@ -230,6 +232,8 @@ export default function CalendarPage() {
       setIsLoggedIn={setIsLoggedIn}
       isPending={isPending}
       setIsPending={setIsPending}
+      language={language}
+      setLanguage={setLanguage}
     >
       <Box maxWidth="800px" maxHeight="800px" p={20}>
         <FullCalendar

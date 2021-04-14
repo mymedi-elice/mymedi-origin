@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/layout";
 import { useBreakpointValue } from "@chakra-ui/react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import MainLayout from "../components/MainLayout";
 import useConfirmLogin from "../components/useConfirmLogin";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import UserInfoForm from "../components/UserInfoForm";
 import Sidebar from "../components/SideBar";
 import axios from "axios";
 import { serverUrl } from "../config";
+import { LanguageContext } from "../context";
 
 const smVariant = { navigation: "drawer", navigationButton: true };
 const mdVariant = { navigation: "sidebar", navigationButton: false };
@@ -18,14 +19,14 @@ export default function MyPage() {
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [isPending, setIsPending] = useState(false);
 
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const variants = useBreakpointValue({ base: smVariant, md: mdVariant });
+  const { language, setLanguage } = useContext(LanguageContext);
 
-  const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
+  const [vaccines, setVaccines] = useState();
+  const [showVaccines, setShowVaccines] = useState();
 
   const getVaccines = useCallback(async () => {
     const res = await axios.get(serverUrl + "/vaccine/");
-    return res;
+    setVaccines(res.data.data);
   }, []);
 
   useEffect(() => {
@@ -33,9 +34,18 @@ export default function MyPage() {
       setIsPending(true);
       isLoggedInServer();
     }
-    const vaccines = getVaccines();
-    console.log(vaccines);
+    getVaccines();
   }, []);
+
+  useEffect(() => {
+    if (vaccines) {
+      setShowVaccines(vaccines[language]);
+    }
+  }, [language, vaccines]);
+
+  console.log(language);
+  console.log(vaccines);
+  console.log(showVaccines);
 
   useEffect(() => {
     setIsLoggedIn(isConfirmed);
@@ -56,9 +66,11 @@ export default function MyPage() {
         setIsLoggedIn={setIsLoggedIn}
         isPending={isPending}
         setIsPending={setIsPending}
+        language={language}
+        setLanguage={setLanguage}
       >
         <Box>마이 페이지</Box>
-        <UserInfoForm />
+        {showVaccines ? <UserInfoForm vaccines={showVaccines} /> : null}
       </MainLayout>
     </div>
   );

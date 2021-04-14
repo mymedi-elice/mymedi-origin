@@ -6,19 +6,19 @@ export default function MenuElement(props) {
   const serviceDescriptionsData = [
     {
       id: "1",
-      language: "Korean",
+      language: "korean",
       languageToShow: "한국어",
       flagImage: "https://www.countryflags.io/kr/flat/64.png",
     },
     {
       id: "2",
-      language: "English",
+      language: "english",
       languageToShow: "English",
       flagImage: "https://www.countryflags.io/um/flat/64.png",
     },
     {
       id: "3",
-      language: "Vietnamese",
+      language: "vietnamese",
       languageToShow: "Tiếng Việt",
       flagImage: "https://www.countryflags.io/vn/flat/64.png",
     },
