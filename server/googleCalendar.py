@@ -4,6 +4,9 @@ from flask_jwt_extended import jwt_required
 
 from config import CLIENT_SECRETS_FILE
 
+# db
+from module.db import connection_pool
+
 # google calendar api module
 import calendarmodule as calendar
 
@@ -183,63 +186,3 @@ def deleteCalendar():
         status = 500,
         error = error
     )
-
-
-# Google Calendar RESTful API
-
-# parser_googleCalendar = reqparse.RequestParser()
-# parser_googleCalendar.add_argument('summary')
-# parser_googleCalendar.add_argument('start_date')
-# parser_googleCalendar.add_argument('end')
-# parser_googleCalendar.add_argument('location')
-
-# class googleCalendar(Resource):
-
-#     # @jwt_required()
-#     def get(self):
-#         creds = get_credentials()
-#         service = build_service()
-
-#         error = None
-#         if not creds:
-#             error = 'There is no authorization from google account'
-#         else:
-#             return jsonify(
-#                 status = 200,
-#                 result = get_upcoming_10_events(creds, service)
-#             )
-
-#         return jsonify(
-#             status = 400,
-#             error = result
-#         )
-
-#     # @jwt_required()
-#     def post(self):
-#         # args = parser_googleCalendar.parse_args()
-#         # summary = args['summary']
-#         # startDate = args['startDate'] # YYYY-MM-DD
-#         # endDate = args['endDate'] # YYYY-MM-DD
-#         # location = args['location'] # 도로명 주소
-
-#         event = {
-#         'summary': '독감 백신 예방접종', # 일정 제목
-#         'location': '관악구보건소, 대한민국 서울특별시 관악구 청룡동 관악로 145', # 일정 장소
-#         'description': '', # 일정 설명
-#         'start': { # 시작 날짜
-#             'dateTime': '2021-04-14T09:00:00',
-#             'timeZone': 'Asia/Seoul',
-#         },
-#         'end': { # 종료 날짜
-#             'dateTime': '2021-04-14T10:00:00',
-#             'timeZone': 'Asia/Seoul',
-#         },
-#     }
-
-#         event = service.events().insert(calendarId = 'primary', body = event).execute()
-#         print('Event created: %s' % (event.get('htmlLink')))
-#         return jsonify(
-#             status = 200
-#         )
-
-# api.add_resource(googleCalendar, '/')

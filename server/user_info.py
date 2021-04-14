@@ -3,22 +3,25 @@ from flask_restful import reqparse, abort, Api, Resource
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+
 from config import CLIENT_ID
 
 # db
 from module.db import connection_pool
 
-user_info = Blueprint("userinfo", __name__)
-api = Api(user_info)
+# user_info = Blueprint("userinfo", __name__)
+# api = Api(user_info)
 
 parser = reqparse.RequestParser()
-parser.add_argument('sub')
 parser.add_argument('id')
+parser.add_argument('sub')
 parser.add_argument('username')
 parser.add_argument('gender')
 parser.add_argument('birthday')
 parser.add_argument('vaccine')
-
+parser.add_argument('family_info')
 parser.add_argument('family_name')
 parser.add_argument('family_gender')
 parser.add_argument('family_birthday')
@@ -35,23 +38,23 @@ Update API : 회원정보를 변경(정확히는 null값 채우기)
 Delete API : 회원정보를 제거
 """
 
+# @jwt_required()
 class UserInfo(Resource):
     def get(self):
-        conn = connection_pool.get_connection()
-        cursor = conn.cursor()
+        # sub = get_jwt_identity()
         args = parser.parse_args()
-        # args = {'sub': '23123123123'}
         sub = args['sub']
         conn = connection_pool.get_connection()
         cursor = conn.cursor()
         sql = "SELECT id FROM `user_info` WHERE `sub` = %s"
         cursor.execute(sql, (sub,))
         id_tuple = cursor.fetchone()
-        id = id_tuple[0]
+        print('id_tuple: ', id_tuple)
+        id = id_tuple[0] # 로그인한 사용자의 sub 정보의 table id 값
         sql = "SELECT username FROM `user_info` WHERE `id` = %s"
         cursor.execute(sql, (id,))
         result = cursor.fetchone()
-        print(result)
+        print('username: ', result)
         #username이 있을때
         if result:
             sql = "SELECT username, gender, birthday FROM `user_info` WHERE id = %s"
@@ -138,16 +141,14 @@ class UserInfo(Resource):
         args = parser.parse_args()
         conn = connection_pool.get_connection()
         cursor = conn.cursor()
-        args = parser.parse_args()
         sub = args['sub']
-        conn = connection_pool.get_connection()
-        cursor = conn.cursor()
         sql = "SELECT id FROM `user_info` WHERE `sub` = %s"
         cursor.execute(sql, (sub,))
         id_tuple = cursor.fetchone()
         id = id_tuple[0]
-        params = request.get_json()
-        family = params['family_info']
+        # params = request.get_json()
+        # family = params['family_info']
+        family = args['family_info']
         sql = "SELECT username FROM `user_info` WHERE `id` = %s"
         cursor.execute(sql, (id,))
         result = cursor.fetchone()
@@ -198,7 +199,7 @@ class UserInfo(Resource):
 
         return jsonify(status = "success")
 
-api.add_resource(
-    UserInfo,
-    "/userinfo/"
-)
+# api.add_resource(
+#     UserInfo,
+#     "/userinfo"
+# )
