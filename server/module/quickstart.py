@@ -41,7 +41,7 @@ def main():
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 'client_secret.json', SCOPES)
-            creds = flow.run_local_server(host = 'localhost', port=5000)
+            creds = flow.run_local_server(host = 'elice-kdt-ai-track-vm-da-07.koreacentral.cloudapp.azure.com', port=3000)
         # Save the credentials for the next run
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
