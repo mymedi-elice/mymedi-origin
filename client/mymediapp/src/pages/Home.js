@@ -47,14 +47,16 @@ export default function Home() {
   //     }
   //   }, []);
 
+  const introCard = {};
+  const calendarCard = {};
+  const MapCard = {};
+
   return (
     <MainLayout
       isLoggedIn={isLoggedIn}
       setIsLoggedIn={setIsLoggedIn}
       isPending={isPending}
       setIsPending={setIsPending}
-    >
-      {t("language")}
-    </MainLayout>
+    ></MainLayout>
   );
 }

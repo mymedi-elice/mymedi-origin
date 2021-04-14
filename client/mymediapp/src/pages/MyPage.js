@@ -1,11 +1,13 @@
 import { Box } from "@chakra-ui/layout";
 import { useBreakpointValue } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import MainLayout from "../components/MainLayout";
 import useConfirmLogin from "../components/useConfirmLogin";
 import { useTranslation } from "react-i18next";
 import UserInfoForm from "../components/UserInfoForm";
 import Sidebar from "../components/SideBar";
+import axios from "axios";
+import { serverUrl } from "../config";
 
 const smVariant = { navigation: "drawer", navigationButton: true };
 const mdVariant = { navigation: "sidebar", navigationButton: false };
@@ -21,11 +23,18 @@ export default function MyPage() {
 
   const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
+  const getVaccines = useCallback(async () => {
+    const res = await axios.get(serverUrl + "/vaccine/");
+    return res;
+  }, []);
+
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
       setIsPending(true);
       isLoggedInServer();
     }
+    const vaccines = getVaccines();
+    console.log(vaccines);
   }, []);
 
   useEffect(() => {

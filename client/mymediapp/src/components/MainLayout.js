@@ -22,6 +22,8 @@ import Footer from "./Footer";
 
 import { useHistory } from "react-router-dom";
 
+const color = {};
+
 export default function MainLayout(props) {
   const { t } = useTranslation();
   const [language, setLanguage] = useState();

@@ -15,8 +15,10 @@ import {
   Stack,
   propNames,
   Spinner,
+  Heading,
+  Text,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import MenuElement from "./Menu";
 import { Link } from "react-router-dom";
 
@@ -27,7 +29,7 @@ const NavLink = (props) => (
     rounded={"md"}
     _hover={{
       textDecoration: "none",
-      bg: useColorModeValue("gray.200", "gray.700"),
+      bg: useColorModeValue("gray.200", "gray.900"),
     }}
     to={props.goto}
   >
@@ -40,16 +42,18 @@ export default function NavBar(props) {
   const Links = props.links;
   return (
     <>
-      <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+      <Box bg={useColorModeValue("gray.50", "gray.900")} px={4}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
           <IconButton
+            variant="ghost"
+            colorScheme={"teal"}
             size={"md"}
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
             aria-label={"Open Menu"}
             display={{ md: !isOpen ? "none" : "inherit" }}
             onClick={isOpen ? onClose : onOpen}
           />
-          <HStack spacing={8} alignItems={"center"}>
+          <HStack spacing={8} alignItems={"center"} color={"teal.700"}>
             <Link
               to="/"
               px={2}
@@ -57,9 +61,12 @@ export default function NavBar(props) {
               rounded={"md"}
               _hover={{
                 textDecoration: "none",
+                bg: useColorModeValue("gray.200", "gray.900"),
               }}
             >
-              <Box>Logo</Box>
+              <Box color={"teal.800"}>
+                <Heading size="md">MyMedi</Heading>
+              </Box>
             </Link>
             <HStack
               as={"nav"}
@@ -101,8 +108,12 @@ export default function NavBar(props) {
                 rounded={"full"}
                 variant={"link"}
                 cursor={"pointer"}
+                color={"teal.700"}
+                _hover={{
+                  textDecoration: "none",
+                }}
               >
-                {props.language}
+                <Text>{props.language}</Text>
               </MenuButton>
               <MenuElement
                 handleMenuClick={props.handleMenuClick}
@@ -113,7 +124,7 @@ export default function NavBar(props) {
 
         {isOpen ? (
           <Box pb={4}>
-            <Stack as={"nav"} spacing={4}>
+            <Stack as={"nav"} spacing={4} color={"teal.700"}>
               {Links.map(([text, link]) => (
                 <NavLink key={text} goto={link}>
                   {text}
@@ -123,8 +134,6 @@ export default function NavBar(props) {
           </Box>
         ) : null}
       </Box>
-
-      {/* <Box p={4}>Main Content Here</Box> */}
     </>
   );
 }
