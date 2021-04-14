@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
 import useConfirmLogin from "../components/useConfirmLogin";
 import {
-  Badge,
   Box,
   Center,
   Flex,
@@ -14,12 +13,14 @@ import {
   Text,
 } from "@chakra-ui/layout";
 import { Image, Tag } from "@chakra-ui/react";
+import { LanguageContext } from "../context";
 
 export default function Introduction() {
   const { t } = useTranslation();
   const [isConfirmed, isLoggedInServer] = useConfirmLogin();
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [isPending, setIsPending] = useState(false);
+  const { language, setLanguage } = useContext(LanguageContext);
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -95,6 +96,8 @@ export default function Introduction() {
       setIsLoggedIn={setIsLoggedIn}
       isPending={isPending}
       setIsPending={setIsPending}
+      language={language}
+      setLanguage={setLanguage}
     >
       <Center maxWidth="800px" m={50}>
         <Stack spacing={10}>

@@ -19,7 +19,7 @@ from google.oauth2 import id_token
 import google.auth.transport.requests
 
 # db
-from module import db
+from module.db import connection_pool
 
 from config import CLIENT_SECRET, CLIENT_ID, CLIENT_SECRETS_FILE, REDIRECT_URI
 
@@ -117,16 +117,18 @@ def callback():
     refresh_token = create_refresh_token(identity = sub)
 
     # 로그인한 사용자의 sub 정보를 db에 저장한다.
-    db_class = db.Database()
+    conn = connection_pool.get_connection()
+    cursor = conn.cursor()
 
     # 이미 등록된 사용자라면 db에 저장하지 않고, 등록되지 않은 유저라면 db에 저장
     sql = "SELECT sub FROM user_info WHERE sub = %s"
-    row = db_class.executeOne(sql, (sub))
+    cursor.execute(sql, (sub,))
+    row = cursor.fetchone()
 
     if row is None:
         sql = "INSERT INTO user_info (sub) VALUES (%s)"
-        db_class.execute(sql, (sub))
-        db_class.commit()
+        cursor.execute(sql, (sub,))
+        conn.commit()
         return jsonify(
             status = 200,
             sub = sub,

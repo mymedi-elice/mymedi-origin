@@ -17,8 +17,35 @@
         "contents": "Bạn có muốn nhập thông tin thành viên của mình để được cung cấp dịch vụ tốt hơn không?"
     },
     "home" : {
-        "card": {
-            "calendarTitle": "Lịch MyMedi"
+        "introCard":{
+            "title":"Trang giới thiệu",
+            "content":"Bạn đang thắc mắc MyMedi là gì? Chúng tôi sẽ cho bạn biết tất cả thông qua trang giới thiệu.",
+            "imageAlt":"ảnh chào",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
+        },
+        "calendarCard":{
+            "title":"Lịch MyMedi",
+            "content":"Bạn có thể tránh bỏ lỡ lịch khám bệnh của mình và gia đình với Lịch MyMedi, cũng được liên kết với Lịch Google.",
+            "imageAlt":"ảnh lịch",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
+        },
+        "mapCard":{
+            "title": "Tìm kiếm bệnh viện",
+            "content": "Bạn có thể tìm một bệnh viện gần nhà và tìm xem họ cung cấp loại vắc xin nào.",
+            "imageAlt": "ảnh bản đồ",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
         }
     },
     "intro":{
@@ -27,7 +54,7 @@
         "sub1":{
             "title":"Tại sao lại nhắm mục tiêu đến các gia đình đa văn hóa?",
             "contents":"Kết quả phân tích dữ liệu đã khẳng định rằng tỷ lệ tiêm chủng của trẻ em từ các gia đình đa văn hóa thấp hơn so với trẻ em từ các gia đình khác.",
-            "imageAlt":"가정형태별 아동의 예방접종률",
+            "imageAlt":"Tỷ lệ trẻ em được tiêm chủng theo loại hộ gia đình",
             "hashtags":{
                 "1":"Trẻ em từ các gia đình đa văn hóa",
                 "2":"Con cái gia đình chung (trong nước)",

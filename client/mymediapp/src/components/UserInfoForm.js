@@ -1,8 +1,7 @@
-import { AddIcon, CloseIcon, MinusIcon } from "@chakra-ui/icons";
+import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 import {
   Box,
   Flex,
-  Heading,
   FormControl,
   FormLabel,
   Input,
@@ -14,7 +13,6 @@ import {
   Center,
   FormHelperText,
   CheckboxGroup,
-  HStack,
   Checkbox,
   Wrap,
   WrapItem,
@@ -23,36 +21,30 @@ import {
 } from "@chakra-ui/react";
 
 import { Form, Formik, Field, FieldArray } from "formik";
-import React, { useState, HTMLAttributes, useEffect } from "react";
+import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./date-picker.css";
 import * as Yup from "yup";
 
-export default function UserInfoFrom() {
-  const vaccines = [
-    "인플루엔자",
-    "파상풍",
-    "간염",
-    "코로나 1차",
-    "코로나 2차",
-    "폐렴구균",
-  ]; //부모 컴포넌트에서 axio get으로 가져오기
+export default function UserInfoFrom(props) {
+  const vaccines = props.vaccines;
 
-  const schema = Yup.object().shape({
-    name: Yup.string().required("이름을 입력해주세요."),
-    gender: Yup.string(),
-    birth: Yup.date(),
-    vaccine: Yup.array().of(Yup.string()),
-    family_info: Yup.array().of(
-      Yup.object({
-        name: Yup.string().required("이름을 입력해주세요."),
-        gender: Yup.string(),
-        birth: Yup.date(),
-        vaccine: Yup.array().of(Yup.string()),
-      })
-    ),
-  }); //작동을 안해...
+  // const schema = Yup.object().shape({
+  //   name: Yup.string().required("이름을 입력해주세요."),
+  //   gender: Yup.string(),
+  //   birth: Yup.date(),
+  //   vaccine: Yup.array().of(Yup.string()),
+  //   family_info: Yup.array().of(
+  //     Yup.object({
+  //       name: Yup.string().required("이름을 입력해주세요."),
+  //       gender: Yup.string(),
+  //       birth: Yup.date(),
+  //       vaccine: Yup.array().of(Yup.string()),
+  //     })
+  //   ),
+  // });
+  //작동을 안해...차후 validation에 사용
 
   return (
     <Center>
@@ -93,6 +85,7 @@ export default function UserInfoFrom() {
                 name="family_info"
                 render={(arrayHelpers) => {
                   const family_info = arrayHelpers.form.values.family_info;
+
                   return (
                     <>
                       {family_info.map((member, ind) => {
@@ -154,11 +147,11 @@ export default function UserInfoFrom() {
                                 vaccine: [],
                               });
                             } else {
-                              //에러메세지 띄워주기
+                              //TODO : 에러메세지 띄워주기
                             }
                           }}
                         >
-                          <AddIcon boxSize={2}></AddIcon>
+                          <AddIcon boxSize={2} />
                           추가
                         </Button>
                       </Center>
@@ -246,7 +239,7 @@ function InfoForm(props) {
                   생년월일
                 </FormLabel>
                 <Box maxWidth="sm">
-                  <DatePickerComponent birth={form}></DatePickerComponent>
+                  <DatePickerComponent birth={form} />
                 </Box>
               </FormControl>
             )}
@@ -261,11 +254,16 @@ function InfoForm(props) {
                 예방 접종 내역
               </FormLabel>
               <Wrap maxWidth="md">
-                {vaccines.map((vaccine, ind) => {
+                {vaccines.map((vaccine) => {
+                  console.log(field);
                   return (
-                    <WrapItem key={ind}>
-                      <Checkbox {...field} value={vaccine} margin={"2.5"}>
-                        <Text fontSize="sm">{vaccine}</Text>
+                    <WrapItem key={vaccine.id}>
+                      <Checkbox
+                        {...field}
+                        value={vaccine.id + ""}
+                        margin={"2.5"}
+                      >
+                        <Text fontSize="sm">{vaccine.name}</Text>
                       </Checkbox>
                     </WrapItem>
                   );
@@ -287,29 +285,14 @@ function FamilyForm(props) {
   const member = props.member;
   const vaccines = props.vaccines;
 
-  //제대로 안됨
-  // const validateName = (value) => {
-  //   let error;
-  //   if (!value) {
-  //     error = "이름을 입력해주세요";
-  //   }
-  //   return error;
-  // };
-
-  // const validateGender = (value) => {
-  //   //제출한 순간에만 입력되어 있으면 됨!
-  // };
-
-  // const validateBirth = (value) => {
-  //   //입력한 날짜가 유효한 날짜인지 확인
-  // };
+  //TODO: validation
 
   return (
     <Box>
       <Field name={`family_info.${index}.name`}>
         {({ field, form }) => (
           <FormControl isInvalid={form.errors.name && form.touched.name}>
-            {/* form.touched.name의 역할을 알아야 할 것 같다 */}
+            {/* form.touched.name의 역할을 정확히 알아야 할 것 같다 */}
             <FormLabel htmlFor="name">* 이름</FormLabel>
             <Input
               {...field}
@@ -329,7 +312,6 @@ function FamilyForm(props) {
               <RadioGroup name="gender" mr="2">
                 <FormLabel mt="8">성별</FormLabel>
                 <Stack spacing={1} direction="row">
-                  {/* <FormLabel mt="2.5">성별</FormLabel> */}
                   <Radio {...field} value="female" m="2" size="md">
                     <Text fontSize="sm">여성</Text>
                   </Radio>
@@ -349,10 +331,7 @@ function FamilyForm(props) {
                   생년월일
                 </FormLabel>
                 <Box maxWidth="sm">
-                  <DatePickerComponent
-                    birth={form}
-                    index={index}
-                  ></DatePickerComponent>
+                  <DatePickerComponent birth={form} index={index} />
                 </Box>
               </FormControl>
             )}
@@ -367,11 +346,15 @@ function FamilyForm(props) {
                 예방 접종 내역
               </FormLabel>
               <Wrap maxWidth="md">
-                {vaccines.map((vaccine, ind) => {
+                {vaccines.map((vaccine) => {
                   return (
-                    <WrapItem key={ind}>
-                      <Checkbox {...field} value={vaccine} margin={"2.5"}>
-                        <Text fontSize="sm">{vaccine}</Text>
+                    <WrapItem key={vaccine.id}>
+                      <Checkbox
+                        {...field}
+                        value={vaccine.id + ""}
+                        margin={"2.5"}
+                      >
+                        <Text fontSize="sm">{vaccine.name}</Text>
                       </Checkbox>
                     </WrapItem>
                   );
@@ -396,9 +379,6 @@ const range = (start, stop, step) =>
 const DatePickerComponent = (props) => {
   const [startDate, setStartDate] = useState();
   const curDate = new Date();
-  // useEffect(() => {
-  //   props.birth.setValues({ ...props.birth.values, birth: curDate });
-  // }, [curDate]);
   const curYear = 1900 + curDate.getYear();
   const years = range(curYear - 150, curYear + 1, 1);
   const months = [
@@ -428,7 +408,6 @@ const DatePickerComponent = (props) => {
           <select
             value={date.getYear() + 1900}
             onChange={({ target: { value } }) => {
-              console.log(value);
               changeYear(value);
             }}
           >
@@ -455,8 +434,6 @@ const DatePickerComponent = (props) => {
       )}
       selected={startDate}
       onChange={(date) => {
-        console.log(props); // field
-        console.log(props.birth.values); // field data
         setStartDate(date);
         const year = date.getFullYear();
         let month = date.getMonth() + 1 + "";
@@ -467,7 +444,7 @@ const DatePickerComponent = (props) => {
         if (day.length === 1) {
           day = "0" + day;
         }
-        console.log(year + "-" + month + "-" + day);
+
         date = year + "-" + month + "-" + day;
         if (props.index === undefined) {
           props.birth.setValues({ ...props.birth.values, birth: date });

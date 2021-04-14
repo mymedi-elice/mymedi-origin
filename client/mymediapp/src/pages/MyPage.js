@@ -1,24 +1,13 @@
-import {
-  Box,
-  Center,
-  Divider,
-  Grid,
-  GridItem,
-  HStack,
-  StackDivider,
-  VStack,
-} from "@chakra-ui/layout";
-import { useBreakpointValue } from "@chakra-ui/react";
-import { useContext, useState, useEffect } from "react";
+import { Box } from "@chakra-ui/layout";
+import { useState, useEffect, useCallback, useContext } from "react";
 import MainLayout from "../components/MainLayout";
-import { logContext } from "../context";
 import useConfirmLogin from "../components/useConfirmLogin";
 import { useTranslation } from "react-i18next";
 import UserInfoForm from "../components/UserInfoForm";
 import Sidebar from "../components/SideBar";
-
-const smVariant = { navigation: "drawer", navigationButton: true };
-const mdVariant = { navigation: "sidebar", navigationButton: false };
+import axios from "axios";
+import { serverUrl } from "../config";
+import { LanguageContext } from "../context";
 
 export default function MyPage() {
   const { t } = useTranslation();
@@ -26,17 +15,33 @@ export default function MyPage() {
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [isPending, setIsPending] = useState(false);
 
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const variants = useBreakpointValue({ base: smVariant, md: mdVariant });
+  const { language, setLanguage } = useContext(LanguageContext);
 
-  const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
+  const [vaccines, setVaccines] = useState();
+  const [showVaccines, setShowVaccines] = useState();
+
+  const getVaccines = useCallback(async () => {
+    const res = await axios.get(serverUrl + "/vaccine/");
+    setVaccines(res.data.data);
+  }, []);
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
       setIsPending(true);
       isLoggedInServer();
     }
+    getVaccines();
   }, []);
+
+  useEffect(() => {
+    if (vaccines) {
+      setShowVaccines(vaccines[language]);
+    }
+  }, [language, vaccines]);
+
+  console.log(language);
+  console.log(vaccines);
+  console.log(showVaccines);
 
   useEffect(() => {
     setIsLoggedIn(isConfirmed);
@@ -51,36 +56,16 @@ export default function MyPage() {
   }, [isConfirmed]);
 
   return (
-    <div>
-      <MainLayout
-        isLoggedIn={isLoggedIn}
-        setIsLoggedIn={setIsLoggedIn}
-        isPending={isPending}
-        setIsPending={setIsPending}
-      >
-        <Box>마이 페이지</Box>
-        {/* <Sidebar
-          variant={variants?.navigation}
-          isOpen={isSidebarOpen}
-          onClose={toggleSidebar}
-        ></Sidebar> */}
-        <UserInfoForm></UserInfoForm>
-        {/* <Grid
-          h="800px"
-          templateRows="repeat(1, 1fr)"
-          templateColumns="repeat(5, 1fr)"
-          alignItems="center"
-        >
-          <GridItem rowSpan={1} colSpan={1}>
-            <VStack align="stretch">
-              <Box></Box>
-            </VStack>
-          </GridItem>
-          <Divider h="90%" orientation="vertical" />
-
-
-        </Grid> */}
-      </MainLayout>
-    </div>
+    <MainLayout
+      isLoggedIn={isLoggedIn}
+      setIsLoggedIn={setIsLoggedIn}
+      isPending={isPending}
+      setIsPending={setIsPending}
+      language={language}
+      setLanguage={setLanguage}
+    >
+      <Sidebar />
+      {showVaccines ? <UserInfoForm vaccines={showVaccines} /> : null}
+    </MainLayout>
   );
 }

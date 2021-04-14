@@ -7,6 +7,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import {
+  Badge,
   Box,
   Button,
   Center,
@@ -40,7 +41,6 @@ import {
   Stack,
   Text,
   Textarea,
-  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 
@@ -48,9 +48,16 @@ import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
 import useConfirmLogin from "../components/useConfirmLogin";
 import { Field, Form, Formik } from "formik";
-import { CheckIcon, DeleteIcon, EditIcon, TimeIcon } from "@chakra-ui/icons";
+import {
+  BellIcon,
+  CheckIcon,
+  DeleteIcon,
+  EditIcon,
+  TimeIcon,
+} from "@chakra-ui/icons";
 import DatePickerComponent from "../components/DatePickerComponent";
 import { date } from "yup/lib/locale";
+import { LanguageContext } from "../context";
 
 export default function CalendarPage() {
   const { t } = useTranslation();
@@ -61,11 +68,11 @@ export default function CalendarPage() {
   const [focusedEvent, setFocusedEvent] = useState({ show: false, data: {} });
 
   const [showAddModal, setShowAddModal] = useState({ show: false, date: "" });
-  // const [showEvent, setShowEvent] = useState();
-  // const [addEvent, setAddEvent] = useState();
-  // const [deleteEvent, setDeleteEvent] = useState();
-  // const [isChange, setIsChange] = useState(false);
+  //TODO:
+  //회원정보 api에서도 get을 해야한다(일정 소유자를 지정하기 위해 가족을 띄워줘야함)
+  const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
 
+  const { language, setLanguage } = useContext(LanguageContext);
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
       setIsPending(true);
@@ -85,10 +92,15 @@ export default function CalendarPage() {
   }, [isConfirmed]);
 
   const getAllEvents = useCallback(async () => {
-    const res = await axios.get(serverUrl + "/calendar/");
+    const res = await axios.get(serverUrl + "/calendar/", {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
     if (res.status === 200) {
       const eventData = res.data.result;
       //아래 코드는 eventData가 있을때만 실행
+
       if (eventData !== "No upcoming events found from now") {
         const formatEvents = eventData.map((eachEvent) => {
           let color;
@@ -100,6 +112,7 @@ export default function CalendarPage() {
           return {
             id: eachEvent.id,
             title: eachEvent.summary,
+            date: eachEvent.date,
             start: eachEvent.date,
             end: eachEvent.date,
             time: eachEvent.time,
@@ -108,35 +121,36 @@ export default function CalendarPage() {
             color: color,
           }; //조건문으로 달리할 수 있다.
         });
+
         setAllEvents(formatEvents);
       }
     }
   }, []);
 
   const handleDateClick = (e) => {
-    console.log(e);
     setShowAddModal({ show: true, date: e.dateStr });
     //일정 등록을 위한 모달이 켜지게 한다. 확인을 누르면 axios post를 보낸다.
   };
 
   const handleEventClick = (e) => {
-    console.log(e.event._def);
     //우리가 쓰는 id -> e.event._def.publicId
     const eventId = e.event._def.publicId;
     let data = {};
     allEvents.forEach((event) => {
       if (event.id === eventId) {
+        console.log(event);
         data.id = eventId;
         data.title = event.title;
+        data.date = event.date;
         data.start = event.start;
         data.end = event.end;
-        date.time = event.time;
+        data.time = event.time;
         data.color = event.color;
         data.location = event.location;
         data.description = event.description;
       }
     });
-    console.log(data);
+
     // const data = { id: e.event._def.publicId, title: e.event._def.title };
     setFocusedEvent({ show: true, data: data });
   };
@@ -153,9 +167,11 @@ export default function CalendarPage() {
     setAllEvents(array);
     const res = await axios.delete(serverUrl + "/calendar/delete", {
       params: { _id: id },
+      headers: {
+        Authorization: AuthStr,
+      },
     });
     console.log(res);
-
     // if (res.data.status === 200) {
     //   let array = [...allEvents];
     //   let deleteInd;
@@ -167,6 +183,8 @@ export default function CalendarPage() {
     //   array.splice(deleteInd, 1);
     //   setAllEvents(array);
     // }
+    //오래걸림...
+    //TODO : res 응답 돌아올때까지 저장 중이라는 toast 띄워주기
   }, []);
 
   const handleAddEvent = useCallback(async (data, allEvents) => {
@@ -175,15 +193,45 @@ export default function CalendarPage() {
     delete sendData["title"];
     sendData.summary = title;
 
-    const res = await axios.post(serverUrl + "/calendar/insert", sendData);
-    console.log(res);
+    const res = await axios.post(serverUrl + "/calendar/insert", sendData, {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
+
     if (res.data.status === 200) {
-      //응답 기다리는데 너무 오래걸림..어떻게 하지?
+      //응답 기다리는 동안 loading 처리 필요(혹은 기다리지 말고 띄운 다음 toast 처리)
       data.id = res.data.result.id;
-      console.log(data);
+
       let addedArray = allEvents.concat(data);
       setAllEvents(addedArray);
     }
+  }, []);
+
+  const handleUpdateEvent = useCallback(async (data, allEvents) => {
+    let title = data.title;
+    let id = data.id;
+    let sendData = { ...data };
+    delete sendData["title"];
+    delete sendData["id"];
+    sendData._id = id;
+    sendData.summary = title;
+    let replaceInd;
+    let newAllEvents = [...allEvents];
+    allEvents.forEach((eachEvent, eventInd) => {
+      if (eachEvent.id === data.id) {
+        replaceInd = eventInd;
+      }
+    });
+    newAllEvents[replaceInd] = data;
+    setAllEvents(newAllEvents);
+    const res = await axios.put(serverUrl + "/calendar/update", sendData, {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
+    //여기도 로딩처리 해주기!
+    console.log(res);
   }, []);
 
   return (
@@ -192,7 +240,30 @@ export default function CalendarPage() {
       setIsLoggedIn={setIsLoggedIn}
       isPending={isPending}
       setIsPending={setIsPending}
+      language={language}
+      setLanguage={setLanguage}
     >
+      <IconButton
+        aria-label="see calendar alarms"
+        icon={<BellIcon />}
+        right="30px"
+        top="90px"
+        position="fixed"
+        variant="outline"
+        colorScheme="teal"
+      />
+      <Badge
+        right="30px"
+        top="90px"
+        position="fixed"
+        variant="ghost"
+        color="red"
+        borderRadius="xl"
+      >
+        10
+        {/* 여기에 알람 갯수 표시 */}
+      </Badge>
+
       <Box maxWidth="800px" maxHeight="800px" p={20}>
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
@@ -201,71 +272,94 @@ export default function CalendarPage() {
           dateClick={handleDateClick}
           events={allEvents}
           eventClick={handleEventClick}
-        ></FullCalendar>
+        />
       </Box>
       <AddEventModal
         show={showAddModal}
         handleShow={setShowAddModal}
         handleAdd={handleAddEvent}
         allEvents={allEvents}
-      ></AddEventModal>
+      />
       <ShowEventModal
         data={focusedEvent}
         handleData={setFocusedEvent}
         handleDelete={handleDeleteEvent}
+        handleUpdate={handleUpdateEvent}
         allEvents={allEvents}
-      ></ShowEventModal>
+      />
     </MainLayout>
   );
 }
 
 const ShowEventModal = (props) => {
-  //수정 가능한 input 형식으로, initialvalue는 이벤트 정보로 해서 만들기.
-  //수정, 삭제 버튼
-  //들어갈 내용은 모두 변수로 관리하기
-  //안에 폼 만들기
+  const [edit, setEdit] = useState(false);
   const show = props.data.show;
   let data = props.data.data;
-
+  let initialValues = data;
+  delete initialValues["end"];
+  delete initialValues["start"];
   return (
     <Modal
       isCentered
       onClose={() => {
         props.handleData({ ...props.data, show: false });
+        setEdit(false);
       }}
       isOpen={show}
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader></ModalHeader>
+        <ModalHeader />
         <ModalCloseButton />
         <ModalBody>
-          <VStack align="left" spacing="15px">
-            <Stack direction="row" spacing="15px">
-              <Box w="15px" h="15px" bg={data.color} m="4px"></Box>
-              <VStack align="left" spacing="0px">
-                <Box>{data.title}</Box>
-                <Text fontSize="sm">
-                  {data.start} {data.time}
-                </Text>
-              </VStack>
-            </Stack>
-            <Box>{data.location}</Box>
-            <Box>{data.description}</Box>
-          </VStack>
+          {edit ? (
+            <CalendarForm
+              initialValues={initialValues}
+              show={props.data}
+              handleShow={props.handleData}
+              handleAdd={props.handleUpdate}
+              allEvents={props.allEvents}
+              curDate={props.data.data.date}
+              setEdit={setEdit}
+            />
+          ) : (
+            <VStack align="left" spacing="15px">
+              <Stack direction="row" spacing="15px">
+                <Box w="15px" h="15px" bg={data.color} m="4px"></Box>
+                <VStack align="left" spacing="0px">
+                  <Box>{data.title}</Box>
+                  <Text fontSize="sm">
+                    {data.date} {data.time}
+                  </Text>
+                </VStack>
+              </Stack>
+              <Box>{data.location}</Box>
+              <Box>{data.description}</Box>
+            </VStack>
+          )}
         </ModalBody>
         <ModalFooter>
-          <IconButton variant="ghost" aria-label="update" icon={<EditIcon />} />
-          <IconButton
-            variant="ghost"
-            aria-label="delete"
-            icon={<DeleteIcon />}
-            onClick={() => {
-              console.log(props.allEvents);
-              props.handleDelete(data.id, props.allEvents);
-              props.handleData({ show: false, data: {} });
-            }}
-          />
+          {edit ? null : (
+            <>
+              <IconButton
+                variant="ghost"
+                aria-label="update"
+                icon={<EditIcon />}
+                onClick={() => {
+                  setEdit(true);
+                }}
+              />
+              <IconButton
+                variant="ghost"
+                aria-label="delete"
+                icon={<DeleteIcon />}
+                onClick={() => {
+                  props.handleDelete(data.id, props.allEvents);
+                  props.handleData({ show: false, data: {} });
+                }}
+              />
+            </>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>
@@ -274,12 +368,13 @@ const ShowEventModal = (props) => {
 
 const AddEventModal = (props) => {
   const curDate = props.show.date;
-  const validateTitle = (value) => {
-    let error;
-    if (!value) {
-      error = "일정 제목을 적어주세요";
-    }
-    return error;
+  const initialValues = {
+    title: "",
+    date: curDate,
+    time: "",
+    location: "",
+    description: "",
+    color: "#039BE5",
   };
   return (
     <Modal
@@ -291,114 +386,142 @@ const AddEventModal = (props) => {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader></ModalHeader>
+        <ModalHeader />
         <ModalCloseButton />
         <ModalBody>
-          <Formik
-            initialValues={{
-              title: "",
-              date: curDate,
-              time: "",
-              location: "",
-              description: "",
-              color: "#039BE5",
-            }}
-            onSubmit={(values, actions) => {
-              console.log(values);
-              props.handleAdd(values, props.allEvents);
-              props.handleShow({ show: false, date: "" });
-            }}
-          >
-            {(props) => (
-              <Form>
-                <VStack>
-                  <Field name="color">
-                    {({ field, form }) => (
-                      <ColorPicker handle={form}></ColorPicker>
-                    )}
-                  </Field>
-                  <Field name="title" validate={validateTitle}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={form.errors.title && form.touched.title}
-                      >
-                        <Input
-                          {...field}
-                          id="title"
-                          placeholder="일정 제목 추가"
-                        ></Input>
-                      </FormControl>
-                    )}
-                  </Field>
-
-                  <Field name="date">
-                    {({ field, form }) => (
-                      <Box maxWidth="150px" maxHeight="50px">
-                        <DatePickerComponent
-                          form={form}
-                          default={curDate}
-                        ></DatePickerComponent>
-                      </Box>
-                    )}
-                  </Field>
-                  <Field name="time">
-                    {({ field, form }) => (
-                      <Box>
-                        <TimePicker form={form}></TimePicker>
-                      </Box>
-                    )}
-                  </Field>
-
-                  <Field name="location" validate={validateTitle}>
-                    {({ field, form }) => (
-                      <FormControl
-                        isInvalid={
-                          form.errors.location && form.touched.location
-                        }
-                      >
-                        <Input
-                          {...field}
-                          id="location"
-                          placeholder="위치 추가"
-                        ></Input>
-                      </FormControl>
-                    )}
-                  </Field>
-                  <Field name="description">
-                    {({ field, form }) => (
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          id="description"
-                          placeholder="설명 추가"
-                        ></Textarea>
-                      </FormControl>
-                    )}
-                  </Field>
-                  <IconButton
-                    variant="ghost"
-                    aria-label="save"
-                    icon={<CheckIcon />}
-                    type="submit"
-                  />
-                </VStack>
-              </Form>
-            )}
-          </Formik>
+          <CalendarForm
+            initialValues={initialValues}
+            show={props.show}
+            handleShow={props.handleShow}
+            handleAdd={props.handleAdd}
+            allEvents={props.allEvents}
+            curDate={curDate}
+          ></CalendarForm>
         </ModalBody>
-        <ModalFooter></ModalFooter>
+        <ModalFooter />
       </ModalContent>
     </Modal>
+  );
+};
+
+const CalendarForm = (props) => {
+  const validateTitle = (value) => {
+    let error;
+    if (!value) {
+      error = "일정 제목을 적어주세요";
+    }
+    return error;
+  };
+  const curDate = props.curDate;
+
+  let defaultTime;
+  if (props.show.data) {
+    defaultTime = props.show.data.time;
+  }
+
+  let initialValues = { ...props.initialValues };
+
+  if (initialValues.description === null) {
+    initialValues.description = "";
+  }
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={(values, actions) => {
+        console.log(values);
+        props.handleAdd(values, props.allEvents);
+        props.handleShow({ ...props.show, show: false });
+        if (props.setEdit) {
+          props.setEdit(false);
+        }
+      }}
+    >
+      {(props) => (
+        <Form>
+          <VStack>
+            <Field name="color">
+              {({ field, form }) => <ColorPicker handle={form}></ColorPicker>}
+            </Field>
+            <Field name="title" validate={validateTitle}>
+              {({ field, form }) => (
+                <FormControl
+                  isInvalid={form.errors.title && form.touched.title}
+                >
+                  <Input
+                    {...field}
+                    id="title"
+                    placeholder="일정 제목 추가"
+                  ></Input>
+                </FormControl>
+              )}
+            </Field>
+
+            <Field name="date">
+              {({ field, form }) => (
+                <Box maxWidth="150px" maxHeight="50px">
+                  <DatePickerComponent
+                    form={form}
+                    default={curDate}
+                  ></DatePickerComponent>
+                </Box>
+              )}
+            </Field>
+            <Field name="time">
+              {({ field, form }) => (
+                <Box>
+                  <TimePicker
+                    form={form}
+                    defaultTime={defaultTime}
+                  ></TimePicker>
+                </Box>
+              )}
+            </Field>
+
+            <Field name="location" validate={validateTitle}>
+              {({ field, form }) => (
+                <FormControl
+                  isInvalid={form.errors.location && form.touched.location}
+                >
+                  <Input
+                    {...field}
+                    id="location"
+                    placeholder="위치 추가"
+                  ></Input>
+                </FormControl>
+              )}
+            </Field>
+            <Field name="description">
+              {({ field, form }) => (
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    id="description"
+                    placeholder="설명 추가"
+                  ></Textarea>
+                </FormControl>
+              )}
+            </Field>
+            <IconButton
+              variant="ghost"
+              aria-label="save"
+              icon={<CheckIcon />}
+              type="submit"
+            />
+          </VStack>
+        </Form>
+      )}
+    </Formik>
   );
 };
 
 const ColorPicker = (props) => {
   const [color, setColor] = useState(props.handle.values.color);
   const colors = [
-    "#D50000",
+    "#D60000",
     "#E67C73",
-    "#F4511E",
-    "#F6BF26",
+    "#F5511D",
+    "#F6C026",
     "#33B679",
     "#0B8043",
     "#039BE5",
@@ -463,29 +586,49 @@ const ColorPicker = (props) => {
 };
 
 const TimePicker = (props) => {
-  const [meridiem, setMeridiem] = useState();
-  const [hour, setHour] = useState();
-  const [minute, setMinute] = useState();
+  // const [meridiem, setMeridiem] = useState();
+  // const [hour, setHour] = useState();
+  // const [minute, setMinute] = useState();
+
+  let defaultMeridiem, defaultHour, defaultMinute;
+  if (props.defaultTime) {
+    defaultHour = Number(props.defaultTime.split(":")[0]);
+    defaultMinute = Number(props.defaultTime.split(":")[1]);
+
+    if (defaultHour >= 12) {
+      defaultMeridiem = 12;
+      defaultHour -= 12;
+    } else {
+      defaultMeridiem = 0;
+    }
+  }
+  const [inputTime, setInputTime] = useState({
+    meridiem: defaultMeridiem,
+    hour: defaultHour,
+    minute: defaultHour,
+  });
+
   return (
     <Stack direction="row">
       <Select
         size="sm"
         maxWidth="120px"
         placeholder="오전/오후"
+        value={defaultMeridiem}
         onChange={(e) => {
           let time;
           let formatHour;
           let formatMinute;
-          if (hour) {
-            formatHour = Number(hour) + Number(e.target.value);
+          if (inputTime.hour) {
+            formatHour = Number(inputTime.hour) + Number(e.target.value);
 
             if (formatHour < 10) {
               formatHour = formatHour + "";
               formatHour = "0" + formatHour;
             }
-            if (minute) {
-              if (minute < 10) {
-                formatMinute = minute + "";
+            if (inputTime.minute) {
+              if (inputTime.minute < 10) {
+                formatMinute = inputTime.minute + "";
                 formatMinute = "0" + formatMinute;
               }
             } else {
@@ -494,8 +637,8 @@ const TimePicker = (props) => {
             time = formatHour + ":" + formatMinute + ":00";
             props.form.setValues({ ...props.form.values, time: time });
           }
-          console.log(time);
-          setMeridiem(e.target.value);
+
+          setInputTime({ ...inputTime, meridiem: e.target.value });
         }}
       >
         <option value={0}>오전</option>
@@ -503,6 +646,7 @@ const TimePicker = (props) => {
       </Select>
       <Box maxWidth="80px">
         <NumberInput
+          defaultValue={defaultHour}
           size="sm"
           min={0}
           max={11}
@@ -512,27 +656,27 @@ const TimePicker = (props) => {
             let time;
             let formatHour;
             let formatMinute;
-            if (meridiem) {
-              formatHour = Number(e) + Number(meridiem);
+            if (inputTime.meridiem !== undefined) {
+              formatHour = Number(e) + Number(inputTime.meridiem);
 
               if (formatHour < 10) {
                 formatHour = formatHour + "";
                 formatHour = "0" + formatHour;
               }
-              if (minute) {
-                if (minute < 10) {
-                  formatMinute = minute + "";
+              if (inputTime.minute !== undefined) {
+                formatMinute = inputTime.minute + "";
+                if (inputTime.minute < 10) {
                   formatMinute = "0" + formatMinute;
                 }
               } else {
                 formatMinute = "00";
               }
-              console.log(formatMinute);
+
               time = formatHour + ":" + formatMinute + ":00";
               props.form.setValues({ ...props.form.values, time: time });
             }
-            console.log(time);
-            setHour(e);
+
+            setInputTime({ ...inputTime, hour: e });
           }}
         >
           <NumberInputField />
@@ -545,6 +689,7 @@ const TimePicker = (props) => {
       <Text p="3px">시</Text>
       <Box maxWidth="80px">
         <NumberInput
+          defaultValue={defaultMinute}
           clampValueOnBlur={false}
           precision={0}
           size="sm"
@@ -554,12 +699,17 @@ const TimePicker = (props) => {
             let time;
             let formatHour;
             let formatMinute;
-            if (meridiem && hour) {
-              formatHour = Number(e) + Number(meridiem);
+            if (
+              inputTime.meridiem !== undefined &&
+              inputTime.hour !== undefined
+            ) {
+              formatHour = Number(inputTime.hour) + Number(inputTime.meridiem);
 
               if (formatHour < 10) {
                 formatHour = formatHour + "";
                 formatHour = "0" + formatHour;
+              } else {
+                formatHour = formatHour + "";
               }
               if (e < 10) {
                 formatMinute = "0" + e;
@@ -569,8 +719,7 @@ const TimePicker = (props) => {
               time = formatHour + ":" + formatMinute + ":00";
               props.form.setValues({ ...props.form.values, time: time });
             }
-            console.log(time);
-            setMinute(e);
+            setInputTime({ ...inputTime, minute: e });
           }}
         >
           <NumberInputField />
