@@ -33,5 +33,8 @@ app.register_blueprint(googleCalendar)
 from vaccine import vaccine
 app.register_blueprint(vaccine)
 
+from hospital import hospital
+app.register_blueprint(hospital)
+
 if __name__ == "__main__":
     app.run(port = 5000, debug = True)

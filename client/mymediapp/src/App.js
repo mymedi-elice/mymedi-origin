@@ -5,6 +5,7 @@ import "./App.css";
 import { Route, Switch } from "react-router-dom";
 import Introduction from "./pages/Introduction";
 import CalendarPage from "./pages/CalendarPage";
+import SearchHospital from "./pages/SearchHospital";
 
 import { LanguageContext } from "./context";
 import MyPageUpdate from "./pages/MyPageUpdate";
@@ -46,6 +47,9 @@ function App() {
           <LanguageContext.Provider value={languageValue}>
             <CalendarPage />
           </LanguageContext.Provider>
+        </Route>
+        <Route path="/map">
+          <SearchHospital></SearchHospital>
         </Route>
       </Switch>
     </main>
