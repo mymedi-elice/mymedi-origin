@@ -28,13 +28,13 @@ class Vaccine(Resource):
             data = {"id":ko[0], "name":ko[1]}
             korean_data.append(data)
 
-        vietnam_sql = "SELECT id, vietnam FROM `vaccine`"
-        cursor.execute(vietnam_sql,)
-        vietnam = cursor.fetchall()
-        vietnam_data = []
-        for vi in vietnam:
+        vietnamese_sql = "SELECT id, vietnamese FROM `vaccine`"
+        cursor.execute(vietnamese_sql,)
+        vietnamese = cursor.fetchall()
+        vietnamese_data = []
+        for vi in vietnamese:
             data = {"id":vi[0], "name":vi[1]}
-            vietnam_data.append(data)
+            vietnamese_data.append(data)
 
         english_sql = "SELECT id, english FROM `vaccine`"
         cursor.execute(english_sql,)
@@ -44,7 +44,7 @@ class Vaccine(Resource):
             data = {"id":en[0], "name":en[1]}
             english_data.append(data)
 
-        return jsonify(status = 200, data = {"korean":korean_data, "vietnam":vietnam_data, "english":english_data})
+        return jsonify(status = 200, data = {"korean":korean_data, "vietnamese":vietnamese_data, "english":english_data})
 
 
 api.add_resource(
