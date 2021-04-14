@@ -3,8 +3,10 @@ import React, { useState, useEffect, useContext } from "react";
 import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
 import useConfirmLogin from "../components/useConfirmLogin";
-import { Box, Wrap, WrapItem } from "@chakra-ui/layout";
+import { Box, Grid, GridItem, Wrap, WrapItem } from "@chakra-ui/layout";
 import { LanguageContext } from "../context";
+import { Image } from "@chakra-ui/image";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -29,31 +31,28 @@ export default function Home() {
       //로그인 에러...
     }
   }, [isConfirmed]);
-  //   const isLoggedInServer = useCallback(async () => {
-  //     console.log("로그인 되어있는지 확인");
 
-  //     const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
-  //     const res = await axios.get(serverUrl + "/googleOauth/protected", {
-  //       headers: {
-  //         Authorization: AuthStr,
-  //       },
-  //     });
-  //     if (res.data.status === 200) {
-  //       setIsLoggedIn(true);
-  //     } else {
-  //       //일단은 이렇게 했지만
-  //       //이제 로그아웃 시키는게 아니라 로그인 연장 모달을 띄우게 하는 걸로 기능 고치기
-  //       //refresh token을 사용하므로 화면 변화는 없다!
-  //       setIsLoggedIn(false);
-  //       localStorage.removeItem("refresh_token");
-  //       localStorage.removeItem("access_token");
-  //       console.log("log out");
-  //     }
-  //   }, []);
-
-  const introCard = {};
-  const calendarCard = {};
-  const MapCard = {};
+  const introCard = {
+    goto: "/intro",
+    imageUrl: "https://ifh.cc/g/xjrIbS.jpg",
+    imageAlt: t("home.introCard.imageAlt"),
+    title: t("home.introCard.title"),
+    content: t("home.introCard.content"),
+  };
+  const calendarCard = {
+    goto: "/calendar",
+    imageUrl: "https://ifh.cc/g/kNacbD.jpg",
+    imageAlt: t("home.calendarCard.imageAlt"),
+    title: t("home.calendarCard.title"),
+    content: t("home.calendarCard.content"),
+  };
+  const mapCard = {
+    goto: "#",
+    imageUrl: "https://ifh.cc/g/2H06dI.jpg",
+    imageAlt: t("home.mapCard.imageAlt"),
+    title: t("home.mapCard.title"),
+    content: t("home.mapCard.content"),
+  };
 
   return (
     <MainLayout
@@ -64,11 +63,95 @@ export default function Home() {
       language={language}
       setLanguage={setLanguage}
     >
-      <Wrap>
-        <WrapItem>
-          <Box></Box>
-        </WrapItem>
-      </Wrap>
+      <Grid my="200px" mx="200px" templateColumns="repeat(3, 1fr)" gap={4}>
+        <GridItem colSpan={1}>
+          <Link to={introCard.goto}>
+            <Box
+              maxW="sm"
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+              height="400px"
+              _hover={{
+                boxShadow: "xl",
+              }}
+            >
+              <Image src={introCard.imageUrl} alt={introCard.imageAlt} />
+
+              <Box p="6">
+                <Box
+                  mt="1"
+                  fontWeight="semibold"
+                  as="h4"
+                  lineHeight="tight"
+                  py="6px"
+                >
+                  {introCard.title}
+                </Box>
+                <Box>{introCard.content}</Box>
+              </Box>
+            </Box>
+          </Link>
+        </GridItem>
+        <GridItem colSpan={1}>
+          <Link to={calendarCard.goto}>
+            <Box
+              maxW="sm"
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+              height="400px"
+              _hover={{
+                boxShadow: "xl",
+              }}
+            >
+              <Image src={calendarCard.imageUrl} alt={calendarCard.imageAlt} />
+
+              <Box p="6">
+                <Box
+                  mt="1"
+                  fontWeight="semibold"
+                  as="h4"
+                  lineHeight="tight"
+                  py="6px"
+                >
+                  {calendarCard.title}
+                </Box>
+                <Box>{calendarCard.content}</Box>
+              </Box>
+            </Box>
+          </Link>
+        </GridItem>
+        <GridItem colSpan={1}>
+          <Link to={mapCard.goto}>
+            <Box
+              maxW="sm"
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+              height="400px"
+              _hover={{
+                boxShadow: "xl",
+              }}
+            >
+              <Image src={mapCard.imageUrl} alt={mapCard.imageAlt} />
+
+              <Box p="6">
+                <Box
+                  mt="1"
+                  fontWeight="semibold"
+                  as="h4"
+                  lineHeight="tight"
+                  py="6px"
+                >
+                  {mapCard.title}
+                </Box>
+                <Box>{mapCard.content}</Box>
+              </Box>
+            </Box>
+          </Link>
+        </GridItem>
+      </Grid>
     </MainLayout>
   );
 }

@@ -7,9 +7,11 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import {
+  Badge,
   Box,
   Button,
   Center,
+  Flex,
   FormControl,
   FormLabel,
   Icon,
@@ -46,7 +48,13 @@ import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
 import useConfirmLogin from "../components/useConfirmLogin";
 import { Field, Form, Formik } from "formik";
-import { CheckIcon, DeleteIcon, EditIcon, TimeIcon } from "@chakra-ui/icons";
+import {
+  BellIcon,
+  CheckIcon,
+  DeleteIcon,
+  EditIcon,
+  TimeIcon,
+} from "@chakra-ui/icons";
 import DatePickerComponent from "../components/DatePickerComponent";
 import { date } from "yup/lib/locale";
 import { LanguageContext } from "../context";
@@ -235,6 +243,27 @@ export default function CalendarPage() {
       language={language}
       setLanguage={setLanguage}
     >
+      <IconButton
+        aria-label="see calendar alarms"
+        icon={<BellIcon />}
+        right="30px"
+        top="90px"
+        position="fixed"
+        variant="outline"
+        colorScheme="teal"
+      />
+      <Badge
+        right="30px"
+        top="90px"
+        position="fixed"
+        variant="ghost"
+        color="red"
+        borderRadius="xl"
+      >
+        10
+        {/* 여기에 알람 갯수 표시 */}
+      </Badge>
+
       <Box maxWidth="800px" maxHeight="800px" p={20}>
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}

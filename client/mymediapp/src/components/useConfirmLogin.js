@@ -18,9 +18,7 @@ export default function useConfirmLogin(initialValue = null) {
     if (res.data.status === 200) {
       setIsConfirmed(true);
     } else {
-      //일단은 이렇게 했지만
-      //이제 로그아웃 시키는게 아니라 로그인 연장 모달을 띄우게 하는 걸로 기능 고치기
-      //refresh token을 사용하므로 화면 변화는 없다!
+      window.location.replace(window.location.href);
       setIsConfirmed(false);
       localStorage.removeItem("refresh_token");
       localStorage.removeItem("access_token");

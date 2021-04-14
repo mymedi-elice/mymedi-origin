@@ -1,5 +1,4 @@
 import { Box } from "@chakra-ui/layout";
-import { useBreakpointValue } from "@chakra-ui/react";
 import { useState, useEffect, useCallback, useContext } from "react";
 import MainLayout from "../components/MainLayout";
 import useConfirmLogin from "../components/useConfirmLogin";
@@ -9,9 +8,6 @@ import Sidebar from "../components/SideBar";
 import axios from "axios";
 import { serverUrl } from "../config";
 import { LanguageContext } from "../context";
-
-const smVariant = { navigation: "drawer", navigationButton: true };
-const mdVariant = { navigation: "sidebar", navigationButton: false };
 
 export default function MyPage() {
   const { t } = useTranslation();
@@ -60,18 +56,16 @@ export default function MyPage() {
   }, [isConfirmed]);
 
   return (
-    <div>
-      <MainLayout
-        isLoggedIn={isLoggedIn}
-        setIsLoggedIn={setIsLoggedIn}
-        isPending={isPending}
-        setIsPending={setIsPending}
-        language={language}
-        setLanguage={setLanguage}
-      >
-        <Box>마이 페이지</Box>
-        {showVaccines ? <UserInfoForm vaccines={showVaccines} /> : null}
-      </MainLayout>
-    </div>
+    <MainLayout
+      isLoggedIn={isLoggedIn}
+      setIsLoggedIn={setIsLoggedIn}
+      isPending={isPending}
+      setIsPending={setIsPending}
+      language={language}
+      setLanguage={setLanguage}
+    >
+      <Sidebar />
+      {showVaccines ? <UserInfoForm vaccines={showVaccines} /> : null}
+    </MainLayout>
   );
 }
