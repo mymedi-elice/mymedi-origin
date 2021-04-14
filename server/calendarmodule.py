@@ -37,7 +37,7 @@ def get_credentials():
                 CLIENT_SECRETS_FILE, SCOPES
             )
             print("success")
-            creds = flow.run_local_server(host = 'localhost', port = 8080)
+            creds = flow.run_local_server( host = 'elice-kdt-ai-track-vm-da-07.koreacentral.cloudapp.azure.com' , port = 8080)
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
     return creds
