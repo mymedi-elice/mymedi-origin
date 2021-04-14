@@ -1,5 +1,7 @@
 /*global kakao*/
 import React, { useState, useEffect, useCallback, useContext } from "react";
+import axios from "axios";
+import { serverUrl } from "../config";
 
 import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
@@ -23,6 +25,7 @@ export default function SearchHospital() {
   const [isConfirmed, isLoggedInServer] = useConfirmLogin();
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [isPending, setIsPending] = useState(false);
+  const [allHospital, setAllHospital] = useState();
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -39,6 +42,35 @@ export default function SearchHospital() {
       //로그인 에러...
     }
   }, [isConfirmed]);
+
+  const getAllEvents = useCallback(async () => {
+    const res = await axios.get(serverUrl + "/calendar/");
+    if (res.status === 200) {
+      const eventData = res.data.result;
+      //아래 코드는 eventData가 있을때만 실행
+      if (eventData !== "No upcoming events found from now") {
+        const formatEvents = eventData.map((eachEvent) => {
+          let color;
+          if (eachEvent.color) {
+            color = eachEvent.color;
+          } else {
+            color = "#039BE5";
+          }
+          return {
+            id: eachEvent.id,
+            title: eachEvent.summary,
+            start: eachEvent.date,
+            end: eachEvent.date,
+            time: eachEvent.time,
+            location: eachEvent.location,
+            description: eachEvent.description,
+            color: color,
+          }; //조건문으로 달리할 수 있다.
+        });
+        setAllHospital(formatEvents);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const container = document.getElementById('map');
