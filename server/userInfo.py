@@ -69,7 +69,7 @@ class UserInfo(Resource):
             print('user_vaccine: ', user_vaccine)
             user_vaccine_list = []
             for vaccine in user_vaccine:
-                user_vaccine_list.append(vaccine[0])
+                user_vaccine_list.append(str(vaccine[0]))
             print('user_vaccine_list: ', user_vaccine_list)
             # 로그인한 user의 가족정보 조회
             family_id_sql = "SELECT `id` FROM `family_info` WHERE `user_info_id` = %s"
@@ -93,7 +93,7 @@ class UserInfo(Resource):
                     print('family_info_vaccine: ', family_info_vaccine)
                     family_info_vaccine_list = []
                     for v in family_info_vaccine:
-                        family_info_vaccine_list.append(v[0])
+                        family_info_vaccine_list.append(str(v[0]))
                     print('family_info_vaccine_list: ', family_info_vaccine_list)
                     family_info_temp = {
                         "family_id": info[0],
