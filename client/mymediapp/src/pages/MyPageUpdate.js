@@ -23,13 +23,10 @@ export default function MyPageUpdate() {
 
   const { user } = useParams();
   //user이 0이면 post 사용, 1이면 put 사용.
+
+  const [userInfo, setUserInfo] = useState();
   const history = useHistory();
   const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
-
-  const getVaccines = useCallback(async () => {
-    const res = await axios.get(serverUrl + "/vaccine/");
-    setVaccines(res.data.data);
-  }, []);
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -51,28 +48,64 @@ export default function MyPageUpdate() {
     if (isConfirmed) {
       setIsPending(false);
       if (user === "1") {
-        //여기에 마이페이지에 뿌려줄 회원정보 get 요청 보내는 함수 실행 (첫 로그인이 아님)
+        getUserInfo();
+      } else {
+        setUserInfo({
+          user: user,
+          data: {
+            name: "",
+            gender: "",
+            birth: "",
+            vaccine: [],
+            family_info: [],
+          },
+        });
       }
     }
   }, [isConfirmed]);
 
-  const updateInfo = useCallback(async (data) => {
-    const res = await axios.put(serverUrl + "/userinfo/", data, {
+  const getUserInfo = useCallback(async () => {
+    const res = await axios.get(serverUrl + "/userinfo", {
       headers: {
         Authorization: AuthStr,
       },
     });
-    // history.push("/mypage");
+    setUserInfo({ user: user, data: res.data.result });
   }, []);
 
-  const createInfo = useCallback(async (data) => {
-    const res = await axios.post(serverUrl + "/userinfo/", data, {
+  const getVaccines = useCallback(async () => {
+    const res = await axios.get(serverUrl + "/vaccine/");
+    setVaccines(res.data.data);
+  }, []);
+
+  const updateInfo = useCallback(async (data) => {
+    const res = await axios.put(serverUrl + "/userinfo", data, {
       headers: {
         Authorization: AuthStr,
       },
     });
     console.log(res);
-    // history.push("/mypage");
+    history.push("/mypage");
+  }, []);
+
+  const createInfo = useCallback(async (data) => {
+    const res = await axios.post(serverUrl + "/userinfo", data, {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
+    console.log(res);
+    history.push("/mypage");
+  }, []);
+
+  const deleteFamilyInfo = useCallback(async (data) => {
+    const res = await axios.delete(serverUrl + "/userinfo", {
+      headers: {
+        Authorization: AuthStr,
+      },
+      data,
+    });
+    console.log(res);
   }, []);
 
   return (
@@ -85,12 +118,14 @@ export default function MyPageUpdate() {
       setLanguage={setLanguage}
     >
       <Box maxW="1000px">
-        {showVaccines ? (
+        {showVaccines && userInfo ? (
           <>
             <Sidebar />
             <UserInfoForm
               vaccines={showVaccines}
               handleSave={user === "1" ? updateInfo : createInfo}
+              handleDeleteFamilyInfo={deleteFamilyInfo}
+              userInfo={userInfo}
             />
           </>
         ) : null}
