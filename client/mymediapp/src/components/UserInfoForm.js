@@ -29,22 +29,25 @@ import * as Yup from "yup";
 
 export default function UserInfoFrom(props) {
   const vaccines = props.vaccines;
+  const handleSave = (data) => {
+    props.handleSave(data);
+  };
 
-  // const schema = Yup.object().shape({
-  //   name: Yup.string().required("이름을 입력해주세요."),
-  //   gender: Yup.string(),
-  //   birth: Yup.date(),
-  //   vaccine: Yup.array().of(Yup.string()),
-  //   family_info: Yup.array().of(
-  //     Yup.object({
-  //       name: Yup.string().required("이름을 입력해주세요."),
-  //       gender: Yup.string(),
-  //       birth: Yup.date(),
-  //       vaccine: Yup.array().of(Yup.string()),
-  //     })
-  //   ),
-  // });
-  //작동을 안해...차후 validation에 사용
+  const schema = Yup.object().shape({
+    name: Yup.string().required("이름을 입력해주세요."),
+    gender: Yup.string().required("성별을 선택해주세요"),
+    birth: Yup.string().required("생일을 선택해주세요."),
+    vaccine: Yup.array().of(Yup.string()),
+    family_info: Yup.array().of(
+      Yup.object({
+        name: Yup.string().required("이름을 입력해주세요."),
+        gender: Yup.string().required("성별을 선택해주세요."),
+        birth: Yup.string().required("생일을 선택해주세요."),
+        vaccine: Yup.array().of(Yup.string()),
+      })
+    ),
+  });
+  // 작동을 안해...차후 validation에 사용
 
   return (
     <Center>
@@ -65,12 +68,13 @@ export default function UserInfoFrom(props) {
             family_info: [],
           }}
           // 사용자 정보로 다시 초기화 만들어줘야 한다.
-          // validationSchema={schema}
+          validationSchema={schema}
           // 사용자 정보로 initial value 넣어주기
           onSubmit={(values, actions) => {
             console.log(values);
             //사용자 정보가 있는지 없는지 확인하기
-            //axios.post (사용자 정보 저장)
+            //(사용자 정보 저장)
+            handleSave(values);
             setTimeout(() => {
               alert(JSON.stringify(values, null, 2));
               actions.setSubmitting(false);
@@ -85,7 +89,6 @@ export default function UserInfoFrom(props) {
                 name="family_info"
                 render={(arrayHelpers) => {
                   const family_info = arrayHelpers.form.values.family_info;
-
                   return (
                     <>
                       {family_info.map((member, ind) => {
@@ -177,70 +180,62 @@ export default function UserInfoFrom(props) {
   );
 }
 function InfoForm(props) {
-  const validateName = (value) => {
-    let error;
-    if (!value) {
-      error = "이름을 입력해주세요";
-    }
-    return error;
-  };
-
-  const validateGender = (value) => {
-    //제출한 순간에만 입력되어 있으면 됨!
-  };
-
-  const validateBirth = (value) => {
-    //입력한 날짜가 유효한 날짜인지 확인
-  };
   const vaccines = props.vaccines;
 
   return (
     <>
-      <Field name="name" validate={validateName}>
-        {({ field, form }) => (
-          <FormControl isInvalid={form.errors.name && form.touched.name}>
-            {/* form.touched.name의 역할을 알아야 할 것 같다 */}
-            <FormLabel htmlFor="name">* 이름</FormLabel>
-            <Input
-              {...field}
-              size="sm"
-              maxWidth="md"
-              id="name"
-              placeholder="이름"
-            />
-            <FormErrorMessage>{form.errors.name}</FormErrorMessage>
-          </FormControl>
-        )}
+      <Field name="name">
+        {({ field, form }) => {
+          return (
+            <FormControl isInvalid={form.errors.name && form.touched.name}>
+              <FormLabel htmlFor="name">* 이름</FormLabel>
+              <Input
+                {...field}
+                size="sm"
+                maxWidth="md"
+                id="name"
+                placeholder="이름"
+              />
+              <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+            </FormControl>
+          );
+        }}
       </Field>
       <Wrap>
         <WrapItem>
-          <Field name="gender" validate={validateGender}>
+          <Field name="gender">
             {({ field, form }) => (
-              <RadioGroup name="gender" mr="4">
-                <FormLabel mt="8">성별</FormLabel>
-                <Stack spacing={5} direction="row">
-                  {/* <FormLabel mt="2.5">성별</FormLabel> */}
-                  <Radio {...field} value="female" m="2" size="md">
-                    <Text fontSize="sm">여성</Text>
-                  </Radio>
-                  <Radio {...field} value="male" size="md">
-                    <Text fontSize="sm">남성</Text>
-                  </Radio>
-                </Stack>
-              </RadioGroup>
+              <FormControl
+                isInvalid={form.errors.gender && form.touched.gender}
+              >
+                <RadioGroup name="gender" mr="4">
+                  <FormLabel mt="8">성별</FormLabel>
+                  <Stack spacing={5} direction="row">
+                    {/* <FormLabel mt="2.5">성별</FormLabel> */}
+                    <Radio {...field} value="female" m="2" size="md">
+                      <Text fontSize="sm">여성</Text>
+                    </Radio>
+                    <Radio {...field} value="male" size="md">
+                      <Text fontSize="sm">남성</Text>
+                    </Radio>
+                  </Stack>
+                  <FormErrorMessage>{form.errors.gender}</FormErrorMessage>
+                </RadioGroup>
+              </FormControl>
             )}
           </Field>
         </WrapItem>
         <WrapItem>
-          <Field name="birth" validate={validateBirth}>
+          <Field name="birth">
             {({ field, form }) => (
-              <FormControl>
+              <FormControl isInvalid={form.errors.birth && form.touched.birth}>
                 <FormLabel htmlFor="birth" mt="8">
                   생년월일
                 </FormLabel>
                 <Box maxWidth="sm">
                   <DatePickerComponent birth={form} />
                 </Box>
+                <FormErrorMessage>{form.errors.birth}</FormErrorMessage>
               </FormControl>
             )}
           </Field>
@@ -255,7 +250,6 @@ function InfoForm(props) {
               </FormLabel>
               <Wrap maxWidth="md">
                 {vaccines.map((vaccine) => {
-                  console.log(field);
                   return (
                     <WrapItem key={vaccine.id}>
                       <Checkbox
@@ -284,57 +278,123 @@ function FamilyForm(props) {
   const index = props.index;
   const member = props.member;
   const vaccines = props.vaccines;
-
   //TODO: validation
 
   return (
     <Box>
       <Field name={`family_info.${index}.name`}>
-        {({ field, form }) => (
-          <FormControl isInvalid={form.errors.name && form.touched.name}>
-            {/* form.touched.name의 역할을 정확히 알아야 할 것 같다 */}
-            <FormLabel htmlFor="name">* 이름</FormLabel>
-            <Input
-              {...field}
-              size="sm"
-              maxWidth="md"
-              id="name"
-              placeholder="이름"
-            />
-            <FormErrorMessage>{form.errors.name}</FormErrorMessage>
-          </FormControl>
-        )}
+        {({ field, form }) => {
+          let isError;
+          let isTouched;
+          if (form.errors.family_info) {
+            if (form.errors.family_info[index]) {
+              isError = form.errors.family_info[index];
+            }
+          }
+          if (form.touched.family_info) {
+            if (form.touched.family_info[index]) {
+              isTouched = form.touched.family_info[index];
+            }
+          }
+          return (
+            <FormControl
+              isInvalid={
+                isError && isTouched ? isError.name && isTouched.name : false
+              }
+            >
+              <FormLabel htmlFor="name">* 이름</FormLabel>
+              <Input
+                {...field}
+                size="sm"
+                maxWidth="md"
+                id="name"
+                placeholder="이름"
+              />
+              <FormErrorMessage>
+                {isError ? isError.name : null}
+              </FormErrorMessage>
+            </FormControl>
+          );
+        }}
       </Field>
       <Wrap>
         <WrapItem>
           <Field name={`family_info.${index}.gender`}>
-            {({ field, form }) => (
-              <RadioGroup name="gender" mr="2">
-                <FormLabel mt="8">성별</FormLabel>
-                <Stack spacing={1} direction="row">
-                  <Radio {...field} value="female" m="2" size="md">
-                    <Text fontSize="sm">여성</Text>
-                  </Radio>
-                  <Radio {...field} value="male" size="md">
-                    <Text fontSize="sm">남성</Text>
-                  </Radio>
-                </Stack>
-              </RadioGroup>
-            )}
+            {({ field, form }) => {
+              let isError;
+              let isTouched;
+              if (form.errors.family_info) {
+                if (form.errors.family_info[index]) {
+                  isError = form.errors.family_info[index];
+                }
+              }
+              if (form.touched.family_info) {
+                if (form.touched.family_info[index]) {
+                  isTouched = form.touched.family_info[index];
+                }
+              }
+              return (
+                <FormControl
+                  isInvalid={
+                    isError && isTouched
+                      ? isError.gender && isTouched.gender
+                      : false
+                  }
+                >
+                  <RadioGroup name="gender" mr="2">
+                    <FormLabel mt="8">성별</FormLabel>
+                    <Stack spacing={1} direction="row">
+                      <Radio {...field} value="female" m="2" size="md">
+                        <Text fontSize="sm">여성</Text>
+                      </Radio>
+                      <Radio {...field} value="male" size="md">
+                        <Text fontSize="sm">남성</Text>
+                      </Radio>
+                    </Stack>
+                  </RadioGroup>
+                  <FormErrorMessage>
+                    {isError ? isError.gender : null}
+                  </FormErrorMessage>
+                </FormControl>
+              );
+            }}
           </Field>
         </WrapItem>
         <WrapItem>
           <Field name={`family_info.${index}.birth`}>
-            {({ field, form }) => (
-              <FormControl>
-                <FormLabel htmlFor="birth" mt="8">
-                  생년월일
-                </FormLabel>
-                <Box maxWidth="sm">
-                  <DatePickerComponent birth={form} index={index} />
-                </Box>
-              </FormControl>
-            )}
+            {({ field, form }) => {
+              let isError;
+              let isTouched;
+              if (form.errors.family_info) {
+                if (form.errors.family_info[index]) {
+                  isError = form.errors.family_info[index];
+                }
+              }
+              if (form.touched.family_info) {
+                if (form.touched.family_info[index]) {
+                  isTouched = form.touched.family_info[index];
+                }
+              }
+              return (
+                <FormControl
+                  isInvalid={
+                    isError && isTouched
+                      ? isError.birth && isTouched.birth
+                      : false
+                  }
+                >
+                  <FormLabel htmlFor="birth" mt="8">
+                    생년월일
+                  </FormLabel>
+                  <Box maxWidth="sm">
+                    <DatePickerComponent birth={form} index={index} />
+                  </Box>
+                  <FormErrorMessage>
+                    {isError ? isError.birth : null}
+                  </FormErrorMessage>
+                </FormControl>
+              );
+            }}
           </Field>
         </WrapItem>
       </Wrap>

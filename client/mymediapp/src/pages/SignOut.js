@@ -9,14 +9,13 @@ import axios from "axios";
 import { serverUrl } from "../config";
 import { LanguageContext } from "../context";
 
-export default function MyPage() {
+export default function SignOut() {
   const { t } = useTranslation();
   const [isConfirmed, isLoggedInServer] = useConfirmLogin();
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [isPending, setIsPending] = useState(false);
 
   const { language, setLanguage } = useContext(LanguageContext);
-  const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -27,21 +26,11 @@ export default function MyPage() {
 
   useEffect(() => {
     setIsLoggedIn(isConfirmed);
+
     if (isConfirmed) {
       setIsPending(false);
-      getUserInfo();
     }
   }, [isConfirmed]);
-
-  const getUserInfo = useCallback(async () => {
-    console.log("get request");
-    const res = await axios.get(serverUrl + "/userinfo/", {
-      headers: {
-        Authorization: AuthStr,
-      },
-    });
-    console.log(res);
-  }, []);
 
   return (
     <MainLayout
@@ -53,6 +42,7 @@ export default function MyPage() {
       setLanguage={setLanguage}
     >
       <Sidebar />
+      {/* 여기에 회원탈퇴 페이지 */}
     </MainLayout>
   );
 }
