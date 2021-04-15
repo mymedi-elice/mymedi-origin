@@ -48,8 +48,7 @@ export default function MyPageUpdate() {
     if (isConfirmed) {
       setIsPending(false);
       if (user === "1") {
-        //여기에 마이페이지에 뿌려줄 회원정보 get 요청 보내는 함수 실행 (첫 로그인이 아님)
-        // setUserInfo({user: user, data: {}})
+        getUserInfo();
       } else {
         setUserInfo({
           user: user,
@@ -65,36 +64,46 @@ export default function MyPageUpdate() {
     }
   }, [isConfirmed]);
 
+  const getUserInfo = useCallback(async () => {
+    const res = await axios.get(serverUrl + "/userinfo", {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
+    setUserInfo({ user: user, data: res.data.result });
+  }, []);
+
   const getVaccines = useCallback(async () => {
     const res = await axios.get(serverUrl + "/vaccine/");
     setVaccines(res.data.data);
   }, []);
 
   const updateInfo = useCallback(async (data) => {
-    const res = await axios.put(serverUrl + "/userinfo/", data, {
+    const res = await axios.put(serverUrl + "/userinfo", data, {
       headers: {
         Authorization: AuthStr,
       },
     });
     console.log(res);
-    // history.push("/mypage");
+    history.push("/mypage");
   }, []);
 
   const createInfo = useCallback(async (data) => {
-    const res = await axios.post(serverUrl + "/userinfo/", data, {
+    const res = await axios.post(serverUrl + "/userinfo", data, {
       headers: {
         Authorization: AuthStr,
       },
     });
     console.log(res);
-    // history.push("/mypage");
+    history.push("/mypage");
   }, []);
 
   const deleteFamilyInfo = useCallback(async (data) => {
-    const res = await axios.delete(serverUrl + "/userinfo/", data, {
+    const res = await axios.delete(serverUrl + "/userinfo", {
       headers: {
         Authorization: AuthStr,
       },
+      data,
     });
     console.log(res);
   }, []);

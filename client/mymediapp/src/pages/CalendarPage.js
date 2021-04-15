@@ -138,7 +138,6 @@ export default function CalendarPage() {
     let data = {};
     allEvents.forEach((event) => {
       if (event.id === eventId) {
-        console.log(event);
         data.id = eventId;
         data.title = event.title;
         data.date = event.date;

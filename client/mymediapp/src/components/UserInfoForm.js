@@ -27,6 +27,16 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./date-picker.css";
 import * as Yup from "yup";
 
+const formatBirth = (date) => {
+  const birthToDate = new Date(date);
+  const year = birthToDate.getFullYear();
+  const month = birthToDate.getMonth() + 1;
+  const day = birthToDate.getDate();
+  const format = year + "-" + month + "-" + day;
+
+  return format;
+};
+
 export default function UserInfoFrom(props) {
   const vaccines = props.vaccines;
   const handleSave = (data) => {
@@ -36,7 +46,25 @@ export default function UserInfoFrom(props) {
     props.handleDeleteFamilyInfo(data);
   };
   const user = props.userInfo.user;
-  const initialValues = props.userInfo.data;
+  let familyNum = [];
+  let userValues;
+  if (user === "1") {
+    let data = props.userInfo.data;
+    userValues = { ...data };
+    userValues.birth = formatBirth(data.birth);
+
+    if (userValues.family_info) {
+      userValues.family_info.map((member) => {
+        const format = formatBirth(member.birth);
+        member.birth = format;
+        familyNum.push(member.family_id);
+        return member;
+      });
+    }
+  }
+  if (user === "0") {
+    userValues = props.userInfo.data;
+  }
 
   const schema = Yup.object().shape({
     name: Yup.string().required("이름을 입력해주세요."),
@@ -53,9 +81,6 @@ export default function UserInfoFrom(props) {
     ),
   });
 
-  // 기존에 정보가 존재하는 회원이라면 (user = 1)
-  // props에서 넘겨받거나 한 사용자 정보로 초기화 값을 지정해준다.
-
   return (
     <Box float="right">
       <Center>
@@ -68,23 +93,51 @@ export default function UserInfoFrom(props) {
           padding="50"
         >
           <Formik
-            initialValues={initialValues}
+            initialValues={userValues}
             validationSchema={schema}
+            enableReinitialize={true}
             onSubmit={(values, actions) => {
-              console.log(values);
               if (user === "0") {
-                console.log(user);
                 handleSave(values);
               }
               if (user === "1") {
-                //initial value와 비교하여 가족 수가 줄어들었는지 확인
-                //줄어들었다면 delete
-                //줄어들지 않았다면 put
+                if (values.family_info) {
+                  if (
+                    familyNum &&
+                    values.family_info.length < familyNum.length
+                  ) {
+                    const change = values.family_info.map((member) => {
+                      return member.id;
+                    });
+                    console.log("삭제");
+                    let toDel;
+                    familyNum.forEach((id) => {
+                      if (!change.includes(id)) {
+                        toDel = id;
+                      }
+                    });
+                    console.log(toDel);
+
+                    //더 작아졌을 경우...삭제 요청 + 수정요청
+                    handleDeleteFamilyInfo({ family_id: toDel });
+                  }
+                  values.family_info.map((member) => {
+                    if (!member.family_id) {
+                      member.family_id = 0;
+                      return member;
+                    }
+                    return member;
+                  });
+                  handleSave(values);
+                } else {
+                  values.family_info = [];
+                  handleSave(values);
+                }
               }
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                actions.setSubmitting(false);
-              }, 1000);
+              // setTimeout(() => {
+              //   alert(JSON.stringify(values, null, 2));
+              //   actions.setSubmitting(false);
+              // }, 1000);
             }}
           >
             {(props) => (
@@ -94,7 +147,12 @@ export default function UserInfoFrom(props) {
                 <FieldArray
                   name="family_info"
                   render={(arrayHelpers) => {
-                    const family_info = arrayHelpers.form.values.family_info;
+                    let family_info;
+                    if (arrayHelpers.form.values.family_info) {
+                      family_info = arrayHelpers.form.values.family_info;
+                    } else {
+                      family_info = [];
+                    }
                     return (
                       <>
                         {family_info.map((member, ind) => {
@@ -211,25 +269,27 @@ function InfoForm(props) {
       <Wrap>
         <WrapItem>
           <Field name="gender">
-            {({ field, form }) => (
-              <FormControl
-                isInvalid={form.errors.gender && form.touched.gender}
-              >
-                <RadioGroup name="gender" mr="4">
-                  <FormLabel mt="8">성별</FormLabel>
-                  <Stack spacing={5} direction="row">
-                    {/* <FormLabel mt="2.5">성별</FormLabel> */}
-                    <Radio {...field} value="female" m="2" size="md">
-                      <Text fontSize="sm">여성</Text>
-                    </Radio>
-                    <Radio {...field} value="male" size="md">
-                      <Text fontSize="sm">남성</Text>
-                    </Radio>
-                  </Stack>
-                  <FormErrorMessage>{form.errors.gender}</FormErrorMessage>
-                </RadioGroup>
-              </FormControl>
-            )}
+            {({ field, form }) => {
+              return (
+                <FormControl
+                  isInvalid={form.errors.gender && form.touched.gender}
+                >
+                  <RadioGroup name="gender" mr="4" {...field}>
+                    <FormLabel mt="8">성별</FormLabel>
+                    <Stack spacing={5} direction="row">
+                      {/* <FormLabel mt="2.5">성별</FormLabel> */}
+                      <Radio {...field} value="female" m="2" size="md">
+                        <Text fontSize="sm">여성</Text>
+                      </Radio>
+                      <Radio {...field} value="male" size="md">
+                        <Text fontSize="sm">남성</Text>
+                      </Radio>
+                    </Stack>
+                    <FormErrorMessage>{form.errors.gender}</FormErrorMessage>
+                  </RadioGroup>
+                </FormControl>
+              );
+            }}
           </Field>
         </WrapItem>
         <WrapItem>
@@ -240,7 +300,10 @@ function InfoForm(props) {
                   생년월일
                 </FormLabel>
                 <Box maxWidth="sm">
-                  <DatePickerComponent birth={form} />
+                  <DatePickerComponent
+                    birth={form}
+                    default={form.initialValues.birth}
+                  />
                 </Box>
                 <FormErrorMessage>{form.errors.birth}</FormErrorMessage>
               </FormControl>
@@ -251,7 +314,7 @@ function InfoForm(props) {
       <Field name="vaccine">
         {({ field, form }) => (
           <FormControl>
-            <CheckboxGroup>
+            <CheckboxGroup defaultValue={field.value}>
               <FormLabel htmlFor="vaccine" mt="8">
                 예방 접종 내역
               </FormLabel>
@@ -263,6 +326,7 @@ function InfoForm(props) {
                         {...field}
                         value={vaccine.id + ""}
                         margin={"2.5"}
+                        name="vaccine"
                       >
                         <Text fontSize="sm">{vaccine.name}</Text>
                       </Checkbox>
@@ -348,7 +412,7 @@ function FamilyForm(props) {
                       : false
                   }
                 >
-                  <RadioGroup name="gender" mr="2">
+                  <RadioGroup name="gender" mr="2" {...field}>
                     <FormLabel mt="8">성별</FormLabel>
                     <Stack spacing={1} direction="row">
                       <Radio {...field} value="female" m="2" size="md">
@@ -394,7 +458,16 @@ function FamilyForm(props) {
                     생년월일
                   </FormLabel>
                   <Box maxWidth="sm">
-                    <DatePickerComponent birth={form} index={index} />
+                    <DatePickerComponent
+                      birth={form}
+                      index={index}
+                      default={
+                        form.initialValues.family_info &&
+                        form.initialValues.family_info[index]
+                          ? form.initialValues.family_info[index].birth
+                          : ""
+                      }
+                    />
                   </Box>
                   <FormErrorMessage>
                     {isError ? isError.birth : null}
@@ -408,7 +481,7 @@ function FamilyForm(props) {
       <Field name={`family_info.${index}.vaccine`}>
         {({ field, form }) => (
           <FormControl>
-            <CheckboxGroup>
+            <CheckboxGroup defaultValue={field.value}>
               <FormLabel htmlFor="vaccine" mt="8">
                 예방 접종 내역
               </FormLabel>
@@ -444,7 +517,11 @@ const range = (start, stop, step) =>
     .map((x, y) => x + y * step);
 
 const DatePickerComponent = (props) => {
-  const [startDate, setStartDate] = useState();
+  let initialDate;
+  if (props.default && props.default != "") {
+    initialDate = new Date(props.default.split("-"));
+  }
+  const [startDate, setStartDate] = useState(initialDate);
   const curDate = new Date();
   const curYear = 1900 + curDate.getYear();
   const years = range(curYear - 150, curYear + 1, 1);
