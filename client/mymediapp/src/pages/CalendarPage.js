@@ -7,6 +7,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import {
+  Badge,
   Box,
   Button,
   Center,
@@ -40,7 +41,6 @@ import {
   Stack,
   Text,
   Textarea,
-  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 
@@ -48,9 +48,16 @@ import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
 import useConfirmLogin from "../components/useConfirmLogin";
 import { Field, Form, Formik } from "formik";
-import { CheckIcon, DeleteIcon, EditIcon, TimeIcon } from "@chakra-ui/icons";
+import {
+  BellIcon,
+  CheckIcon,
+  DeleteIcon,
+  EditIcon,
+  TimeIcon,
+} from "@chakra-ui/icons";
 import DatePickerComponent from "../components/DatePickerComponent";
 import { date } from "yup/lib/locale";
+import { LanguageContext } from "../context";
 
 export default function CalendarPage() {
   const { t } = useTranslation();
@@ -61,11 +68,11 @@ export default function CalendarPage() {
   const [focusedEvent, setFocusedEvent] = useState({ show: false, data: {} });
 
   const [showAddModal, setShowAddModal] = useState({ show: false, date: "" });
-  // const [showEvent, setShowEvent] = useState();
-  // const [addEvent, setAddEvent] = useState();
-  // const [deleteEvent, setDeleteEvent] = useState();
-  // const [isChange, setIsChange] = useState(false);
+  //TODO:
+  //회원정보 api에서도 get을 해야한다(일정 소유자를 지정하기 위해 가족을 띄워줘야함)
+  const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
 
+  const { language, setLanguage } = useContext(LanguageContext);
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
       setIsPending(true);
@@ -85,7 +92,11 @@ export default function CalendarPage() {
   }, [isConfirmed]);
 
   const getAllEvents = useCallback(async () => {
-    const res = await axios.get(serverUrl + "/calendar/");
+    const res = await axios.get(serverUrl + "/calendar/", {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
     if (res.status === 200) {
       const eventData = res.data.result;
       //아래 코드는 eventData가 있을때만 실행
@@ -111,20 +122,17 @@ export default function CalendarPage() {
           }; //조건문으로 달리할 수 있다.
         });
 
-        console.log(formatEvents);
         setAllEvents(formatEvents);
       }
     }
   }, []);
 
   const handleDateClick = (e) => {
-    console.log(e);
     setShowAddModal({ show: true, date: e.dateStr });
     //일정 등록을 위한 모달이 켜지게 한다. 확인을 누르면 axios post를 보낸다.
   };
 
   const handleEventClick = (e) => {
-    console.log(e.event._def);
     //우리가 쓰는 id -> e.event._def.publicId
     const eventId = e.event._def.publicId;
     let data = {};
@@ -142,7 +150,7 @@ export default function CalendarPage() {
         data.description = event.description;
       }
     });
-    console.log(data);
+
     // const data = { id: e.event._def.publicId, title: e.event._def.title };
     setFocusedEvent({ show: true, data: data });
   };
@@ -159,9 +167,11 @@ export default function CalendarPage() {
     setAllEvents(array);
     const res = await axios.delete(serverUrl + "/calendar/delete", {
       params: { _id: id },
+      headers: {
+        Authorization: AuthStr,
+      },
     });
     console.log(res);
-
     // if (res.data.status === 200) {
     //   let array = [...allEvents];
     //   let deleteInd;
@@ -174,6 +184,7 @@ export default function CalendarPage() {
     //   setAllEvents(array);
     // }
     //오래걸림...
+    //TODO : res 응답 돌아올때까지 저장 중이라는 toast 띄워주기
   }, []);
 
   const handleAddEvent = useCallback(async (data, allEvents) => {
@@ -181,15 +192,17 @@ export default function CalendarPage() {
     let sendData = { ...data };
     delete sendData["title"];
     sendData.summary = title;
-    console.log(sendData);
 
-    const res = await axios.post(serverUrl + "/calendar/insert", sendData);
-    console.log(res);
+    const res = await axios.post(serverUrl + "/calendar/insert", sendData, {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
+
     if (res.data.status === 200) {
-      //응답 기다리는데 너무 오래걸림..어떻게 하지?
-
+      //응답 기다리는 동안 loading 처리 필요(혹은 기다리지 말고 띄운 다음 toast 처리)
       data.id = res.data.result.id;
-      console.log(data);
+
       let addedArray = allEvents.concat(data);
       setAllEvents(addedArray);
     }
@@ -210,10 +223,14 @@ export default function CalendarPage() {
         replaceInd = eventInd;
       }
     });
-    console.log(sendData);
     newAllEvents[replaceInd] = data;
     setAllEvents(newAllEvents);
-    const res = await axios.put(serverUrl + "/calendar/update", sendData);
+    const res = await axios.put(serverUrl + "/calendar/update", sendData, {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
+    //여기도 로딩처리 해주기!
     console.log(res);
   }, []);
 
@@ -223,7 +240,30 @@ export default function CalendarPage() {
       setIsLoggedIn={setIsLoggedIn}
       isPending={isPending}
       setIsPending={setIsPending}
+      language={language}
+      setLanguage={setLanguage}
     >
+      <IconButton
+        aria-label="see calendar alarms"
+        icon={<BellIcon />}
+        right="30px"
+        top="90px"
+        position="fixed"
+        variant="outline"
+        colorScheme="teal"
+      />
+      <Badge
+        right="30px"
+        top="90px"
+        position="fixed"
+        variant="ghost"
+        color="red"
+        borderRadius="xl"
+      >
+        10
+        {/* 여기에 알람 갯수 표시 */}
+      </Badge>
+
       <Box maxWidth="800px" maxHeight="800px" p={20}>
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
@@ -232,34 +272,29 @@ export default function CalendarPage() {
           dateClick={handleDateClick}
           events={allEvents}
           eventClick={handleEventClick}
-        ></FullCalendar>
+        />
       </Box>
       <AddEventModal
         show={showAddModal}
         handleShow={setShowAddModal}
         handleAdd={handleAddEvent}
         allEvents={allEvents}
-      ></AddEventModal>
+      />
       <ShowEventModal
         data={focusedEvent}
         handleData={setFocusedEvent}
         handleDelete={handleDeleteEvent}
         handleUpdate={handleUpdateEvent}
         allEvents={allEvents}
-      ></ShowEventModal>
+      />
     </MainLayout>
   );
 }
 
 const ShowEventModal = (props) => {
-  //수정 가능한 input 형식으로, initialvalue는 이벤트 정보로 해서 만들기.
-  //수정, 삭제 버튼
-  //들어갈 내용은 모두 변수로 관리하기
-  //안에 폼 만들기
   const [edit, setEdit] = useState(false);
   const show = props.data.show;
   let data = props.data.data;
-  console.log(props);
   let initialValues = data;
   delete initialValues["end"];
   delete initialValues["start"];
@@ -274,7 +309,7 @@ const ShowEventModal = (props) => {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader></ModalHeader>
+        <ModalHeader />
         <ModalCloseButton />
         <ModalBody>
           {edit ? (
@@ -286,7 +321,7 @@ const ShowEventModal = (props) => {
               allEvents={props.allEvents}
               curDate={props.data.data.date}
               setEdit={setEdit}
-            ></CalendarForm>
+            />
           ) : (
             <VStack align="left" spacing="15px">
               <Stack direction="row" spacing="15px">
@@ -319,7 +354,6 @@ const ShowEventModal = (props) => {
                 aria-label="delete"
                 icon={<DeleteIcon />}
                 onClick={() => {
-                  console.log(props.allEvents);
                   props.handleDelete(data.id, props.allEvents);
                   props.handleData({ show: false, data: {} });
                 }}
@@ -352,7 +386,7 @@ const AddEventModal = (props) => {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader></ModalHeader>
+        <ModalHeader />
         <ModalCloseButton />
         <ModalBody>
           <CalendarForm
@@ -364,7 +398,7 @@ const AddEventModal = (props) => {
             curDate={curDate}
           ></CalendarForm>
         </ModalBody>
-        <ModalFooter></ModalFooter>
+        <ModalFooter />
       </ModalContent>
     </Modal>
   );
@@ -379,7 +413,7 @@ const CalendarForm = (props) => {
     return error;
   };
   const curDate = props.curDate;
-  console.log(props);
+
   let defaultTime;
   if (props.show.data) {
     defaultTime = props.show.data.time;
@@ -567,11 +601,6 @@ const TimePicker = (props) => {
     } else {
       defaultMeridiem = 0;
     }
-    // setInputTime({
-    //   meridiem: defaultMeridiem,
-    //   hour: defaultHour,
-    //   minute: defaultHour,
-    // });
   }
   const [inputTime, setInputTime] = useState({
     meridiem: defaultMeridiem,
@@ -608,7 +637,7 @@ const TimePicker = (props) => {
             time = formatHour + ":" + formatMinute + ":00";
             props.form.setValues({ ...props.form.values, time: time });
           }
-          console.log(time);
+
           setInputTime({ ...inputTime, meridiem: e.target.value });
         }}
       >
@@ -643,12 +672,10 @@ const TimePicker = (props) => {
                 formatMinute = "00";
               }
 
-              console.log(time);
               time = formatHour + ":" + formatMinute + ":00";
               props.form.setValues({ ...props.form.values, time: time });
             }
-            console.log(props.form.values);
-            console.log(inputTime);
+
             setInputTime({ ...inputTime, hour: e });
           }}
         >
@@ -692,9 +719,7 @@ const TimePicker = (props) => {
               time = formatHour + ":" + formatMinute + ":00";
               props.form.setValues({ ...props.form.values, time: time });
             }
-            console.log(inputTime);
             setInputTime({ ...inputTime, minute: e });
-            console.log(props.form.values);
           }}
         >
           <NumberInputField />

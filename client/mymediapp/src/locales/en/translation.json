@@ -17,8 +17,35 @@
         "contents": "Would you like to fill up your profile to enjoy a better service?"
     },
     "home" : {
-        "card": {
-            "calendarTitle": "MyMedi Calendar"
+        "introCard":{
+            "title":"Introduction Page",
+            "content":"Wondering what MyMedi is? We will tell you all through the introduction page.",
+            "imageAlt":"photo saying hello",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
+        },
+        "calendarCard":{
+            "title":"MyMedi Calendar",
+            "content":"You can avoid missing you and your family's medical schedule with MyMedi Calendar, which is also linked to Google Calendar.",
+            "imageAlt":"photo of calendar",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
+        },
+        "mapCard":{
+            "title":"Search Hospital",
+            "content":"You can find a hospital near your home and find out what kind of vaccines they offer.",
+            "imageAlt":"photo of map",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
         }
     },
     "intro":{
