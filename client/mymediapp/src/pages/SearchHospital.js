@@ -1,5 +1,7 @@
 /*global kakao*/
 import React, { useState, useEffect, useCallback, useContext } from "react";
+import axios from "axios";
+import { serverUrl } from "../config";
 
 import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
@@ -23,6 +25,7 @@ export default function SearchHospital() {
   const [isConfirmed, isLoggedInServer] = useConfirmLogin();
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [isPending, setIsPending] = useState(false);
+  const [allHospital, setAllHospital] = useState();
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -36,17 +39,43 @@ export default function SearchHospital() {
     if (isConfirmed) {
       setIsPending(false);
     } else {
-      //로그인 에러...
+      //로그인 에러
     }
   }, [isConfirmed]);
+
+  const getHospital = useCallback(async () => {
+    const data = await axios.get(serverUrl + "/hospital/");
+    setAllHospital(data.data.data);
+  }, []);
+  console.log('a',allHospital);
+
+  useEffect(() => {
+    if (localStorage.getItem("access_token")) {
+      setIsPending(true);
+      isLoggedInServer();
+    }
+    getHospital();
+  }, []);
 
   useEffect(() => {
     const container = document.getElementById('map');
     const options = {
       center: new kakao.maps.LatLng(33.450701, 126.570667),
-      level: 3
+      level: 5
     };
     const map = new kakao.maps.Map(container, options);
+    const geocoder = new kakao.maps.services.Geocoder();
+    geocoder.addressSearch('서울 강남구 선릉로 433', function(result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+        var marker = new kakao.maps.Marker({
+          map: map,
+          position: coords,
+          title: "엘리스"
+        });
+        map.setCenter(coords);
+      }
+    })
   }, []);
   return (
     <MainLayout
@@ -70,6 +99,7 @@ export default function SearchHospital() {
                 width: '500px',
                 height: '500px'
               }}></div>
+              <div></div>
               <Spacer />
               <Box maxWidth="400px" alignItems="baseline" ml={5}>
               </Box>
