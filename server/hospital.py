@@ -21,7 +21,7 @@ class Hospital(Resource):
         cursor = conn.cursor()
 
         #전체데이터 로딩 너무 길어 일단 일부 데이터 가져오기
-        sql = "SELECT name, address FROM `hospital` WHERE address LIKE '경기도%'"
+        sql = "SELECT name, address FROM `hospital` WHERE address LIKE '경기도%' limit 100"
         cursor.execute(sql,)
         datas = cursor.fetchall()
         hospitals = []
