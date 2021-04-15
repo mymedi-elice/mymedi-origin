@@ -23,13 +23,10 @@ export default function MyPageUpdate() {
 
   const { user } = useParams();
   //user이 0이면 post 사용, 1이면 put 사용.
+
+  const [userInfo, setUserInfo] = useState();
   const history = useHistory();
   const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
-
-  const getVaccines = useCallback(async () => {
-    const res = await axios.get(serverUrl + "/vaccine/");
-    setVaccines(res.data.data);
-  }, []);
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -52,9 +49,26 @@ export default function MyPageUpdate() {
       setIsPending(false);
       if (user === "1") {
         //여기에 마이페이지에 뿌려줄 회원정보 get 요청 보내는 함수 실행 (첫 로그인이 아님)
+        // setUserInfo({user: user, data: {}})
+      } else {
+        setUserInfo({
+          user: user,
+          data: {
+            name: "",
+            gender: "",
+            birth: "",
+            vaccine: [],
+            family_info: [],
+          },
+        });
       }
     }
   }, [isConfirmed]);
+
+  const getVaccines = useCallback(async () => {
+    const res = await axios.get(serverUrl + "/vaccine/");
+    setVaccines(res.data.data);
+  }, []);
 
   const updateInfo = useCallback(async (data) => {
     const res = await axios.put(serverUrl + "/userinfo/", data, {
@@ -62,6 +76,7 @@ export default function MyPageUpdate() {
         Authorization: AuthStr,
       },
     });
+    console.log(res);
     // history.push("/mypage");
   }, []);
 
@@ -75,6 +90,15 @@ export default function MyPageUpdate() {
     // history.push("/mypage");
   }, []);
 
+  const deleteFamilyInfo = useCallback(async (data) => {
+    const res = await axios.delete(serverUrl + "/userinfo/", data, {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
+    console.log(res);
+  }, []);
+
   return (
     <MainLayout
       isLoggedIn={isLoggedIn}
@@ -85,12 +109,14 @@ export default function MyPageUpdate() {
       setLanguage={setLanguage}
     >
       <Box maxW="1000px">
-        {showVaccines ? (
+        {showVaccines && userInfo ? (
           <>
             <Sidebar />
             <UserInfoForm
               vaccines={showVaccines}
               handleSave={user === "1" ? updateInfo : createInfo}
+              handleDeleteFamilyInfo={deleteFamilyInfo}
+              userInfo={userInfo}
             />
           </>
         ) : null}

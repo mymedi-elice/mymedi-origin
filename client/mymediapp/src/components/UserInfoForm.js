@@ -32,6 +32,11 @@ export default function UserInfoFrom(props) {
   const handleSave = (data) => {
     props.handleSave(data);
   };
+  const handleDeleteFamilyInfo = (data) => {
+    props.handleDeleteFamilyInfo(data);
+  };
+  const user = props.userInfo.user;
+  const initialValues = props.userInfo.data;
 
   const schema = Yup.object().shape({
     name: Yup.string().required("이름을 입력해주세요."),
@@ -48,13 +53,6 @@ export default function UserInfoFrom(props) {
     ),
   });
 
-  const initialValues = {
-    name: "",
-    gender: "",
-    birth: "",
-    vaccine: [],
-    family_info: [],
-  };
   // 기존에 정보가 존재하는 회원이라면 (user = 1)
   // props에서 넘겨받거나 한 사용자 정보로 초기화 값을 지정해준다.
 
@@ -74,9 +72,15 @@ export default function UserInfoFrom(props) {
             validationSchema={schema}
             onSubmit={(values, actions) => {
               console.log(values);
-              //사용자 정보가 있는지 없는지 확인하기
-              //(사용자 정보 저장)
-              handleSave(values);
+              if (user === "0") {
+                console.log(user);
+                handleSave(values);
+              }
+              if (user === "1") {
+                //initial value와 비교하여 가족 수가 줄어들었는지 확인
+                //줄어들었다면 delete
+                //줄어들지 않았다면 put
+              }
               setTimeout(() => {
                 alert(JSON.stringify(values, null, 2));
                 actions.setSubmitting(false);
