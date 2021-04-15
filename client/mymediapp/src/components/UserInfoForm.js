@@ -47,136 +47,139 @@ export default function UserInfoFrom(props) {
       })
     ),
   });
-  // 작동을 안해...차후 validation에 사용
+
+  const initialValues = {
+    name: "",
+    gender: "",
+    birth: "",
+    vaccine: [],
+    family_info: [],
+  };
+  // 기존에 정보가 존재하는 회원이라면 (user = 1)
+  // props에서 넘겨받거나 한 사용자 정보로 초기화 값을 지정해준다.
 
   return (
-    <Center>
-      <Box
-        className="container"
-        boxShadow="base"
-        maxWidth="500px"
-        alignItems="center"
-        margin="50"
-        padding="50"
-      >
-        <Formik
-          initialValues={{
-            name: "",
-            gender: "",
-            birth: "",
-            vaccine: [],
-            family_info: [],
-          }}
-          // 사용자 정보로 다시 초기화 만들어줘야 한다.
-          validationSchema={schema}
-          // 사용자 정보로 initial value 넣어주기
-          onSubmit={(values, actions) => {
-            console.log(values);
-            //사용자 정보가 있는지 없는지 확인하기
-            //(사용자 정보 저장)
-            handleSave(values);
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              actions.setSubmitting(false);
-            }, 1000);
-          }}
+    <Box float="right">
+      <Center>
+        <Box
+          className="container"
+          boxShadow="base"
+          maxWidth="500px"
+          alignItems="center"
+          margin="50"
+          padding="50"
         >
-          {(props) => (
-            <Form>
-              <InfoForm vaccines={vaccines}></InfoForm>
-              <FormLabel mt="10">가족 정보</FormLabel>
-              <FieldArray
-                name="family_info"
-                render={(arrayHelpers) => {
-                  const family_info = arrayHelpers.form.values.family_info;
-                  return (
-                    <>
-                      {family_info.map((member, ind) => {
-                        return (
-                          <Box
-                            key={ind}
-                            borderWidth="1px"
-                            pl="5"
-                            pr="5"
-                            pb="5"
-                            borderRadius="lg"
+          <Formik
+            initialValues={initialValues}
+            validationSchema={schema}
+            onSubmit={(values, actions) => {
+              console.log(values);
+              //사용자 정보가 있는지 없는지 확인하기
+              //(사용자 정보 저장)
+              handleSave(values);
+              setTimeout(() => {
+                alert(JSON.stringify(values, null, 2));
+                actions.setSubmitting(false);
+              }, 1000);
+            }}
+          >
+            {(props) => (
+              <Form>
+                <InfoForm vaccines={vaccines}></InfoForm>
+                <FormLabel mt="10">가족 정보</FormLabel>
+                <FieldArray
+                  name="family_info"
+                  render={(arrayHelpers) => {
+                    const family_info = arrayHelpers.form.values.family_info;
+                    return (
+                      <>
+                        {family_info.map((member, ind) => {
+                          return (
+                            <Box
+                              key={ind}
+                              borderWidth="1px"
+                              pl="5"
+                              pr="5"
+                              pb="5"
+                              borderRadius="lg"
+                            >
+                              <Flex>
+                                <Spacer />
+                                <Button
+                                  size="xs"
+                                  colorScheme="teal"
+                                  variant="outline"
+                                  mt="5"
+                                  onClick={() => {
+                                    if (family_info) {
+                                      arrayHelpers.pop();
+                                    }
+                                  }}
+                                >
+                                  <CloseIcon boxSize={2}></CloseIcon>
+                                </Button>
+                              </Flex>
+                              <FamilyForm
+                                member={member}
+                                index={ind}
+                                vaccines={vaccines}
+                              ></FamilyForm>
+                            </Box>
+                          );
+                        })}
+                        <Center>
+                          <Button
+                            size="xs"
+                            colorScheme="teal"
+                            variant="outline"
+                            mt="3"
+                            onClick={() => {
+                              if (
+                                family_info.length > 0 &&
+                                family_info[family_info.length - 1].name
+                              ) {
+                                arrayHelpers.push({
+                                  name: "",
+                                  gender: "",
+                                  birth: "",
+                                  vaccine: [],
+                                });
+                              } else if (family_info.length === 0) {
+                                arrayHelpers.push({
+                                  name: "",
+                                  gender: "",
+                                  birth: "",
+                                  vaccine: [],
+                                });
+                              } else {
+                                //TODO : 에러메세지 띄워주기
+                              }
+                            }}
                           >
-                            <Flex>
-                              <Spacer />
-                              <Button
-                                size="xs"
-                                colorScheme="teal"
-                                variant="outline"
-                                mt="5"
-                                onClick={() => {
-                                  if (family_info) {
-                                    arrayHelpers.pop();
-                                  }
-                                }}
-                              >
-                                <CloseIcon boxSize={2}></CloseIcon>
-                              </Button>
-                            </Flex>
-                            <FamilyForm
-                              member={member}
-                              index={ind}
-                              vaccines={vaccines}
-                            ></FamilyForm>
-                          </Box>
-                        );
-                      })}
-                      <Center>
-                        <Button
-                          size="xs"
-                          colorScheme="teal"
-                          variant="outline"
-                          mt="3"
-                          onClick={() => {
-                            if (
-                              family_info.length > 0 &&
-                              family_info[family_info.length - 1].name
-                            ) {
-                              arrayHelpers.push({
-                                name: "",
-                                gender: "",
-                                birth: "",
-                                vaccine: [],
-                              });
-                            } else if (family_info.length === 0) {
-                              arrayHelpers.push({
-                                name: "",
-                                gender: "",
-                                birth: "",
-                                vaccine: [],
-                              });
-                            } else {
-                              //TODO : 에러메세지 띄워주기
-                            }
-                          }}
-                        >
-                          <AddIcon boxSize={2} />
-                          추가
-                        </Button>
-                      </Center>
-                    </>
-                  );
-                }}
-              ></FieldArray>
-              <Center>
-                <Button
-                  mt={6}
-                  colorScheme="teal"
-                  isLoading={props.isSubmitting}
-                  type="submit"
-                >
-                  회원 정보 저장
-                </Button>
-              </Center>
-            </Form>
-          )}
-        </Formik>
-      </Box>
-    </Center>
+                            <AddIcon boxSize={2} />
+                            추가
+                          </Button>
+                        </Center>
+                      </>
+                    );
+                  }}
+                ></FieldArray>
+                <Center>
+                  <Button
+                    mt={6}
+                    colorScheme="teal"
+                    isLoading={props.isSubmitting}
+                    type="submit"
+                  >
+                    회원 정보 저장
+                  </Button>
+                </Center>
+              </Form>
+            )}
+          </Formik>
+        </Box>
+      </Center>
+    </Box>
   );
 }
 function InfoForm(props) {
