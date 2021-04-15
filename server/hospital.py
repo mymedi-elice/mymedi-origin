@@ -26,7 +26,7 @@ class Hospital(Resource):
         datas = cursor.fetchall()
         hospitals = []
         for item in datas:
-            row = {"name":item[0].decode(), "address":item[1].decode()}
+            row = {"name":item[0], "address":item[1]}
             hospitals.append(row)
         return jsonify(status = 200, data = {"hospital":hospitals})
 

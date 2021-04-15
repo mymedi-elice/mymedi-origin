@@ -100,9 +100,9 @@
     },
     "mypage":{
         "sideBar":{
-            "title": "My Page",
+            "title": "trang của tôi",
             "links": {
-                "1": "Information",
+                "1": "thông tin",
                 "2": "Unsubscribe"
             }
         },
