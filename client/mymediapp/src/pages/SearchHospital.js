@@ -61,17 +61,17 @@ export default function SearchHospital() {
     const container = document.getElementById('map');
     const options = {
       center: new kakao.maps.LatLng(33.450701, 126.570667),
-      level: 3
+      level: 5
     };
     const map = new kakao.maps.Map(container, options);
     const geocoder = new kakao.maps.services.Geocoder();
-    geocoder.addressSearch('제주특별자치도 제주시 첨단로 242', function(result, status) {
+    geocoder.addressSearch('서울 강남구 선릉로 433', function(result, status) {
       if (status === kakao.maps.services.Status.OK) {
         var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
         var marker = new kakao.maps.Marker({
           map: map,
           position: coords,
-          title: "제주도"
+          title: "엘리스"
         });
         map.setCenter(coords);
       }
