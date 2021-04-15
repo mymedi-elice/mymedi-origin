@@ -97,5 +97,42 @@
                 "4": "Philippines"
             }
         }
+    },
+    "mypage":{
+        "sideBar":{
+            "title": "trang của tôi",
+            "links": {
+                "1": "thông tin",
+                "2": "Unsubscribe"
+            }
+        },
+        "show":{},
+        "form":{
+            "name": "name",
+            "gender":{
+                "label": "sex",
+                "female": "female",
+                "male": "male"
+            },
+            "birth": "date of birth",
+            "vaccine": {
+                "label": "Vaccination history",
+                "helper": "Please select diseases with a history of vaccination."
+            },
+            "family": "Family information",
+            "save":"Save",
+            "error":{
+                "name": "Please select a name.",
+                "gender": "Please choose your gender.",
+                "birth":"Please choose a birthday.",
+                "add": "Please enter all existing information before entering new information."
+            }
+        },
+        "signOut":{
+            "title": "Are you sure you want to unsubscribe?",
+            "warning": "Please decide carefully as your data cannot be recovered when you leave your membership.",
+            "button": "Unsubscribe"
+        }
     }
+
 }

@@ -8,6 +8,7 @@ import axios from "axios";
 import { serverUrl } from "../config";
 import { LanguageContext } from "../context";
 import { useHistory, useParams } from "react-router-dom";
+import { Box, Center } from "@chakra-ui/layout";
 
 export default function MyPageUpdate() {
   const { t } = useTranslation();
@@ -56,8 +57,12 @@ export default function MyPageUpdate() {
   }, [isConfirmed]);
 
   const updateInfo = useCallback(async (data) => {
-    const res = await axios.put(serverUrl);
-    history.push("/mypage");
+    const res = await axios.put(serverUrl + "/userinfo/", data, {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
+    // history.push("/mypage");
   }, []);
 
   const createInfo = useCallback(async (data) => {
@@ -79,13 +84,17 @@ export default function MyPageUpdate() {
       language={language}
       setLanguage={setLanguage}
     >
-      <Sidebar />
-      {showVaccines ? (
-        <UserInfoForm
-          vaccines={showVaccines}
-          handleSave={user === "1" ? updateInfo : createInfo}
-        />
-      ) : null}
+      <Box maxW="1000px">
+        {showVaccines ? (
+          <>
+            <Sidebar />
+            <UserInfoForm
+              vaccines={showVaccines}
+              handleSave={user === "1" ? updateInfo : createInfo}
+            />
+          </>
+        ) : null}
+      </Box>
     </MainLayout>
   );
 }
