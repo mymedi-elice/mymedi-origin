@@ -93,56 +93,63 @@ CREATE TABLE `get_vaccine` (
   `user_info_id` int DEFAULT NULL,
   `vaccine_id` int NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_comment_user_info1_idx` (`user_info_id` ASC) VISIBLE,
-  INDEX `fk_comment_hospital1_idx` (`hospital_id` ASC) VISIBLE,
-  CONSTRAINT `fk_comment_user_info1`
-    FOREIGN KEY (`user_info_id`)
-    REFERENCES `mymedi`.`user_info` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_comment_hospital1`
-    FOREIGN KEY (`hospital_id`)
-    REFERENCES `mymedi`.`hospital` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `mymedi`.`vaccine`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `vaccine`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `vaccine` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `korean` varchar(45) COLLATE utf8_bin DEFAULT NULL,
-  `vietnam` varchar(45) COLLATE utf8_bin DEFAULT NULL,
-  `english` varchar(45) COLLATE utf8_bin DEFAULT NULL,
-  `name` varchar(45) COLLATE utf8_bin DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  KEY `fk_get_vaccine_user_info1_idx` (`user_info_id`),
+  CONSTRAINT `fk_get_vaccine_user_info1` FOREIGN KEY (`user_info_id`) REFERENCES `user_info` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-LOCK TABLES `vaccine` WRITE;
-/*!40000 ALTER TABLE `vaccine` DISABLE KEYS */;
-INSERT INTO `vaccine` VALUES (1,'결핵','bệnh lao','tuberculosis','BCG'),(2,'B형간염','viêm gan B','Hepatitis B','HepB'),(3,'디프테리아/파상풍/백일해','bạch hầu / uốn ván /  ho gà.','Tetanus/ Diphtheria/ Pertussis','DTaP/Tdap/Td'),(4,'폴리오','Bại Liệt','Polio','IPV'),(5,'b형 헤모필루스인플루엔자','Haemophilus Influenzae Tuýp b\n','Haemophilus influenzae type B','Hib'),(6,'폐렴구균','phế cầu Viêm phổi','pneumococcus','PCV/ PPSV'),(7,'홍역/유행성이하선염/풍진','bệnh sởi/ quai bị/bệnh ban đào','Measles/ Mumps / Rubella','MMR'),(8,'수두',' thủy đậu ','varicella','VAR'),(9,'A형 간염','viêm gan A','Hepatitis A','HepA'),(10,'일본뇌염','Viêm não Nhật Bản','Japanese encephalitis','IJEV/ LJEV'),(11,'사람유두종바이러스 감염증','Virus gây u nhú ở người','Human papilloma virus infection','HPV'),(12,'인플루엔자','Bệnh Cúm','influenza','IIV'),(13,'로타바이러스 감염증','lây truyền rota virus','rota virus infection','RV1/ RV5');
-/*!40000 ALTER TABLE `vaccine` ENABLE KEYS */;
+--
+-- Dumping data for table `get_vaccine`
+--
+
+LOCK TABLES `get_vaccine` WRITE;
+/*!40000 ALTER TABLE `get_vaccine` DISABLE KEYS */;
+INSERT INTO `get_vaccine` VALUES (1,1,'2016-01-01 00:00:00',1,NULL,1),(2,1,'2000-03-05 00:00:00',NULL,4,1),(3,1,'2016-03-26 00:00:00',NULL,4,1),(4,1,NULL,8,14,1),(5,1,NULL,8,14,2),(18,1,NULL,14,17,1),(19,1,NULL,14,17,2);
+/*!40000 ALTER TABLE `get_vaccine` ENABLE KEYS */;
 UNLOCK TABLES;
 
+--
+-- Table structure for table `hospital`
+--
 
--- -----------------------------------------------------
--- Table `mymedi`.`get_vaccine`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `mymedi`.`get_vaccine` ;
+DROP TABLE IF EXISTS `hospital`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `hospital` (
+  `id` int NOT NULL,
+  `name` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `address` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `phone` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `rating_mean` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `vaccine_list` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `address_UNIQUE` (`address`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE IF NOT EXISTS `mymedi`.`get_vaccine` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `get_vaccine` TINYINT NULL DEFAULT 1,
-  `get_date` DATETIME NULL,
-  `family_info_id` INT NULL,
-  `user_info_id` INT NULL,
-  `vaccine_id` INT NOT NULL,
+--
+-- Dumping data for table `hospital`
+--
+
+LOCK TABLES `hospital` WRITE;
+/*!40000 ALTER TABLE `hospital` DISABLE KEYS */;
+/*!40000 ALTER TABLE `hospital` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user_info`
+--
+
+DROP TABLE IF EXISTS `user_info`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_info` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `sub` varchar(128) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `username` varchar(16) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `birthday` date DEFAULT NULL,
+  `gender` varchar(45) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sub_UNIQUE` (`sub`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;

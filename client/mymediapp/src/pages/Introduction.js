@@ -33,8 +33,6 @@ export default function Introduction() {
     setIsLoggedIn(isConfirmed);
     if (isConfirmed) {
       setIsPending(false);
-    } else {
-      //로그인 에러...
     }
   }, [isConfirmed]);
 

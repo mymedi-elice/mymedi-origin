@@ -42,7 +42,7 @@ try:
                                                   database='mymedi',
                                                   user='root',
                                                   charset="utf8",
-                                                  password=""
+                                                  password="0000"
                                                   )
 
     print("Printing connection pool properties ")
