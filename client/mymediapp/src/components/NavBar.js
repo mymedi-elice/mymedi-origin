@@ -23,7 +23,7 @@ import MenuElement from "./Menu";
 import { Link } from "react-router-dom";
 
 const NavLink = (props) => (
-  <Link
+  <Box
     px={2}
     py={1}
     rounded={"md"}
@@ -31,10 +31,9 @@ const NavLink = (props) => (
       textDecoration: "none",
       bg: useColorModeValue("gray.200", "gray.900"),
     }}
-    to={props.goto}
   >
-    {props.children}
-  </Link>
+    <Link to={props.goto}>{props.children}</Link>
+  </Box>
 );
 
 export default function NavBar(props) {
@@ -54,16 +53,7 @@ export default function NavBar(props) {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems={"center"} color={"teal.700"}>
-            <Link
-              to="/"
-              px={2}
-              py={1}
-              rounded={"md"}
-              _hover={{
-                textDecoration: "none",
-                bg: useColorModeValue("gray.200", "gray.900"),
-              }}
-            >
+            <Link to="/">
               <Box color={"teal.800"}>
                 <Heading size="md">MyMedi</Heading>
               </Box>
@@ -111,6 +101,7 @@ export default function NavBar(props) {
                 color={"teal.700"}
                 _hover={{
                   textDecoration: "none",
+                  bg: useColorModeValue("gray.200", "gray.900"),
                 }}
               >
                 <Text>{props.language}</Text>

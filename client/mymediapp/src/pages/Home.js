@@ -68,6 +68,7 @@ export default function Home() {
           <Link to={introCard.goto}>
             <Box
               maxW="sm"
+              minW="120px"
               borderWidth="1px"
               borderRadius="lg"
               overflow="hidden"
@@ -97,6 +98,7 @@ export default function Home() {
           <Link to={calendarCard.goto}>
             <Box
               maxW="sm"
+              minW="120px"
               borderWidth="1px"
               borderRadius="lg"
               overflow="hidden"
@@ -126,6 +128,7 @@ export default function Home() {
           <Link to={mapCard.goto}>
             <Box
               maxW="sm"
+              minW="120px"
               borderWidth="1px"
               borderRadius="lg"
               overflow="hidden"

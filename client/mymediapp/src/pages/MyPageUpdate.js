@@ -1,4 +1,3 @@
-import { Box } from "@chakra-ui/layout";
 import { useState, useEffect, useCallback, useContext } from "react";
 import MainLayout from "../components/MainLayout";
 import useConfirmLogin from "../components/useConfirmLogin";
@@ -8,39 +7,67 @@ import Sidebar from "../components/SideBar";
 import axios from "axios";
 import { serverUrl } from "../config";
 import { LanguageContext } from "../context";
+import { useHistory, useParams } from "react-router-dom";
 
-export default function MyPage() {
+export default function MyPageUpdate() {
   const { t } = useTranslation();
   const [isConfirmed, isLoggedInServer] = useConfirmLogin();
   const [isLoggedIn, setIsLoggedIn] = useState();
   const [isPending, setIsPending] = useState(false);
 
   const { language, setLanguage } = useContext(LanguageContext);
+
+  const [vaccines, setVaccines] = useState();
+  const [showVaccines, setShowVaccines] = useState();
+
+  const { user } = useParams();
+  //user이 0이면 post 사용, 1이면 put 사용.
+  const history = useHistory();
   const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
+
+  const getVaccines = useCallback(async () => {
+    const res = await axios.get(serverUrl + "/vaccine/");
+    setVaccines(res.data.data);
+  }, []);
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
       setIsPending(true);
       isLoggedInServer();
     }
+    getVaccines();
   }, []);
 
   useEffect(() => {
+    if (vaccines) {
+      setShowVaccines(vaccines[language]);
+    }
+  }, [language, vaccines]);
+
+  useEffect(() => {
     setIsLoggedIn(isConfirmed);
+
     if (isConfirmed) {
       setIsPending(false);
-      getUserInfo();
+      if (user === "1") {
+        //여기에 마이페이지에 뿌려줄 회원정보 get 요청 보내는 함수 실행 (첫 로그인이 아님)
+      }
     }
   }, [isConfirmed]);
 
-  const getUserInfo = useCallback(async () => {
-    console.log("get request");
-    const res = await axios.get(serverUrl + "/userinfo/", {
+  const updateInfo = useCallback(async (data) => {
+    const res = await axios.put(serverUrl);
+    history.push("/mypage");
+  }, []);
+
+  const createInfo = useCallback(async (data) => {
+    const res = await axios.post(serverUrl + "/userinfo/", data, {
       headers: {
         Authorization: AuthStr,
       },
     });
     console.log(res);
+    // history.push("/mypage");
   }, []);
 
   return (
@@ -53,6 +80,12 @@ export default function MyPage() {
       setLanguage={setLanguage}
     >
       <Sidebar />
+      {showVaccines ? (
+        <UserInfoForm
+          vaccines={showVaccines}
+          handleSave={user === "1" ? updateInfo : createInfo}
+        />
+      ) : null}
     </MainLayout>
   );
 }
