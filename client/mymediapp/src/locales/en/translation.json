@@ -1,0 +1,137 @@
+{
+    "answer" :{
+        "yes":"Yes",
+        "no": "No"
+    },
+    "language" : "language",
+    "navbar" : {
+        "calendar": "Calendar",
+        "search": "Hospital search",
+        "mypage": "MyPage",
+        "intro": "Introduction",
+        "login": "Google Login",
+        "logout": "Logout"
+    },
+    "dialogToMypage":{
+        "title": "Welcome to MyMedi!",
+        "contents": "Would you like to fill up your profile to enjoy a better service?"
+    },
+    "home" : {
+        "introCard":{
+            "title":"Introduction Page",
+            "content":"Wondering what MyMedi is? We will tell you all through the introduction page.",
+            "imageAlt":"photo saying hello",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
+        },
+        "calendarCard":{
+            "title":"MyMedi Calendar",
+            "content":"You can avoid missing you and your family's medical schedule with MyMedi Calendar, which is also linked to Google Calendar.",
+            "imageAlt":"photo of calendar",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
+        },
+        "mapCard":{
+            "title":"Search Hospital",
+            "content":"You can find a hospital near your home and find out what kind of vaccines they offer.",
+            "imageAlt":"photo of map",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
+        }
+    },
+    "intro":{
+        "title":"Why MyMedi?",
+        "sum-intro":"MyMedi is a medical schedule management service for multicultural families in the medical blind spot.",
+        "sub1":{
+            "title":"Why multicultural family?",
+            "contents":"As a result of data analysis, it was confirmed that the vaccination rate of children from multicultural families was lower than that of children from other families.",
+            "imageAlt":"vaccination per family type",
+            "hashtags":{
+                "1":"Children from multicultural families",
+                "2":"Children from General families(domestic)",
+                "3":"Children from General families(overseas)"
+            }
+        },
+        "sub2":{
+            "title":"Why is it low?",
+            "contents":{
+                "1":"The reasons were linguistic limitations and missed timing due to not knowing the recommended schedule for vaccination.",
+                "2":"In addition, it was confirmed that health/welfare is the next highest priority issue in Korea's foreigner consultation, while the main issues are immigration and labor."
+            },
+            "imageAlt":"Statistics of counseling contents for foreigners residing in Korea",
+            "hashtags":{
+                "1":"Immigration",
+                "2":"Labor",
+                "3":"Health/Welfare",
+                "4":"Administration",
+                "5":"Education"
+            }
+        },
+        "sub3":{
+            "title":"Why web service?",
+            "contents": "You can see that the proportion of phone calls is the highest among the Seoul Global Center counseling methods. It can be seen that there is a tendency to prefer phone calls that provide direct information, non-face-to-face, to receive counseling in a variety of languages. That's why we decided to build a calendar and notification web service that supports internationalization.",
+            "imageAlt":"Seoul Global Center Consultation Method Statistics",
+            "hashtags":{
+                "1":"Phone call",
+                "2":"Visit in person",
+                "3":"E-mail"
+            }
+        },
+        "sub4":{
+            "title":"In what languages ​​is internationalization supported?",
+            "contents":"In addition to Korean and English, Vietnamese was added by referring to the nationality rankings of multicultural families nationwide.",
+            "imageAlt":"Statistics on nationality of multicultural families",
+            "hashtags":{
+                "1":"Vietnam",
+                "2":"China",
+                "3":"Chinese (Korean)",
+                "4":"Philippines"
+            }
+        }
+    },
+    "mypage":{
+        "sideBar":{
+            "title": "My Page",
+            "links": {
+                "1": "Information",
+                "2": "Unsubscribe"
+            }
+        },
+        "show":{},
+        "form":{
+            "name": "name",
+            "gender":{
+                "label": "sex",
+                "female": "female",
+                "male": "male"
+            },
+            "birth": "date of birth",
+            "vaccine": {
+                "label": "Vaccination history",
+                "helper": "Please select diseases with a history of vaccination."
+            },
+            "family": "Family information",
+            "save":"Save",
+            "error":{
+                "name": "Please select a name.",
+                "gender": "Please choose your gender.",
+                "birth":"Please choose a birthday.",
+                "add": "Please enter all existing information before entering new information."
+            }
+        },
+        "signOut":{
+            "title": "Are you sure you want to unsubscribe?",
+            "warning": "Please decide carefully as your data cannot be recovered when you leave your membership.",
+            "button": "Unsubscribe"
+        }
+    }
+}

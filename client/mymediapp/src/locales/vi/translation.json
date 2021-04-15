@@ -1,0 +1,138 @@
+{
+    "answer" :{
+        "yes":"Vâng",
+        "no": "Không"
+    },
+    "language" : "ngôn ngữ",
+    "navbar" : {
+        "calendar": "lịch",
+        "search": "khám bệnh viện",
+        "mypage": "Thông tin của tôi",
+        "intro": "Giới thiệu",
+        "login": "đăng nhập Google",
+        "logout": "đăng xuất"
+    },
+    "dialogToMypage":{
+        "title": "Chào mừng đến với MyMedi!",
+        "contents": "Bạn có muốn nhập thông tin thành viên của mình để được cung cấp dịch vụ tốt hơn không?"
+    },
+    "home" : {
+        "introCard":{
+            "title":"Trang giới thiệu",
+            "content":"Bạn đang thắc mắc MyMedi là gì? Chúng tôi sẽ cho bạn biết tất cả thông qua trang giới thiệu.",
+            "imageAlt":"ảnh chào",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
+        },
+        "calendarCard":{
+            "title":"Lịch MyMedi",
+            "content":"Bạn có thể tránh bỏ lỡ lịch khám bệnh của mình và gia đình với Lịch MyMedi, cũng được liên kết với Lịch Google.",
+            "imageAlt":"ảnh lịch",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
+        },
+        "mapCard":{
+            "title": "Tìm kiếm bệnh viện",
+            "content": "Bạn có thể tìm một bệnh viện gần nhà và tìm xem họ cung cấp loại vắc xin nào.",
+            "imageAlt": "ảnh bản đồ",
+            "hashtags":{
+                "1":"",
+                "2":"",
+                "3":""
+            }
+        }
+    },
+    "intro":{
+        "title":"Tại sao MyMedi?",
+        "sum-intro":"MyMedi là một dịch vụ quản lý lịch trình y tế dành cho các gia đình đa văn hóa ở vùng mù y tế.",
+        "sub1":{
+            "title":"Tại sao lại nhắm mục tiêu đến các gia đình đa văn hóa?",
+            "contents":"Kết quả phân tích dữ liệu đã khẳng định rằng tỷ lệ tiêm chủng của trẻ em từ các gia đình đa văn hóa thấp hơn so với trẻ em từ các gia đình khác.",
+            "imageAlt":"Tỷ lệ trẻ em được tiêm chủng theo loại hộ gia đình",
+            "hashtags":{
+                "1":"Trẻ em từ các gia đình đa văn hóa",
+                "2":"Con cái gia đình chung (trong nước)",
+                "3":"Con cái gia đình chung (ở nước ngoài)"
+            }
+        },
+        "sub2":{
+            "title":"Tại sao nó lại thấp?",
+            "contents":{
+                "1":"Nguyên nhân là do hạn chế về ngôn ngữ và bỏ lỡ thời điểm do không biết lịch tiêm chủng được khuyến cáo.",
+                "2":"Ngoài ra, người ta cũng xác nhận rằng sức khỏe / phúc lợi là vấn đề ưu tiên hàng đầu tiếp theo trong tham vấn người nước ngoài của Hàn Quốc, trong khi các vấn đề chính là nhập cư và lao động."
+            },
+            "imageAlt":"Thống kê nội dung tư vấn cho người nước ngoài cư trú tại Hàn Quốc",
+            "hashtags":{
+                "1":"Nhập cư",
+                "2":"Lao động",
+                "3":"Y tế / Phúc lợi",
+                "4":"quản lý",
+                "5":"Giáo dục"
+            }
+        },
+        "sub3":{
+            "title":"Tại sao lại là dịch vụ web?",
+            "contents": "Phương pháp tư vấn ưa thích nhất tại Trung tâm Toàn cầu Seoul là điện thoại di động. Từ đó có thể thấy xu hướng thích gọi điện thoại hơn do được cung cấp thông tin và tư vấn trực tiếp bằng nhiều ngôn ngữ. Vì vậy, chúng tôi quyết định xây dựng một dịch vụ web hỗ trợ quốc tế hóa.",
+            "imageAlt":"Thống kê về phương pháp tham vấn của Trung tâm toàn cầu Seoul",
+            "hashtags":{
+                "1": "Cuộc gọi điện thoại",
+                "2": "Đến gặp trực tiếp",
+                "3": "E-mail"
+            }
+        },
+        "sub4":{
+            "title":"Quốc tế hóa được hỗ trợ bằng những ngôn ngữ nào?",
+            "contents":"Ngoài tiếng Hàn và tiếng Anh, tiếng Việt đã được thêm vào bằng cách tham khảo bảng xếp hạng quốc tịch của các gia đình đa văn hóa trên toàn quốc.",
+            "imageAlt":"Thống kê về quốc tịch của các gia đình đa văn hóa",
+            "hashtags":{
+                "1": "Việt Nam",
+                "2": "Trung Quốc",
+                "3": "Tiếng Trung (tiếng Hàn)",
+                "4": "Philippines"
+            }
+        }
+    },
+    "mypage":{
+        "sideBar":{
+            "title": "trang của tôi",
+            "links": {
+                "1": "thông tin",
+                "2": "Unsubscribe"
+            }
+        },
+        "show":{},
+        "form":{
+            "name": "name",
+            "gender":{
+                "label": "sex",
+                "female": "female",
+                "male": "male"
+            },
+            "birth": "date of birth",
+            "vaccine": {
+                "label": "Vaccination history",
+                "helper": "Please select diseases with a history of vaccination."
+            },
+            "family": "Family information",
+            "save":"Save",
+            "error":{
+                "name": "Please select a name.",
+                "gender": "Please choose your gender.",
+                "birth":"Please choose a birthday.",
+                "add": "Please enter all existing information before entering new information."
+            }
+        },
+        "signOut":{
+            "title": "Are you sure you want to unsubscribe?",
+            "warning": "Please decide carefully as your data cannot be recovered when you leave your membership.",
+            "button": "Unsubscribe"
+        }
+    }
+
+}
