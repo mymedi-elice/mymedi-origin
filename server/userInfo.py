@@ -130,6 +130,7 @@ class UserInfo(Resource):
                 status = 500,
                 error = "There is no username from your logged in google account, Register user information first"
             )
+
     @jwt_required()
     def post(self):
         sub = get_jwt_identity()
