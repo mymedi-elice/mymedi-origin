@@ -153,9 +153,9 @@ def get_all_event(service):
                 get_vaccine_info_all = cursor.fetchall()
                 if get_vaccine_info_all != []:
                     temp['get_vaccine'] = get_vaccine_info_all[0][1]
-                    temp['family_id'] = get_vaccine_info_all[0][3]
+                    temp['family_id'] = str(get_vaccine_info_all[0][3])
                     temp['user_id'] = get_vaccine_info_all[0][4]
-                    temp['vaccine_id'] = str(get_vaccine_info_all[0])[5]
+                    temp['vaccine_id'] = str(get_vaccine_info_all[0][5])
                     print('get_vaccine_info_all: ', get_vaccine_info_all[0])
                 result.append(temp)
             return result
@@ -175,6 +175,15 @@ def get_event(service, get_id):
     location = event['location']
     temp['id'] = eventId; temp['date'] = date; temp['time'] = time; temp['location'] = location; temp['summary'] = summary; temp['description'] = description
     return temp
+
+def get_event_date(service, event_id):
+    eventId = event_id
+    event = service.events().get(calendarId = 'primary', eventId = eventId).execute()
+    datetime = event['start'].get('dateTime', event['start'].get('date'))
+    print('datetime: ', datetime)
+    date = datetime.split('T')[0]
+    print('date: ', date)
+    return date
 
 def insert_event(service, hexcode, summary, location, description, date, time):
     event = {
@@ -265,11 +274,23 @@ def save_vaccine_info(date, user_id, family_id, vaccine_id):
         cursor.execute(get_vaccine_sql, (date, 1, family_id, user_id, vaccine_id))
     conn.commit()
 
-def update_vaccine_info(previous_date, previous_vaccine_id, date, user_id, family_id, vaccine_id):
+def update_vaccine_info(previous_date, date, user_id, family_id, vaccine_id):
     if family_id == 0:
+        get_previous_vaccine_sql = "SELECT `id` FROM `get_vaccine` WHERE `get_date` = %s"
+        cursor.execute(get_previous_vaccine_sql, (previous_date, ))
+        prev_date_id = cursor.fetchone()[0]
+        print('prev_date_id: ', prev_date_id)
+        reset_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` = %s, `get_vaccine` = 0 WHERE `id` = %s"
+        cursor.execute(reset_vaccine_sql, (None, prev_date_id ))
         get_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` = %s, `get_vaccine` = %s WHERE `family_info_id` is NULL and `user_info_id` = %s and `vaccine_id` = %s "
         cursor.execute(get_vaccine_sql, (date, 1, user_id, vaccine_id))
     else:
+        get_previous_vaccine_sql = "SELECT `id` FROM `get_vaccine` WHERE `get_date` = %s"
+        cursor.execute(get_previous_vaccine_sql, (previous_date, ))
+        prev_date_id = cursor.fetchone()[0]
+        print('prev_date_id: ', prev_date_id)
+        reset_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` = %s, `get_vaccine` = 0 WHERE `id` = %s"
+        cursor.execute(reset_vaccine_sql, (None ,prev_date_id))
         get_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` = %s, `get_vaccine` = %s WHERE `family_info_id` = %s and `user_info_id` = %s and `vaccine_id` = %s"
         cursor.execute(get_vaccine_sql, (date, 1, family_id, user_id, vaccine_id))
     conn.commit()
