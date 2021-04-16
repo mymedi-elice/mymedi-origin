@@ -21,12 +21,12 @@ class Hospital(Resource):
         cursor = conn.cursor()
 
         #전체데이터 로딩 너무 길어 일단 일부 데이터 가져오기
-        sql = "SELECT name, address FROM `hospital` WHERE address LIKE '경기도%'"
+        sql = "SELECT name, address FROM `hospital` WHERE address LIKE '경기도%' limit 100"
         cursor.execute(sql,)
         datas = cursor.fetchall()
         hospitals = []
         for item in datas:
-            row = {"name":item[0].decode(), "address":item[1].decode()}
+            row = {"name":item[0], "address":item[1]}
             hospitals.append(row)
         return jsonify(status = 200, data = {"hospital":hospitals})
 
