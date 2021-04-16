@@ -9,6 +9,12 @@ from google.oauth2.credentials import Credentials
 
 from config import CLIENT_SECRETS_FILE
 
+# db
+from module.db import connection_pool
+conn = connection_pool.get_connection()
+cursor = conn.cursor()
+
+
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 color = {
@@ -140,6 +146,17 @@ def get_all_event(service):
                 except:
                     time = None
                 temp['id'] = event_id; temp['color'] = colorId; temp['summary'] = summary; temp['description'] = description; temp['location'] = location; temp['date'] = date; temp['time'] = time
+
+                # 선택한 일정에 해당하는 예방 접종 예약에 대한 정보 불러오기
+                get_vaccine_info_all_sql = "SELECT * FROM `get_vaccine` WHERE `get_date` = %s"
+                cursor.execute(get_vaccine_info_all_sql, (date + " 00:00:00", ))
+                get_vaccine_info_all = cursor.fetchall()
+                if get_vaccine_info_all != []:
+                    temp['get_vaccine'] = get_vaccine_info_all[0][1]
+                    temp['family_id'] = get_vaccine_info_all[0][3]
+                    temp['user_id'] = get_vaccine_info_all[0][4]
+                    temp['vaccine_id'] = str(get_vaccine_info_all[0])[5]
+                    print('get_vaccine_info_all: ', get_vaccine_info_all[0])
                 result.append(temp)
             return result
 
@@ -205,3 +222,71 @@ def update_event(service, update_id, hexcode, summary, location, description, da
     temp['id'] = update_id; temp['color'] = hexcode; temp['summary'] = summary; temp['location'] = location; temp['description'] = description; temp['date'] = date; temp['time'] = time
     updated_event = service.events().update(calendarId = 'primary', eventId = update_id, body = update_event).execute()
     return temp
+
+def sub_to_user_id(sub):
+    # 로그인한 user의 table id 값 받아오기
+    sql = "SELECT `id` FROM `user_info` WHERE `sub` = %s"
+    cursor.execute(sql, (sub, ))
+    user_id = cursor.fetchone()[0]
+    return user_id
+
+def check_family_info(family_id):
+    check_family_info_sql = "SELECT * FROM `family_info` WHERE `id` = %s"
+    cursor.execute(check_family_info_sql, (family_id, ))
+    result = cursor.fetchone()
+    return result
+
+def get_vaccine_info_check(user_id, family_id):
+    if family_id == 0:
+        all_vaccine_check_sql = "SELECT * FROM `get_vaccine` WHERE `family_info_id` is NULL and `user_info_id` = %s"
+        cursor.execute(all_vaccine_check_sql, (user_id, ))
+    else:
+        all_vaccine_check_sql = "SELECT * FROM `get_vaccine` WHERE `family_info_id` = %s and `user_info_id` = %s"
+        cursor.execute(all_vaccine_check_sql, (family_id, user_id))
+    all_vaccine_check = cursor.fetchall()
+    return all_vaccine_check
+
+def get_vaccine_table_default(user_id, family_id):
+    for i in range(1, 14):
+        if family_id == 0:
+            all_vaccine_sql = "INSERT INTO `get_vaccine` (`get_vaccine`, `user_info_id`, `vaccine_id`) VALUES (%s, %s, %s)"
+            cursor.execute(all_vaccine_sql, (0, user_id, i))
+        else:
+            all_vaccine_sql = "INSERT INTO `get_vaccine` (`get_vaccine`, `family_info_id`, `user_info_id`, `vaccine_id`) VALUES (%s, %s, %s, %s)"
+            cursor.execute(all_vaccine_sql, (0, family_id, user_id, i))
+        conn.commit()
+
+def save_vaccine_info(date, user_id, family_id, vaccine_id):
+    if family_id == 0:
+        get_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` = %s, `get_vaccine` = %s WHERE `family_info_id` is NULL and `user_info_id` = %s and `vaccine_id` = %s"
+        cursor.execute(get_vaccine_sql, (date, 1, user_id, vaccine_id))
+    else:
+        get_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` = %s, `get_vaccine` = %s WHERE `family_info_id` = %s and `user_info_id` = %s and `vaccine_id` = %s"
+        cursor.execute(get_vaccine_sql, (date, 1, family_id, user_id, vaccine_id))
+    conn.commit()
+
+def update_vaccine_info(previous_date, previous_vaccine_id, date, user_id, family_id, vaccine_id):
+    if family_id == 0:
+        get_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` = %s, `get_vaccine` = %s WHERE `family_info_id` is NULL and `user_info_id` = %s and `vaccine_id` = %s "
+        cursor.execute(get_vaccine_sql, (date, 1, user_id, vaccine_id))
+    else:
+        get_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` = %s, `get_vaccine` = %s WHERE `family_info_id` = %s and `user_info_id` = %s and `vaccine_id` = %s"
+        cursor.execute(get_vaccine_sql, (date, 1, family_id, user_id, vaccine_id))
+    conn.commit()
+
+def delete_vaccine_info(user_id, family_id, date):
+    if family_id == 0:
+        sql = "SELECT * FROM `get_vaccine` WHERE `get_date` = %s and `family_info_id` is NULL and `user_info_id` = %s"
+        cursor.execute(sql, (date + " 00:00:00", user_id))
+        result = cursor.fetchone()
+        if result:
+            delete_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` is NULL, `get_vaccine` = %s WHERE `family_info_id` is NULL and `user_info_id` = %s"
+            cursor.execute(delete_vaccine_sql, (0, user_id))
+    else:
+        sql = "SELECT * FROM `get_vaccine` WHERE `get_date` = %s and `family_info_id` = %s and `user_info_id` = %s"
+        cursor.execute(sql, (date + " 00:00:00", family_id, user_id))
+        result = cursor.fetchone()
+        if result:
+            delete_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` is NULL, `get_vaccine` = %s WHERE `family_info_id` = %s and `user_info_id` = %s"
+            cursor.execute(delete_vaccine_sql, (0, family_id, user_id))
+    conn.commit()

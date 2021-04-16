@@ -165,7 +165,7 @@ def refresh():
 @jwt_required()
 def protected():
     current_user = get_jwt_identity()
-    print(current_user)
+    print('current_user: ', current_user)
     if current_user:
         return jsonify(
             status = 200,
