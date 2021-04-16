@@ -127,7 +127,7 @@ export default function MyPage() {
                     </>
                   ) : null}
                 </Box>
-                <Button mb="20px">
+                <Button marginBottom="50px">
                   <Link to="/mypage/update/1">{label.edit}</Link>
                 </Button>
               </VStack>

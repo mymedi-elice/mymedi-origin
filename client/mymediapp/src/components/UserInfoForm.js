@@ -18,6 +18,7 @@ import {
   WrapItem,
   Text,
   Spacer,
+  useToast,
 } from "@chakra-ui/react";
 
 import { Form, Formik, Field, FieldArray } from "formik";
@@ -49,6 +50,7 @@ export default function UserInfoFrom(props) {
   const user = props.userInfo.user;
 
   const { t } = useTranslation();
+  const toast = useToast();
 
   const formText = {
     name: t("mypage.form.name"),
@@ -236,7 +238,12 @@ export default function UserInfoFrom(props) {
                                   vaccine: [],
                                 });
                               } else {
-                                //TODO : 에러메세지 띄워주기
+                                toast({
+                                  description: formText.error.add,
+                                  status: "error",
+                                  isClosable: true,
+                                });
+                                console.log(props);
                               }
                             }}
                           >

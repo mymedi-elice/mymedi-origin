@@ -174,20 +174,13 @@ export default function CalendarPage() {
           if (eachEvent.family_id) {
             family_id = eachEvent.family_id;
           } else {
-            family_id = 0;
+            family_id = "0";
           }
+          let vaccine_id;
           if (eachEvent.vaccine_id) {
-            return {
-              id: eachEvent.id,
-              title: eachEvent.summary,
-              date: eachEvent.date,
-              time: eachEvent.time,
-              location: eachEvent.location,
-              description: eachEvent.description,
-              color: color,
-              family_id: family_id,
-              vaccine_id: eachEvent.vaccine_id,
-            };
+            vaccine_id = eachEvent.vaccine_id;
+          } else {
+            vaccine_id = "0";
           }
           return {
             id: eachEvent.id,
@@ -198,6 +191,7 @@ export default function CalendarPage() {
             description: eachEvent.description,
             color: color,
             family_id: family_id,
+            vaccine_id: vaccine_id,
           };
         });
 
@@ -244,9 +238,7 @@ export default function CalendarPage() {
         data.location = event.location;
         data.description = event.description;
         data.family_id = event.family_id;
-        if (event.vaccine_id) {
-          data.vaccine_id = event.vaccine_id;
-        }
+        data.vaccine_id = event.vaccine_id;
       }
     });
     console.log(data);
@@ -307,13 +299,14 @@ export default function CalendarPage() {
     let sendData = { ...data };
     delete sendData["title"];
     sendData.summary = title;
+    console.log(data);
 
     const res = await axios.post(serverUrl + "/calendar/insert", sendData, {
       headers: {
         Authorization: AuthStr,
       },
     });
-
+    console.log(res);
     if (res.data.status === 200) {
       data.id = res.data.result.id;
 
@@ -361,7 +354,7 @@ export default function CalendarPage() {
       language={language}
       setLanguage={setLanguage}
     >
-      <Box maxWidth="800px" maxHeight="800px" p={20}>
+      <Box maxWidth="800px" maxHeight="800px" p={20} my="80px">
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
@@ -404,7 +397,7 @@ const ShowEventModal = (props) => {
   let eventVaccine;
   if (data.family_id) {
     props.familyInfo.forEach((member) => {
-      if (member.family_id === data.family_id) {
+      if (member.family_id === Number(data.family_id)) {
         eventOwner = member.name;
       }
     });
@@ -461,7 +454,7 @@ const ShowEventModal = (props) => {
                 <Icon as={BsJustifyLeft} m="4px" />
                 <Box>{data.description}</Box>
               </HStack>
-              {data.family_id ? (
+              {data.family_id !== "0" ? (
                 <>
                   <HStack>
                     <Icon as={BsFillPersonFill} m="4px" />
@@ -513,8 +506,8 @@ const AddEventModal = (props) => {
     location: "",
     description: "",
     color: "#039BE5",
-    family_id: 0,
-    vaccine_id: "",
+    family_id: "0",
+    vaccine_id: "0",
   };
 
   //family_id 정수형, vaccine_id 문자형...
