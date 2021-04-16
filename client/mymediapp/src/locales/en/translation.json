@@ -39,7 +39,7 @@
         },
         "mapCard":{
             "title":"Search Hospital",
-            "content":"You can find a hospital near your home and find out what kind of vaccines they offer.",
+            "content":"You can search for hospitals with vaccines on the map and find their addresses.",
             "imageAlt":"photo of map",
             "hashtags":{
                 "1":"",
@@ -106,15 +106,18 @@
                 "2": "Unsubscribe"
             }
         },
-        "show":{},
+        "show":{
+            "title": "My profile",
+            "edit":"Edit"
+        },
         "form":{
-            "name": "name",
+            "name": "Name",
             "gender":{
-                "label": "sex",
-                "female": "female",
-                "male": "male"
+                "label": "Sex",
+                "female": "Female",
+                "male": "Male"
             },
-            "birth": "date of birth",
+            "birth": "Date of birth",
             "vaccine": {
                 "label": "Vaccination history",
                 "helper": "Please select diseases with a history of vaccination."
@@ -132,6 +135,45 @@
             "title": "Are you sure you want to unsubscribe?",
             "warning": "Please decide carefully as your data cannot be recovered when you leave your membership.",
             "button": "Unsubscribe"
+        },
+        "toast":{
+            "update":{
+                "success":"Your member information has been successfully corrected.",
+                "error":"There was a problem while editing your member information."
+            },
+            "add":{
+                "success":"Your member information has been successfully entered.",
+                "error":"There was a problem while saving your member information."
+            }
         }
+    },
+    "calendar":{
+        "form":{
+            "title": "add schedule title",
+            "time": {
+                "placeHolder":"am/pm",
+                "am":"am",
+                "pm":"pm"
+            },
+            "location": "add location",
+            "description": "add schedule description",
+            "vaccination":{
+                "title": "Manage vaccination schedule",
+                "helper": "If you would like to register your family's vaccination schedule, not your own, please select a family member's name from below",
+                "family": "choose family name"
+            }
+        },
+        "toast":{
+            "save": "Saving..."
+        }
+    },
+    "hospital":{
+        "title": "Search Hospital",
+        "search":{
+            "placeHolder":"search with hospital name",
+            "button":"Search"
+        },
+        "vaccine": "Vaccines held by hospitals"
+
     }
 }

@@ -60,11 +60,15 @@ export default function MainLayout(props) {
     }
   }, [language]);
 
-  const Links = [
+  const validLinks = [
     [t("navbar.intro"), "/intro"],
     [t("navbar.calendar"), "/calendar"],
     [t("navbar.search"), "/map"],
     [t("navbar.mypage"), "/mypage"],
+  ];
+  const unValidLinks = [
+    [t("navbar.intro"), "/intro"],
+    [t("navbar.search"), "/map"],
   ];
 
   const handleLogout = () => {
@@ -111,7 +115,7 @@ export default function MainLayout(props) {
         handleMenuClick={(item) => {
           setLanguage(item);
         }}
-        links={Links}
+        links={isLoggedIn ? validLinks : unValidLinks}
         logButton={isLoggedIn ? t("navbar.logout") : t("navbar.login")}
         onClickLogButton={isLoggedIn ? handleLogout : handleLogin}
         logstat={isLoggedIn}

@@ -63,7 +63,7 @@ export default function Home() {
       language={language}
       setLanguage={setLanguage}
     >
-      <Grid my="200px" mx="200px" templateColumns="repeat(3, 1fr)" gap={4}>
+      <Grid my="220px" mx="200px" templateColumns="repeat(3, 1fr)" gap={4}>
         <GridItem colSpan={1}>
           <Link to={introCard.goto}>
             <Box

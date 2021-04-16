@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import {
-  Button
-} from "@chakra-ui/react";
-export default function Search(props){
+import { Box, Button, Input } from "@chakra-ui/react";
+export default function Search(props) {
   const [inputText, setInputText] = useState("");
 
-  const postHospital = (place)=>{
+  const postHospital = (place) => {
     props.postHospital(place);
-  }
+  };
 
   const onChange = (e) => {
     setInputText(e.target.value);
@@ -15,19 +13,23 @@ export default function Search(props){
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    postHospital(inputText)
+    postHospital(inputText);
   };
+  const text = props.text;
 
   return (
-    <>
+    <Box ml="40px">
       <form className="inputForm" onSubmit={handleSubmit}>
-        <input
-          placeholder="병원이름을 검색하세요"
+        <Input
+          placeholder={text.placeHolder}
           onChange={onChange}
           value={inputText}
+          mt="10px"
         />
-        <Button type="submit">검색</Button>
+        <Button type="submit" mt="10px">
+          {text.button}
+        </Button>
       </form>
-    </>
+    </Box>
   );
-};
+}

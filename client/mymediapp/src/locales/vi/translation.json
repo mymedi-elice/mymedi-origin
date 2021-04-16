@@ -39,7 +39,7 @@
         },
         "mapCard":{
             "title": "Tìm kiếm bệnh viện",
-            "content": "Bạn có thể tìm một bệnh viện gần nhà và tìm xem họ cung cấp loại vắc xin nào.",
+            "content": "Bạn có thể tìm kiếm các bệnh viện có vắc xin trên bản đồ và tìm địa chỉ của họ.",
             "imageAlt": "ảnh bản đồ",
             "hashtags":{
                 "1":"",
@@ -106,7 +106,10 @@
                 "2": "Hủy đăng ký"
             }
         },
-        "show":{},
+        "show":{
+            "title": "Thông tin của tôi",
+            "edit":"Biên tập"
+        },
         "form":{
             "name": "Tên",
             "gender":{
@@ -132,7 +135,46 @@
             "title": "Bạn có chắc chắn muốn hủy đăng ký không?",
             "warning": "Hãy quyết định cẩn thận vì dữ liệu của bạn không thể khôi phục được khi bạn rời khỏi tư cách thành viên.",
             "button": "Hủy đăng ký"
+        },
+        "toast":{
+            "update":{
+                "success":"Thông tin thành viên của bạn đã được sửa thành công.",
+                "error":"Đã xảy ra sự cố khi chỉnh sửa thông tin thành viên của bạn."
+            },
+            "add":{
+                "success":"Thông tin thành viên của bạn đã được nhập thành công.",
+                "error":"Đã xảy ra sự cố khi lưu thông tin thành viên của bạn."
+            }
         }
+    },
+    "calendar":{
+        "form":{
+            "title": "thêm tiêu đề lịch biểu",
+            "time": {
+                "placeHolder":"am/pm",
+                "am":"am",
+                "pm":"pm"
+            },
+            "location": "thêm vị trí",
+            "description": "thêm mô tả",
+            "vaccination":{
+                "title": "Quản lý lịch tiêm chủng",
+                "helper": "Nếu bạn muốn đăng ký lịch tiêm chủng của gia đình mình, không phải của riêng bạn, vui lòng chọn tên của thành viên gia đình bên dưới",
+                "family": "chọn tên gia đình"
+            }
+        },
+        "toast":{
+            "save": "Tiết kiệm..."
+        }
+    },
+    "hospital":{
+        "title": "Tìm kiếm bệnh viện",
+        "search":{
+            "placeHolder":"tìm kiếm với tên bệnh viện",
+            "button":"Tìm kiếm"
+        },
+        "vaccine": "Vắc xin do bệnh viện giữ"
+
     }
 
 }

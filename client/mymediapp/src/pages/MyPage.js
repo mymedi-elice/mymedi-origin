@@ -60,14 +60,14 @@ export default function MyPage() {
   }, []);
 
   const label = {
-    title: "My Profile",
+    title: t("mypage.show.title"),
     profile: {
-      name: "이름",
-      gender: "성별",
-      birth: "생일",
+      name: t("mypage.form.name"),
+      gender: t("mypage.form.gender.label"),
+      birth: t("mypage.form.birth"),
     },
-    family: "가족 정보",
-    edit: "수정하기",
+    family: t("mypage.form.family"),
+    edit: t("mypage.show.edit"),
   };
   const translateGender = {
     male: t("mypage.form.gender.male"),
@@ -84,7 +84,7 @@ export default function MyPage() {
       setLanguage={setLanguage}
     >
       {userInfo ? (
-        <Box maxW="1000px" my="50px">
+        <Box maxW="1000px" my="80px">
           <Sidebar />
           <Box float="right">
             <Center>
@@ -127,7 +127,7 @@ export default function MyPage() {
                     </>
                   ) : null}
                 </Box>
-                <Button mb="20px">
+                <Button>
                   <Link to="/mypage/update/1">{label.edit}</Link>
                 </Button>
               </VStack>
@@ -156,7 +156,7 @@ const UserProfile = (props) => {
       borderWidth="1px"
       borderRadius="lg"
       padding="40px"
-      key={props.info.name}
+      key={info.name}
     >
       <Flex>
         <Center>
