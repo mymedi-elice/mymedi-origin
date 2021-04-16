@@ -5,7 +5,7 @@ from flask_jwt_extended import JWTManager
 
 from config import JWT_SECRET_KEY
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../build', static_url_path='/')
 app.secret_key = "mymedi"
 CORS(app)
 
@@ -33,5 +33,9 @@ app.register_blueprint(googleCalendar)
 from vaccine import vaccine
 app.register_blueprint(vaccine)
 
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
+
 if __name__ == "__main__":
-    app.run(port = 5000, debug = True, host='0.0.0.0')
+    app.run( debug = True, host='0.0.0.0')
