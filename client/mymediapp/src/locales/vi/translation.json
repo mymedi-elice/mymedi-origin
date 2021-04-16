@@ -146,6 +146,35 @@
                 "error":"Đã xảy ra sự cố khi lưu thông tin thành viên của bạn."
             }
         }
+    },
+    "calendar":{
+        "form":{
+            "title": "thêm tiêu đề lịch biểu",
+            "time": {
+                "placeHolder":"am/pm",
+                "am":"am",
+                "pm":"pm"
+            },
+            "location": "thêm vị trí",
+            "description": "thêm mô tả",
+            "vaccination":{
+                "title": "Quản lý lịch tiêm chủng",
+                "helper": "Nếu bạn muốn đăng ký lịch tiêm chủng của gia đình mình, không phải của riêng bạn, vui lòng chọn tên của thành viên gia đình bên dưới",
+                "family": "chọn tên gia đình"
+            }
+        },
+        "toast":{
+            "save": "Tiết kiệm..."
+        }
+    },
+    "hospital":{
+        "title": "Tìm kiếm bệnh viện",
+        "search":{
+            "placeHolder":"tìm kiếm với tên bệnh viện",
+            "button":"Tìm kiếm"
+        },
+        "vaccine": "Vắc xin do bệnh viện giữ"
+
     }
 
 }

@@ -49,7 +49,9 @@ function App() {
           </LanguageContext.Provider>
         </Route>
         <Route path="/map">
-          <SearchHospital></SearchHospital>
+          <LanguageContext.Provider value={languageValue}>
+            <SearchHospital />
+          </LanguageContext.Provider>
         </Route>
       </Switch>
     </main>

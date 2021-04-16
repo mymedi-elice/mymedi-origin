@@ -17,14 +17,22 @@ import {
   Stack,
   Text,
   Link,
+  List,
+  ListItem,
+  ListIcon,
+  HStack,
 } from "@chakra-ui/layout";
-import { Image, Tag,
+import {
+  Image,
+  Tag,
   Accordion,
   AccordionItem,
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
 } from "@chakra-ui/react";
+import { LanguageContext } from "../context";
+import { CheckIcon } from "@chakra-ui/icons";
 
 const { kakao } = window;
 
@@ -35,14 +43,7 @@ export default function SearchHospital() {
   const [isPending, setIsPending] = useState(false);
   const [allHospital, setAllHospital] = useState();
 
-  useEffect(() => {
-    setIsLoggedIn(isConfirmed);
-    if (isConfirmed) {
-      setIsPending(false);
-    } else {
-      //로그인 에러
-    }
-  }, [isConfirmed]);
+  const { language, setLanguage } = useContext(LanguageContext);
 
   const getHospital = useCallback(async () => {
     const data = await axios.get(serverUrl + "/hospital");
@@ -56,6 +57,13 @@ export default function SearchHospital() {
     }
     getHospital();
   }, []);
+
+  useEffect(() => {
+    setIsLoggedIn(isConfirmed);
+    if (isConfirmed) {
+      setIsPending(false);
+    }
+  }, [isConfirmed]);
 
   useEffect(() => {
     if (allHospital) {
@@ -89,11 +97,12 @@ export default function SearchHospital() {
     });
   };
 
-
   const [searchedHospital, setSearchedHospital] = useState();
   const postName = useCallback(async (place) => {
     console.log(place);
-    const res = await axios.post(serverUrl + "/hospital", null, {params: { name: place }});
+    const res = await axios.post(serverUrl + "/hospital", null, {
+      params: { name: place },
+    });
     console.log(res);
     setSearchedHospital(res.data.data);
   }, []);
@@ -106,10 +115,6 @@ export default function SearchHospital() {
       }
     }
   }, [searchedHospital]);
-
-  // function nameHospital(name) {
-  //   console.log(name);
-  // }
 
   const nameHospital = (name) => {
     const { kakao } = window;
@@ -134,16 +139,27 @@ export default function SearchHospital() {
     });
   };
 
+  const text = {
+    title: t("hospital.title"),
+    search: {
+      placeHolder: t("hospital.search.placeHolder"),
+      button: t("hospital.search.button"),
+    },
+    vaccine: t("hospital.vaccine"),
+  };
+
   return (
     <MainLayout
       isLoggedIn={isLoggedIn}
       setIsLoggedIn={setIsLoggedIn}
       isPending={isPending}
       setIsPending={setIsPending}
+      language={language}
+      setLanguage={setLanguage}
     >
       <Center maxWidth="800px" m={50}>
         <Stack spacing={10}>
-          <Heading size="xl">병원 검색</Heading>
+          <Heading size="xl">{text.title}</Heading>
           <Box
             maxWidth="750px"
             borderWidth="1px"
@@ -161,31 +177,52 @@ export default function SearchHospital() {
               ></div>
               <div></div>
               <Spacer />
-              <Search postHospital={postName}></Search>
-              <Box maxWidth="400px" alignItems="baseline" ml={5}></Box>
+              <Search postHospital={postName} text={text.search}></Search>
             </Flex>
-            <section>{searchedHospital &&
-              searchedHospital.hospital.map((h)=>(
-                <div key={h.id}>
-                  <Link color="darkcyan" onClick={(e) => nameHospital(h.address)}><strong>{h.name}</strong></Link>
-                  <p>{h.phone}</p>
-                  <Accordion allowToggle>
-                    <AccordionItem>
-                      <h2>
-                        <AccordionButton>
-                          <Box flex="1" textAlign="left">
-                            보유 백신 리스트
-                          </Box>
-                          <AccordionIcon />
-                        </AccordionButton>
-                      </h2>
-                      <AccordionPanel pb={4}>
-                        {h.vaccine.map((v)=>(<li>{v}</li>))}
-                      </AccordionPanel>
-                    </AccordionItem>
-                  </Accordion>
-                </div>
-              ))}</section>
+            <section>
+              {searchedHospital &&
+                searchedHospital.hospital.map((h) => (
+                  <Box key={h.id} mt="5px">
+                    <Accordion allowToggle>
+                      <AccordionItem>
+                        <h2>
+                          <AccordionButton>
+                            <Box flex="1" textAlign="left">
+                              <Link
+                                color="teal"
+                                onClick={(e) => nameHospital(h.address)}
+                              >
+                                <Text fontWeight="semibold">{h.name}</Text>
+                              </Link>
+                              <Box mb="5px" fontSize="12px" color="gray.400">
+                                {h.phone}
+                              </Box>
+                            </Box>
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </h2>
+                        <AccordionPanel pb={4}>
+                          <Box mb="10px">{text.vaccine}</Box>
+                          <List>
+                            {h.vaccine.map((v, ind) => (
+                              <ListItem key={ind}>
+                                <HStack>
+                                  <ListIcon
+                                    as={CheckIcon}
+                                    color="teal"
+                                    boxSize="10px"
+                                  />
+                                  <Text fontSize="13px">{v}</Text>
+                                </HStack>
+                              </ListItem>
+                            ))}
+                          </List>
+                        </AccordionPanel>
+                      </AccordionItem>
+                    </Accordion>
+                  </Box>
+                ))}
+            </section>
           </Box>
         </Stack>
       </Center>

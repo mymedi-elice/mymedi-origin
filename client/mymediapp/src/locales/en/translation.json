@@ -146,5 +146,34 @@
                 "error":"There was a problem while saving your member information."
             }
         }
+    },
+    "calendar":{
+        "form":{
+            "title": "add schedule title",
+            "time": {
+                "placeHolder":"am/pm",
+                "am":"am",
+                "pm":"pm"
+            },
+            "location": "add location",
+            "description": "add schedule description",
+            "vaccination":{
+                "title": "Manage vaccination schedule",
+                "helper": "If you would like to register your family's vaccination schedule, not your own, please select a family member's name from below",
+                "family": "choose family name"
+            }
+        },
+        "toast":{
+            "save": "Saving..."
+        }
+    },
+    "hospital":{
+        "title": "Search Hospital",
+        "search":{
+            "placeHolder":"search with hospital name",
+            "button":"Search"
+        },
+        "vaccine": "Vaccines held by hospitals"
+
     }
 }

@@ -131,6 +131,27 @@ export default function CalendarPage() {
     }
   }, [isConfirmed]);
 
+  const text = {
+    form: {
+      title: t("calendar.form.title"),
+      time: {
+        placeHolder: t("calendar.form.time.placeHolder"),
+        am: t("calendar.form.time.am"),
+        pm: t("calendar.form.time.pm"),
+      },
+      location: t("calendar.form.location"),
+      description: t("calendar.form.description"),
+      vaccination: {
+        title: t("calendar.form.vaccination.title"),
+        helper: t("calendar.form.vaccination.helper"),
+        family: t("calendar.form.vaccination.family"),
+      },
+    },
+    toast: {
+      save: t("calendar.toast.save"),
+    },
+  };
+
   const getAllEvents = useCallback(async () => {
     const res = await axios.get(serverUrl + "/calendar/", {
       headers: {
@@ -245,7 +266,7 @@ export default function CalendarPage() {
           borderRadius="lg"
           maxW="150px"
         >
-          저장 중...
+          {text.toast.save}
         </Box>
       ),
     });
@@ -357,6 +378,7 @@ export default function CalendarPage() {
         allEvents={allEvents}
         familyInfo={familyInfo}
         vaccines={showVaccines}
+        text={text}
       />
       <ShowEventModal
         data={focusedEvent}
@@ -366,6 +388,7 @@ export default function CalendarPage() {
         allEvents={allEvents}
         familyInfo={familyInfo}
         vaccines={showVaccines}
+        text={text}
       />
     </MainLayout>
   );
@@ -390,7 +413,6 @@ const ShowEventModal = (props) => {
         eventVaccine = v.name;
       }
     });
-    console.log(eventVaccine);
   }
   return (
     <Modal
@@ -417,6 +439,7 @@ const ShowEventModal = (props) => {
               setEdit={setEdit}
               familyInfo={props.familyInfo}
               vaccines={props.vaccines}
+              text={props.text}
             />
           ) : (
             <VStack align="left" spacing="15px">
@@ -518,6 +541,7 @@ const AddEventModal = (props) => {
             curDate={curDate}
             familyInfo={props.familyInfo}
             vaccines={props.vaccines}
+            text={props.text}
           ></CalendarForm>
         </ModalBody>
         <ModalFooter />
@@ -537,7 +561,8 @@ const CalendarForm = (props) => {
   const curDate = props.curDate;
   const familyInfo = props.familyInfo;
   const vaccines = props.vaccines;
-  console.log(familyInfo);
+  const text = props.text;
+
   let defaultTime;
   if (props.show.data) {
     defaultTime = props.show.data.time;
@@ -575,7 +600,7 @@ const CalendarForm = (props) => {
                   <Input
                     {...field}
                     id="title"
-                    placeholder="일정 제목 추가"
+                    placeholder={text.form.title}
                   ></Input>
                 </FormControl>
               )}
@@ -597,6 +622,7 @@ const CalendarForm = (props) => {
                   <TimePicker
                     form={form}
                     defaultTime={defaultTime}
+                    text={text}
                   ></TimePicker>
                 </Box>
               )}
@@ -610,7 +636,7 @@ const CalendarForm = (props) => {
                   <Input
                     {...field}
                     id="location"
-                    placeholder="위치 추가"
+                    placeholder={text.form.location}
                   ></Input>
                 </FormControl>
               )}
@@ -621,7 +647,7 @@ const CalendarForm = (props) => {
                   <Textarea
                     {...field}
                     id="description"
-                    placeholder="설명 추가"
+                    placeholder={text.form.description}
                   ></Textarea>
                 </FormControl>
               )}
@@ -630,7 +656,7 @@ const CalendarForm = (props) => {
               <AccordionItem>
                 <AccordionButton>
                   <Box flex="1" textAlign="left">
-                    예방접종 일정 관리
+                    {text.form.vaccination.title}
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -638,14 +664,13 @@ const CalendarForm = (props) => {
                   {familyInfo ? (
                     <>
                       <Box fontSize="xs" color="gray.500" mb={1}>
-                        * 본인의 일정이 아닌 가족의 예방 접종 일정을 등록하고
-                        싶으시다면 아래에서 가족 구성원의 이름을 선택해주세요
+                        * {text.form.vaccination.helper}
                       </Box>
                       <Field name="family_id">
                         {({ field, form }) => (
                           <Select
                             size="sm"
-                            placeholder="가족 이름 선택"
+                            placeholder={text.form.vaccination.family}
                             defaultValue={form.initialValues.family_id}
                             onChange={(e) => {
                               form.setValues({
@@ -654,7 +679,6 @@ const CalendarForm = (props) => {
                               });
                             }}
                           >
-                            {/* Select에 defaultValue 주기*/}
                             {familyInfo.map((member, index) => (
                               <option
                                 value={member.family_id}
@@ -803,7 +827,7 @@ const TimePicker = (props) => {
         defaultValue={defaultMeridiem}
         size="sm"
         maxWidth="120px"
-        placeholder="오전/오후"
+        placeholder={props.text.form.time.placeHolder}
         // value={defaultMeridiem}
         onChange={(e) => {
           let time;
@@ -831,8 +855,8 @@ const TimePicker = (props) => {
           setInputTime({ ...inputTime, meridiem: e.target.value });
         }}
       >
-        <option value={0}>오전</option>
-        <option value={12}>오후</option>
+        <option value={0}>{props.text.form.time.am}</option>
+        <option value={12}>{props.text.form.time.pm}</option>
       </Select>
       <Box maxWidth="80px">
         <NumberInput
