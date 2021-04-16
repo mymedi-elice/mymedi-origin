@@ -36,7 +36,7 @@ from mysql.connector import pooling
 
 try:
     connection_pool = pooling.MySQLConnectionPool(pool_name="pool",
-                                                  pool_size=10,
+                                                  pool_size=32,
                                                   pool_reset_session=True,
                                                   host='localhost',
                                                   database='mymedi',
