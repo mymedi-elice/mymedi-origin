@@ -27,11 +27,44 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./date-picker.css";
 import * as Yup from "yup";
 
+const formatBirth = (date) => {
+  const birthToDate = new Date(date);
+  const year = birthToDate.getFullYear();
+  const month = birthToDate.getMonth() + 1;
+  const day = birthToDate.getDate();
+  const format = year + "-" + month + "-" + day;
+
+  return format;
+};
+
 export default function UserInfoFrom(props) {
   const vaccines = props.vaccines;
   const handleSave = (data) => {
     props.handleSave(data);
   };
+  const handleDeleteFamilyInfo = (data) => {
+    props.handleDeleteFamilyInfo(data);
+  };
+  const user = props.userInfo.user;
+  let familyNum = [];
+  let userValues;
+  if (user === "1") {
+    let data = props.userInfo.data;
+    userValues = { ...data };
+    userValues.birth = formatBirth(data.birth);
+
+    if (userValues.family_info) {
+      userValues.family_info.map((member) => {
+        const format = formatBirth(member.birth);
+        member.birth = format;
+        familyNum.push(member.family_id);
+        return member;
+      });
+    }
+  }
+  if (user === "0") {
+    userValues = props.userInfo.data;
+  }
 
   const schema = Yup.object().shape({
     name: Yup.string().required("이름을 입력해주세요."),
@@ -47,136 +80,168 @@ export default function UserInfoFrom(props) {
       })
     ),
   });
-  // 작동을 안해...차후 validation에 사용
 
   return (
-    <Center>
-      <Box
-        className="container"
-        boxShadow="base"
-        maxWidth="500px"
-        alignItems="center"
-        margin="50"
-        padding="50"
-      >
-        <Formik
-          initialValues={{
-            name: "",
-            gender: "",
-            birth: "",
-            vaccine: [],
-            family_info: [],
-          }}
-          // 사용자 정보로 다시 초기화 만들어줘야 한다.
-          validationSchema={schema}
-          // 사용자 정보로 initial value 넣어주기
-          onSubmit={(values, actions) => {
-            console.log(values);
-            //사용자 정보가 있는지 없는지 확인하기
-            //(사용자 정보 저장)
-            handleSave(values);
-            setTimeout(() => {
-              alert(JSON.stringify(values, null, 2));
-              actions.setSubmitting(false);
-            }, 1000);
-          }}
+    <Box float="right">
+      <Center>
+        <Box
+          className="container"
+          boxShadow="base"
+          maxWidth="500px"
+          alignItems="center"
+          margin="50"
+          padding="50"
         >
-          {(props) => (
-            <Form>
-              <InfoForm vaccines={vaccines}></InfoForm>
-              <FormLabel mt="10">가족 정보</FormLabel>
-              <FieldArray
-                name="family_info"
-                render={(arrayHelpers) => {
-                  const family_info = arrayHelpers.form.values.family_info;
-                  return (
-                    <>
-                      {family_info.map((member, ind) => {
-                        return (
-                          <Box
-                            key={ind}
-                            borderWidth="1px"
-                            pl="5"
-                            pr="5"
-                            pb="5"
-                            borderRadius="lg"
+          <Formik
+            initialValues={userValues}
+            validationSchema={schema}
+            enableReinitialize={true}
+            onSubmit={(values, actions) => {
+              if (user === "0") {
+                handleSave(values);
+              }
+              if (user === "1") {
+                if (values.family_info) {
+                  if (
+                    familyNum &&
+                    values.family_info.length < familyNum.length
+                  ) {
+                    const change = values.family_info.map((member) => {
+                      return member.id;
+                    });
+                    console.log("삭제");
+                    let toDel;
+                    familyNum.forEach((id) => {
+                      if (!change.includes(id)) {
+                        toDel = id;
+                      }
+                    });
+                    console.log(toDel);
+
+                    //더 작아졌을 경우...삭제 요청 + 수정요청
+                    handleDeleteFamilyInfo({ family_id: toDel });
+                  }
+                  values.family_info.map((member) => {
+                    if (!member.family_id) {
+                      member.family_id = 0;
+                      return member;
+                    }
+                    return member;
+                  });
+                  handleSave(values);
+                } else {
+                  values.family_info = [];
+                  handleSave(values);
+                }
+              }
+              // setTimeout(() => {
+              //   alert(JSON.stringify(values, null, 2));
+              //   actions.setSubmitting(false);
+              // }, 1000);
+            }}
+          >
+            {(props) => (
+              <Form>
+                <InfoForm vaccines={vaccines}></InfoForm>
+                <FormLabel mt="10">가족 정보</FormLabel>
+                <FieldArray
+                  name="family_info"
+                  render={(arrayHelpers) => {
+                    let family_info;
+                    if (arrayHelpers.form.values.family_info) {
+                      family_info = arrayHelpers.form.values.family_info;
+                    } else {
+                      family_info = [];
+                    }
+                    return (
+                      <>
+                        {family_info.map((member, ind) => {
+                          return (
+                            <Box
+                              key={ind}
+                              borderWidth="1px"
+                              pl="5"
+                              pr="5"
+                              pb="5"
+                              borderRadius="lg"
+                            >
+                              <Flex>
+                                <Spacer />
+                                <Button
+                                  size="xs"
+                                  colorScheme="teal"
+                                  variant="outline"
+                                  mt="5"
+                                  onClick={() => {
+                                    if (family_info) {
+                                      arrayHelpers.pop();
+                                    }
+                                  }}
+                                >
+                                  <CloseIcon boxSize={2}></CloseIcon>
+                                </Button>
+                              </Flex>
+                              <FamilyForm
+                                member={member}
+                                index={ind}
+                                vaccines={vaccines}
+                              ></FamilyForm>
+                            </Box>
+                          );
+                        })}
+                        <Center>
+                          <Button
+                            size="xs"
+                            colorScheme="teal"
+                            variant="outline"
+                            mt="3"
+                            onClick={() => {
+                              if (
+                                family_info.length > 0 &&
+                                family_info[family_info.length - 1].name
+                              ) {
+                                arrayHelpers.push({
+                                  name: "",
+                                  gender: "",
+                                  birth: "",
+                                  vaccine: [],
+                                });
+                              } else if (family_info.length === 0) {
+                                arrayHelpers.push({
+                                  name: "",
+                                  gender: "",
+                                  birth: "",
+                                  vaccine: [],
+                                });
+                              } else {
+                                //TODO : 에러메세지 띄워주기
+                              }
+                            }}
                           >
-                            <Flex>
-                              <Spacer />
-                              <Button
-                                size="xs"
-                                colorScheme="teal"
-                                variant="outline"
-                                mt="5"
-                                onClick={() => {
-                                  if (family_info) {
-                                    arrayHelpers.pop();
-                                  }
-                                }}
-                              >
-                                <CloseIcon boxSize={2}></CloseIcon>
-                              </Button>
-                            </Flex>
-                            <FamilyForm
-                              member={member}
-                              index={ind}
-                              vaccines={vaccines}
-                            ></FamilyForm>
-                          </Box>
-                        );
-                      })}
-                      <Center>
-                        <Button
-                          size="xs"
-                          colorScheme="teal"
-                          variant="outline"
-                          mt="3"
-                          onClick={() => {
-                            if (
-                              family_info.length > 0 &&
-                              family_info[family_info.length - 1].name
-                            ) {
-                              arrayHelpers.push({
-                                name: "",
-                                gender: "",
-                                birth: "",
-                                vaccine: [],
-                              });
-                            } else if (family_info.length === 0) {
-                              arrayHelpers.push({
-                                name: "",
-                                gender: "",
-                                birth: "",
-                                vaccine: [],
-                              });
-                            } else {
-                              //TODO : 에러메세지 띄워주기
-                            }
-                          }}
-                        >
-                          <AddIcon boxSize={2} />
-                          추가
-                        </Button>
-                      </Center>
-                    </>
-                  );
-                }}
-              ></FieldArray>
-              <Center>
-                <Button
-                  mt={6}
-                  colorScheme="teal"
-                  isLoading={props.isSubmitting}
-                  type="submit"
-                >
-                  회원 정보 저장
-                </Button>
-              </Center>
-            </Form>
-          )}
-        </Formik>
-      </Box>
-    </Center>
+                            <AddIcon boxSize={2} />
+                            추가
+                          </Button>
+                        </Center>
+                      </>
+                    );
+                  }}
+                ></FieldArray>
+                <Center>
+                  <Button
+                    mt={6}
+                    colorScheme="teal"
+                    isLoading={props.isSubmitting}
+                    type="submit"
+                  >
+                    회원 정보 저장
+                  </Button>
+                </Center>
+              </Form>
+            )}
+          </Formik>
+        </Box>
+      </Center>
+    </Box>
   );
 }
 function InfoForm(props) {
@@ -204,25 +269,27 @@ function InfoForm(props) {
       <Wrap>
         <WrapItem>
           <Field name="gender">
-            {({ field, form }) => (
-              <FormControl
-                isInvalid={form.errors.gender && form.touched.gender}
-              >
-                <RadioGroup name="gender" mr="4">
-                  <FormLabel mt="8">성별</FormLabel>
-                  <Stack spacing={5} direction="row">
-                    {/* <FormLabel mt="2.5">성별</FormLabel> */}
-                    <Radio {...field} value="female" m="2" size="md">
-                      <Text fontSize="sm">여성</Text>
-                    </Radio>
-                    <Radio {...field} value="male" size="md">
-                      <Text fontSize="sm">남성</Text>
-                    </Radio>
-                  </Stack>
-                  <FormErrorMessage>{form.errors.gender}</FormErrorMessage>
-                </RadioGroup>
-              </FormControl>
-            )}
+            {({ field, form }) => {
+              return (
+                <FormControl
+                  isInvalid={form.errors.gender && form.touched.gender}
+                >
+                  <RadioGroup name="gender" mr="4" {...field}>
+                    <FormLabel mt="8">성별</FormLabel>
+                    <Stack spacing={5} direction="row">
+                      {/* <FormLabel mt="2.5">성별</FormLabel> */}
+                      <Radio {...field} value="female" m="2" size="md">
+                        <Text fontSize="sm">여성</Text>
+                      </Radio>
+                      <Radio {...field} value="male" size="md">
+                        <Text fontSize="sm">남성</Text>
+                      </Radio>
+                    </Stack>
+                    <FormErrorMessage>{form.errors.gender}</FormErrorMessage>
+                  </RadioGroup>
+                </FormControl>
+              );
+            }}
           </Field>
         </WrapItem>
         <WrapItem>
@@ -233,7 +300,10 @@ function InfoForm(props) {
                   생년월일
                 </FormLabel>
                 <Box maxWidth="sm">
-                  <DatePickerComponent birth={form} />
+                  <DatePickerComponent
+                    birth={form}
+                    default={form.initialValues.birth}
+                  />
                 </Box>
                 <FormErrorMessage>{form.errors.birth}</FormErrorMessage>
               </FormControl>
@@ -244,7 +314,7 @@ function InfoForm(props) {
       <Field name="vaccine">
         {({ field, form }) => (
           <FormControl>
-            <CheckboxGroup>
+            <CheckboxGroup defaultValue={field.value}>
               <FormLabel htmlFor="vaccine" mt="8">
                 예방 접종 내역
               </FormLabel>
@@ -256,6 +326,7 @@ function InfoForm(props) {
                         {...field}
                         value={vaccine.id + ""}
                         margin={"2.5"}
+                        name="vaccine"
                       >
                         <Text fontSize="sm">{vaccine.name}</Text>
                       </Checkbox>
@@ -341,7 +412,7 @@ function FamilyForm(props) {
                       : false
                   }
                 >
-                  <RadioGroup name="gender" mr="2">
+                  <RadioGroup name="gender" mr="2" {...field}>
                     <FormLabel mt="8">성별</FormLabel>
                     <Stack spacing={1} direction="row">
                       <Radio {...field} value="female" m="2" size="md">
@@ -387,7 +458,16 @@ function FamilyForm(props) {
                     생년월일
                   </FormLabel>
                   <Box maxWidth="sm">
-                    <DatePickerComponent birth={form} index={index} />
+                    <DatePickerComponent
+                      birth={form}
+                      index={index}
+                      default={
+                        form.initialValues.family_info &&
+                        form.initialValues.family_info[index]
+                          ? form.initialValues.family_info[index].birth
+                          : ""
+                      }
+                    />
                   </Box>
                   <FormErrorMessage>
                     {isError ? isError.birth : null}
@@ -401,7 +481,7 @@ function FamilyForm(props) {
       <Field name={`family_info.${index}.vaccine`}>
         {({ field, form }) => (
           <FormControl>
-            <CheckboxGroup>
+            <CheckboxGroup defaultValue={field.value}>
               <FormLabel htmlFor="vaccine" mt="8">
                 예방 접종 내역
               </FormLabel>
@@ -437,7 +517,11 @@ const range = (start, stop, step) =>
     .map((x, y) => x + y * step);
 
 const DatePickerComponent = (props) => {
-  const [startDate, setStartDate] = useState();
+  let initialDate;
+  if (props.default && props.default != "") {
+    initialDate = new Date(props.default.split("-"));
+  }
+  const [startDate, setStartDate] = useState(initialDate);
   const curDate = new Date();
   const curYear = 1900 + curDate.getYear();
   const years = range(curYear - 150, curYear + 1, 1);

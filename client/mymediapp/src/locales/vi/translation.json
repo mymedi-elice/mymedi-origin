@@ -97,5 +97,42 @@
                 "4": "Philippines"
             }
         }
+    },
+    "mypage":{
+        "sideBar":{
+            "title": "trang của tôi",
+            "links": {
+                "1": "thông tin",
+                "2": "Hủy đăng ký"
+            }
+        },
+        "show":{},
+        "form":{
+            "name": "Tên",
+            "gender":{
+                "label": "tình dục",
+                "female": "giống cái",
+                "male": "Nam giới"
+            },
+            "birth": "ngày sinh",
+            "vaccine": {
+                "label": "Lịch sử tiêm chủng",
+                "helper": "Vui lòng chọn các bệnh có tiền sử tiêm phòng."
+            },
+            "family": "Thông tin gia đình",
+            "save":"tiết kiệm",
+            "error":{
+                "name": "Vui lòng chọn một tên.",
+                "gender": "Vui lòng chọn giới tính của bạn.",
+                "birth":"Vui lòng chọn ngày sinh.",
+                "add": "Vui lòng nhập tất cả thông tin hiện có trước khi thêm thông tin mới."
+            }
+        },
+        "signOut":{
+            "title": "Bạn có chắc chắn muốn hủy đăng ký không?",
+            "warning": "Hãy quyết định cẩn thận vì dữ liệu của bạn không thể khôi phục được khi bạn rời khỏi tư cách thành viên.",
+            "button": "Hủy đăng ký"
+        }
     }
+
 }
