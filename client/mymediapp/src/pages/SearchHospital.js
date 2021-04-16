@@ -157,75 +157,77 @@ export default function SearchHospital() {
       language={language}
       setLanguage={setLanguage}
     >
-      <Center maxWidth="800px" m={50}>
-        <Stack spacing={10}>
-          <Heading size="xl">{text.title}</Heading>
-          <Box
-            maxWidth="750px"
-            borderWidth="1px"
-            borderRadius="lg"
-            overflow="hidden"
-            p={10}
-          >
-            <Flex>
-              <div
-                id="map"
-                style={{
-                  width: "500px",
-                  height: "500px",
-                }}
-              ></div>
-              <div></div>
-              <Spacer />
-              <Search postHospital={postName} text={text.search}></Search>
-            </Flex>
-            <section>
-              {searchedHospital &&
-                searchedHospital.hospital.map((h) => (
-                  <Box key={h.id} mt="5px">
-                    <Accordion allowToggle>
-                      <AccordionItem>
-                        <h2>
-                          <AccordionButton>
-                            <Box flex="1" textAlign="left">
-                              <Link
-                                color="teal"
-                                onClick={(e) => nameHospital(h.address)}
-                              >
-                                <Text fontWeight="semibold">{h.name}</Text>
-                              </Link>
-                              <Box mb="5px" fontSize="12px" color="gray.400">
-                                {h.phone}
+      <Box my="30px">
+        <Center maxWidth="800px" m={50}>
+          <Stack spacing={10}>
+            <Heading size="xl">{text.title}</Heading>
+            <Box
+              maxWidth="750px"
+              borderWidth="1px"
+              borderRadius="lg"
+              overflow="hidden"
+              p={10}
+            >
+              <Flex>
+                <div
+                  id="map"
+                  style={{
+                    width: "500px",
+                    height: "500px",
+                  }}
+                ></div>
+                <div></div>
+                <Spacer />
+                <Search postHospital={postName} text={text.search}></Search>
+              </Flex>
+              <section>
+                {searchedHospital &&
+                  searchedHospital.hospital.map((h) => (
+                    <Box key={h.id} mt="5px">
+                      <Accordion allowToggle>
+                        <AccordionItem>
+                          <h2>
+                            <AccordionButton>
+                              <Box flex="1" textAlign="left">
+                                <Link
+                                  color="teal"
+                                  onClick={(e) => nameHospital(h.address)}
+                                >
+                                  <Text fontWeight="semibold">{h.name}</Text>
+                                </Link>
+                                <Box mb="5px" fontSize="12px" color="gray.400">
+                                  {h.phone}
+                                </Box>
                               </Box>
-                            </Box>
-                            <AccordionIcon />
-                          </AccordionButton>
-                        </h2>
-                        <AccordionPanel pb={4}>
-                          <Box mb="10px">{text.vaccine}</Box>
-                          <List>
-                            {h.vaccine.map((v, ind) => (
-                              <ListItem key={ind}>
-                                <HStack>
-                                  <ListIcon
-                                    as={CheckIcon}
-                                    color="teal"
-                                    boxSize="10px"
-                                  />
-                                  <Text fontSize="13px">{v}</Text>
-                                </HStack>
-                              </ListItem>
-                            ))}
-                          </List>
-                        </AccordionPanel>
-                      </AccordionItem>
-                    </Accordion>
-                  </Box>
-                ))}
-            </section>
-          </Box>
-        </Stack>
-      </Center>
+                              <AccordionIcon />
+                            </AccordionButton>
+                          </h2>
+                          <AccordionPanel pb={4}>
+                            <Box mb="10px">{text.vaccine}</Box>
+                            <List>
+                              {h.vaccine.map((v, ind) => (
+                                <ListItem key={ind}>
+                                  <HStack>
+                                    <ListIcon
+                                      as={CheckIcon}
+                                      color="teal"
+                                      boxSize="10px"
+                                    />
+                                    <Text fontSize="13px">{v}</Text>
+                                  </HStack>
+                                </ListItem>
+                              ))}
+                            </List>
+                          </AccordionPanel>
+                        </AccordionItem>
+                      </Accordion>
+                    </Box>
+                  ))}
+              </section>
+            </Box>
+          </Stack>
+        </Center>
+      </Box>
     </MainLayout>
   );
 }

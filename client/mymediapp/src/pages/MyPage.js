@@ -84,7 +84,7 @@ export default function MyPage() {
       setLanguage={setLanguage}
     >
       {userInfo ? (
-        <Box maxW="1000px" my="50px">
+        <Box maxW="1000px" my="80px">
           <Sidebar />
           <Box float="right">
             <Center>
@@ -127,7 +127,7 @@ export default function MyPage() {
                     </>
                   ) : null}
                 </Box>
-                <Button marginBottom="50px">
+                <Button>
                   <Link to="/mypage/update/1">{label.edit}</Link>
                 </Button>
               </VStack>
