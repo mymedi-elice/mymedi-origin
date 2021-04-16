@@ -226,29 +226,50 @@ def updateCalendar():
     elif not params['vaccine_id']:
         error = "Please enter the content of vaccine id from the selected event id you want to update"
 
-    elif not params['previous date']:
-        error = "Please enter the content of previous date from the selected event id you want to update"
-
-    elif not params['previous vaccine_id']:
-        error = "Please enter the content of previous vaccine id from the selected event id you want to update"
-
     user_id = calendar.sub_to_user_id(sub) # sub 정보로 user_info table에서 user_id 검색
 
     if error is None:
-    #     family_id = int(params['family_id'])
-    #     vaccine_id = int(params['vaccine_id'])
-    #     # 입력된 family_id의 일정에 사용자의 가족 구성원 정보 수정 (단순 일정 or 예방 접종)
-    #     if family_id != 0:
-    #         # 입력된 family_id의 정보가 family_info에 존재하면
-    #         if calendar.check_family_info(family_id):
-    #             # 예방 접종 내역을 수정하려면 vaccine_id가 존재
-    #             if vaccine_id != 0:
-
-        result = calendar.update_event(service, params['_id'], params['color'], params['summary'], params['location'], params['description'], params['date'], params['time'])
-
+        family_id = int(params['family_id'])
+        vaccine_id = int(params['vaccine_id'])
+        # 입력된 family_id의 일정에 사용자의 가족 구성원 정보 수정 (단순 일정 or 예방 접종)
+        if family_id != 0:
+            # 입력된 family_id의 정보가 family_info에 존재하면
+            if calendar.check_family_info(family_id):
+                # 예방 접종 내역을 수정하려면 vaccine_id가 존재
+                if vaccine_id != 0:
+                    # 수정하기 전 이미 등록된 이벤트의 날짜 불러오기
+                    event_date = calendar.get_event_date(service, params['_id'])
+                    # 이미 등록된 이벤트의 날짜를 이용해서 이전 get_vaccine 정보를 조회해서 날짜와 접종 여부를 초기화하고
+                    # 입력된 정보로 수정
+                    calendar.update_vaccine_info(event_date, params['date'], user_id, family_id, vaccine_id)
+                    result = calendar.update_event(service, params['_id'], params['color'], params['summary'], params['location'], params['description'], params['date'], params['time'])
+                # 예방 접종 내역을 하지 않고 단순 일정 등록 (vaccine_id 값이 없을 때)
+                elif vaccine_id == 0:
+                    result = calendar.update_event(service, params['_id'], params['color'], params['summary'], params['location'], params['description'], params['date'], params['time'])
+            # 입력된 family_id의 정보가 family_info에 존재하지 않으면
+            else:
+                return jsonify(
+                    status = 500,
+                    error = "There is no family_id in family_info"
+                )
+        # family_id가 없으면 user의 일정을 수정 (단순 일정 or 예방 접종)
+        elif family_id == 0:
+            # 예방 접종을 하기 위해서 병원에 방문하게 된다면 vaccine_id 값이 존재
+            if vaccine_id != 0:
+                # 수정하기 전 이미 등록된 이벤트의 날짜 불러오기
+                event_date = calendar.get_event_date(service, params['_id'])
+                # 이미 등록된 이벤트의 날짜를 이용해서 이전 get_vaccine 정보를 조회 후, 날짜와 접종 여부를 초기화하고
+                # 입력된 정보로 수정
+                calendar.update_vaccine_info(event_date, params['date'], user_id, family_id, vaccine_id)
+                result = calendar.update_event(service, params['_id'], params['color'], params['summary'], params['location'], params['description'], params['date'], params['time'])
+            # 예방 접종을 하지 않고 단순 일정 등록 (vaccine_id 값이 없을 때)
+            elif vaccine_id == 0:
+                result = calendar.update_event(service, params['_id'], params['color'], params['summary'], params['location'], params['description'], params['date'], params['time'])
         return jsonify(
             status = 200,
-            result = result
+            update_result = result,
+            family_id = params['family_id'],
+            update_vaccine_id = params['vaccine_id']
             )
 
     return jsonify(
