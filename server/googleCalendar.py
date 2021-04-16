@@ -290,14 +290,14 @@ def deleteCalendar():
 
     if not params['_id']:
         error = 'Please enter the event id you want to delete'
-    elif not params['family_id']:
-        error = 'Please'
+    # elif not params['family_id']:
+    #     error = 'Please'
 
     if error is None:
-        family_id = int(params['family_id'])
-        event_date = calendar.get_event_date(service, params['_id'])
-        calendar.delete_vaccine_info(event_date, user_id, family_id)
-        # service.events().delete(calendarId = 'primary', eventId = params['_id']).execute()
+        # family_id = int(params['family_id'])
+        # event_date = calendar.get_event_date(service, params['_id'])
+        # calendar.delete_vaccine_info(event_date, user_id, family_id)
+        service.events().delete(calendarId = 'primary', eventId = params['_id']).execute()
         return jsonify(
             status = 200,
             deleted_id = params['_id']
