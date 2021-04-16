@@ -268,7 +268,7 @@ def updateCalendar():
         return jsonify(
             status = 200,
             update_result = result,
-            family_id = params['family_id'],
+            family_id = family_id,
             update_vaccine_id = params['vaccine_id']
             )
 
@@ -285,27 +285,22 @@ def deleteCalendar():
     params = request.get_json()
 
     user_id = calendar.sub_to_user_id(sub) # sub 정보로 user_info table에서 user_id 검색
-    family_id = int(params['family_id'])
 
     error = None
 
     if not params['_id']:
         error = 'Please enter the event id you want to delete'
-
     elif not params['family_id']:
-        error = 'Please enter the family id you want to delete'
-
-    elif not params['date']:
-        error = 'Please enter the date you want to delete'
+        error = 'Please'
 
     if error is None:
-        calendar.delete_vaccine_info(user_id, family_id, params['date'])
-        service.events().delete(calendarId = 'primary', eventId = params['_id']).execute()
+        family_id = int(params['family_id'])
+        event_date = calendar.get_event_date(service, params['_id'])
+        calendar.delete_vaccine_info(event_date, user_id, family_id)
+        # service.events().delete(calendarId = 'primary', eventId = params['_id']).execute()
         return jsonify(
             status = 200,
-            deleted_id = params['_id'],
-            deleted_user_id = user_id,
-            deleted_family_id = family_id
+            deleted_id = params['_id']
         )
 
     return jsonify(
