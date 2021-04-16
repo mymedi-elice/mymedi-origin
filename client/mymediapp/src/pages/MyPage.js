@@ -116,12 +116,14 @@ export default function MyPage() {
                         </Heading>
                       </Box>
                       <Wrap>
-                        {userInfo.family_info.map((member) => (
-                          <UserProfile
-                            label={label.profile}
-                            info={member}
-                            translateGender={translateGender}
-                          />
+                        {userInfo.family_info.map((member, ind) => (
+                          <Box key={ind}>
+                            <UserProfile
+                              label={label.profile}
+                              info={member}
+                              translateGender={translateGender}
+                            />
+                          </Box>
                         ))}
                       </Wrap>
                     </>
@@ -151,13 +153,7 @@ const UserProfile = (props) => {
   const formatBirth = year + "-" + month + "-" + day;
 
   return (
-    <Box
-      maxW="sm"
-      borderWidth="1px"
-      borderRadius="lg"
-      padding="40px"
-      key={info.name}
-    >
+    <Box maxW="sm" borderWidth="1px" borderRadius="lg" padding="40px">
       <Flex>
         <Center>
           <Avatar bg="gray.200" size="md" mr="20px" />

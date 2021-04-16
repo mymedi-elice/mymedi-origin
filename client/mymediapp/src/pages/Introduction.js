@@ -177,7 +177,7 @@ export default function Introduction() {
               <Image src={sub3.imageUrl} alt={sub3.imageAlt}></Image>
             </Center>
             <Box align="center">
-              <Text size="lg" noOfLines={[1, 2, 3]} mb={3}>
+              <Text size="lg" noOfLines={[1, 2, 3, 4]} mb={3}>
                 {sub3.contents1}
               </Text>
               {sub3.hastags.map(([hashtag, color], ind) => (
