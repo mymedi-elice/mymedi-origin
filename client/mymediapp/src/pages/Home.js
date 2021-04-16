@@ -47,7 +47,7 @@ export default function Home() {
     content: t("home.calendarCard.content"),
   };
   const mapCard = {
-    goto: "#",
+    goto: "/map",
     imageUrl: "https://ifh.cc/g/2H06dI.jpg",
     imageAlt: t("home.mapCard.imageAlt"),
     title: t("home.mapCard.title"),
