@@ -35,8 +35,6 @@ class UserInfo(Resource):
     def get(self):
         sub = get_jwt_identity()
         print('sub: ', sub)
-        # params = request.get_json()
-        # sub = params['sub']
 
         # db connect & cursor
         conn = connection_pool.get_connection()
@@ -69,7 +67,7 @@ class UserInfo(Resource):
             print('user_vaccine: ', user_vaccine)
             user_vaccine_list = []
             for vaccine in user_vaccine:
-                user_vaccine_list.append(vaccine[0])
+                user_vaccine_list.append(str(vaccine[0]))
             print('user_vaccine_list: ', user_vaccine_list)
             # 로그인한 user의 가족정보 조회
             family_id_sql = "SELECT `id` FROM `family_info` WHERE `user_info_id` = %s"
@@ -93,7 +91,7 @@ class UserInfo(Resource):
                     print('family_info_vaccine: ', family_info_vaccine)
                     family_info_vaccine_list = []
                     for v in family_info_vaccine:
-                        family_info_vaccine_list.append(v[0])
+                        family_info_vaccine_list.append(str(v[0]))
                     print('family_info_vaccine_list: ', family_info_vaccine_list)
                     family_info_temp = {
                         "family_id": info[0],
@@ -132,12 +130,12 @@ class UserInfo(Resource):
                 status = 500,
                 error = "There is no username from your logged in google account, Register user information first"
             )
+
     @jwt_required()
     def post(self):
         sub = get_jwt_identity()
         params = request.get_json()
         print('params: ', params)
-        # sub = params['sub'] # postman api 검증용 (frontend에서 accesstoken 넘겨주면 삭제)
 
         # db connect & cursor
         conn = connection_pool.get_connection()
@@ -178,11 +176,12 @@ class UserInfo(Resource):
                     conn.commit()
 
             # 로그인한 user의 vaccine 정보(vaccine_id)를 get_vaccine table에 저장
+            # vccine_id가 string이 읿력됨-> int로 변환해서 db에 저장
             if params['vaccine'] != []:
                 for vaccine_id in params['vaccine']:
                     print('vaccine_id: ', vaccine_id)
                     user_get_vaccine_sql = "UPDATE `get_vaccine` SET `get_vaccine` = %s WHERE `user_info_id` = %s and `vaccine_id` = %s"
-                    cursor.execute(user_get_vaccine_sql, (1, user_id, vaccine_id))
+                    cursor.execute(user_get_vaccine_sql, (1, user_id, int(vaccine_id)))
                     conn.commit()
 
             # 로그인한 user의 family_info가 있다면 family_info table에 추가
@@ -217,7 +216,7 @@ class UserInfo(Resource):
                     for vaccine_id in family['vaccine']:
                         print('vaccine_id: ', vaccine_id)
                         family_get_vaccine_sql = "UPDATE `get_vaccine` SET `get_vaccine` = %s WHERE `family_info_id` = %s and `user_info_id` = %s and `vaccine_id` = %s"
-                        cursor.execute(family_get_vaccine_sql, (1, family_id, user_id, vaccine_id))
+                        cursor.execute(family_get_vaccine_sql, (1, family_id, user_id, int(vaccine_id)))
                         conn.commit()
 
             return jsonify(
@@ -287,7 +286,7 @@ class UserInfo(Resource):
             for vaccine_id in params['vaccine']:
                 print('vaccine_id: ', vaccine_id)
                 user_update_vaccine_sql = "UPDATE `get_vaccine` SET `get_vaccine` = %s WHERE `user_info_id` = %s and `vaccine_id` = %s"
-                cursor.execute(user_update_vaccine_sql, (1, user_id, vaccine_id))
+                cursor.execute(user_update_vaccine_sql, (1, user_id, int(vaccine_id)))
                 conn.commit()
 
         # 로그인한 user의 기존 family_info가 있다면 family_info table에서 family_id를 통해 수정
@@ -314,7 +313,7 @@ class UserInfo(Resource):
                     for vaccine_id in family['vaccine']:
                         print('vaccine_id: ', vaccine_id)
                         family_update_vaccine_sql = "UPDATE `get_vaccine` SET `get_vaccine` = %s WHERE `family_info_id` = %s and `user_info_id` = %s and `vaccine_id` = %s"
-                        cursor.execute(family_update_vaccine_sql, (1, family_id, user_id, vaccine_id))
+                        cursor.execute(family_update_vaccine_sql, (1, family_id, user_id, int(vaccine_id)))
                         conn.commit()
 
                 # 로그인한 user의 기존 family_info_id가 존재하지 않다면 family_info 추가
@@ -338,7 +337,7 @@ class UserInfo(Resource):
                     for vaccine_id in family['vaccine']:
                         print('vaccine_id: ', vaccine_id)
                         family_update_vaccine_sql = "UPDATE `get_vaccine` SET `get_vaccine` = %s WHERE `family_info_id` = %s and `user_info_id` = %s and `vaccine_id` = %s"
-                        cursor.execute(family_update_vaccine_sql, (1, family_id, user_id, vaccine_id))
+                        cursor.execute(family_update_vaccine_sql, (1, family_id, user_id, int(vaccine_id)))
                         conn.commit()
 
         return jsonify(

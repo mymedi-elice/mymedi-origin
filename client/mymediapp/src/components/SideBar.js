@@ -22,7 +22,7 @@ export default function SideBar() {
         borderRadius="lg"
       >
         {data.links.map(([name, goto]) => (
-          <Link to={goto}>
+          <Link to={goto} key={name}>
             <Box
               w="100%"
               py="5px"

@@ -42,6 +42,7 @@ try:
                                                   database='mymedi',
                                                   user='root',
                                                   charset="utf8",
+                                                  password="0000",
                                                   connection_timeout=30
                                                   )
 
