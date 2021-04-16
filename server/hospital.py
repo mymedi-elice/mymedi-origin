@@ -34,14 +34,21 @@ class Hospital(Resource):
         conn = connection_pool.get_connection()
         cursor = conn.cursor()
         name = request.args['name']
-        print(name)
         sql = "SELECT id, name, address, phone FROM `hospital` WHERE address LIKE '강원도%' and name LIKE '%"+ name +"%' limit 100"
         cursor.execute(sql,)
         datas = cursor.fetchall()
         hospitals = []
         for item in datas:
-            row = {"id":item[0], "name":item[1], "address":item[2], "phone":item[3]}
-            # row = {"id":item[0], "name":item[1].decode(), "address":item[2].decode(), "phone":item[3].decode()}
+            sql = "SELECT vaccine FROM `hospital_vaccine_list` WHERE hospital_id = %s"
+            cursor.execute(sql,(item[0],))
+            vaccines = cursor.fetchall()
+            vac_list = []
+            for vaccine in vaccines:
+                vac_list.append(vaccine[0])
+            row = {"id":item[0], "name":item[1], "address":item[2], "phone":item[3], "vaccine":vac_list}
+            # for vaccine in vaccines:
+            #     vac_list.append(vaccine[0].decode())
+            # row = {"id":item[0], "name":item[1].decode(), "address":item[2].decode(), "phone":item[3].decode(), "vaccine":vac_list}
             hospitals.append(row)
         return jsonify(status = 200, data = {"hospital":hospitals})
 

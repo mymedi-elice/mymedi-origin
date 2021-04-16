@@ -15,12 +15,6 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours = 1)
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days = 30)
 jwt = JWTManager(app)
 
-from test import test
-app.register_blueprint(test)
-
-from auth import auth
-app.register_blueprint(auth)
-
 from userInfo import userInfo
 app.register_blueprint(userInfo)
 

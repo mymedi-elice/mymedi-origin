@@ -16,8 +16,15 @@ import {
   Spacer,
   Stack,
   Text,
+  Link,
 } from "@chakra-ui/layout";
-import { Image, Tag } from "@chakra-ui/react";
+import { Image, Tag,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+} from "@chakra-ui/react";
 
 const { kakao } = window;
 
@@ -160,8 +167,23 @@ export default function SearchHospital() {
             <section>{searchedHospital &&
               searchedHospital.hospital.map((h)=>(
                 <div key={h.id}>
-                  <strong onClick={(e) => nameHospital(h.address)}>{h.name}</strong>
+                  <Link color="darkcyan" onClick={(e) => nameHospital(h.address)}><strong>{h.name}</strong></Link>
                   <p>{h.phone}</p>
+                  <Accordion allowToggle>
+                    <AccordionItem>
+                      <h2>
+                        <AccordionButton>
+                          <Box flex="1" textAlign="left">
+                            보유 백신 리스트
+                          </Box>
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel pb={4}>
+                        {h.vaccine.map((v)=>(<li>{v}</li>))}
+                      </AccordionPanel>
+                    </AccordionItem>
+                  </Accordion>
                 </div>
               ))}</section>
           </Box>

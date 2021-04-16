@@ -22,7 +22,7 @@ export default function Search(props){
     <>
       <form className="inputForm" onSubmit={handleSubmit}>
         <input
-          placeholder="찾으시는 병원을 검색해주세요"
+          placeholder="병원이름을 검색하세요"
           onChange={onChange}
           value={inputText}
         />
