@@ -27,6 +27,8 @@ import {
   Flex,
   FormControl,
   FormLabel,
+  Heading,
+  HStack,
   Icon,
   IconButton,
   Input,
@@ -59,7 +61,13 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-
+import {
+  BsClock,
+  BsFillPersonFill,
+  BsGeoAlt,
+  BsJustifyLeft,
+} from "react-icons/bs";
+import { RiSyringeLine } from "react-icons/ri";
 import MainLayout from "../components/MainLayout";
 import { useTranslation } from "react-i18next";
 import useConfirmLogin from "../components/useConfirmLogin";
@@ -367,9 +375,23 @@ const ShowEventModal = (props) => {
   const [edit, setEdit] = useState(false);
   const show = props.data.show;
   let data = props.data.data;
-  let initialValues = data;
-  delete initialValues["end"];
-  delete initialValues["start"];
+  let initialValues = props.data.data;
+
+  let eventOwner;
+  let eventVaccine;
+  if (data.family_id) {
+    props.familyInfo.forEach((member) => {
+      if (member.family_id === data.family_id) {
+        eventOwner = member.name;
+      }
+    });
+    props.vaccines.forEach((v) => {
+      if (v.id + "" === data.vaccine_id) {
+        eventVaccine = v.name;
+      }
+    });
+    console.log(eventVaccine);
+  }
   return (
     <Modal
       isCentered
@@ -398,17 +420,36 @@ const ShowEventModal = (props) => {
             />
           ) : (
             <VStack align="left" spacing="15px">
-              <Stack direction="row" spacing="15px">
-                <Box w="15px" h="15px" bg={data.color} m="4px"></Box>
-                <VStack align="left" spacing="0px">
-                  <Box>{data.title}</Box>
-                  <Text fontSize="sm">
-                    {data.date} {data.time}
-                  </Text>
-                </VStack>
-              </Stack>
-              <Box>{data.location}</Box>
-              <Box>{data.description}</Box>
+              <HStack>
+                <Box w="15px" h="15px" bg={data.color} m="4px" />
+                <Heading size="md">{data.title}</Heading>
+              </HStack>
+              <HStack>
+                <Icon as={BsClock} m="4px" />
+                <Text fontSize="sm">
+                  {data.date} {data.time}
+                </Text>
+              </HStack>
+              <HStack>
+                <Icon as={BsGeoAlt} m="4px" />
+                <Box>{data.location}</Box>
+              </HStack>
+              <HStack>
+                <Icon as={BsJustifyLeft} m="4px" />
+                <Box>{data.description}</Box>
+              </HStack>
+              {data.family_id ? (
+                <>
+                  <HStack>
+                    <Icon as={BsFillPersonFill} m="4px" />
+                    <Box>{eventOwner}</Box>
+                  </HStack>
+                  <HStack>
+                    <Icon as={RiSyringeLine} m="4px" />
+                    <Box>{eventVaccine}</Box>
+                  </HStack>
+                </>
+              ) : null}
             </VStack>
           )}
         </ModalBody>
@@ -596,7 +637,7 @@ const CalendarForm = (props) => {
                 <AccordionPanel pb={4}>
                   {familyInfo ? (
                     <>
-                      <Box fontSize="xs" color="gray.500">
+                      <Box fontSize="xs" color="gray.500" mb={1}>
                         * 본인의 일정이 아닌 가족의 예방 접종 일정을 등록하고
                         싶으시다면 아래에서 가족 구성원의 이름을 선택해주세요
                       </Box>
