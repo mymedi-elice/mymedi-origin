@@ -295,19 +295,23 @@ def update_vaccine_info(previous_date, date, user_id, family_id, vaccine_id):
         cursor.execute(get_vaccine_sql, (date, 1, family_id, user_id, vaccine_id))
     conn.commit()
 
-def delete_vaccine_info(user_id, family_id, date):
+def delete_vaccine_info(event_date, user_id, family_id):
     if family_id == 0:
-        sql = "SELECT * FROM `get_vaccine` WHERE `get_date` = %s and `family_info_id` is NULL and `user_info_id` = %s"
-        cursor.execute(sql, (date + " 00:00:00", user_id))
-        result = cursor.fetchone()
-        if result:
-            delete_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` is NULL, `get_vaccine` = %s WHERE `family_info_id` is NULL and `user_info_id` = %s"
-            cursor.execute(delete_vaccine_sql, (0, user_id))
-    else:
-        sql = "SELECT * FROM `get_vaccine` WHERE `get_date` = %s and `family_info_id` = %s and `user_info_id` = %s"
-        cursor.execute(sql, (date + " 00:00:00", family_id, user_id))
-        result = cursor.fetchone()
-        if result:
-            delete_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` is NULL, `get_vaccine` = %s WHERE `family_info_id` = %s and `user_info_id` = %s"
-            cursor.execute(delete_vaccine_sql, (0, family_id, user_id))
+        search_date_sql = "SELECT `id` FROM `get_vaccine` WHERE `get_date` = %s and `family_info_id` = %s and `get_vaccine` = 1"
+        cursor.execute(search_date_sql, (event_date + " 00:00:00", family_id))
+        search_date = cursor.fetchall()
+        print("search_date: ", search_date)
+        if search_date != []:
+            for i in search_date:
+                delete_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` = %, `get_vaccine` = %s WHERE `id` = %s"
+                cursor.execute(delete_vaccine_sql, (None, 0, i))
+    elif family_id != 0:
+        search_date_sql = "SELECT `id` FROM `get_vaccine` WHERE `get_date` = %s and `family_info_id` is Null  and `user_info_id` = %s and `get_vaccine` = 1"
+        cursor.execute(search_date_sql, (event_date + " 00:00:00", user_id))
+        search_date = cursor.fetchall()
+        print("search_date: ", search_date)
+        if search_date != []:
+            for i in search_date:
+                delete_vaccine_sql = "UPDATE `get_vaccine` SET `get_date` = %, `get_vaccine` = %s WHERE `id` = %s"
+                cursor.execute(delete_vaccine_sql, (None, 0, i))
     conn.commit()
