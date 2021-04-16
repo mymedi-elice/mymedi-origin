@@ -49,6 +49,8 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
+  Radio,
+  RadioGroup,
   Select,
   SimpleGrid,
   Stack,
@@ -201,7 +203,6 @@ export default function CalendarPage() {
   };
 
   const handleEventClick = (e) => {
-    //우리가 쓰는 id -> e.event._def.publicId
     const eventId = e.event._def.publicId;
     let data = {};
     allEvents.forEach((event) => {
@@ -213,10 +214,13 @@ export default function CalendarPage() {
         data.color = event.color;
         data.location = event.location;
         data.description = event.description;
+        data.family_id = event.family_id;
+        if (event.vaccine_id) {
+          data.vaccine_id = event.vaccine_id;
+        }
       }
     });
-
-    // const data = { id: e.event._def.publicId, title: e.event._def.title };
+    console.log(data);
     setFocusedEvent({ show: true, data: data });
   };
 
@@ -624,22 +628,24 @@ const CalendarForm = (props) => {
                     </>
                   ) : null}
                   <Field name="vaccine_id">
-                    {({ field, form }) => (
-                      <CheckboxGroup
-                        defaultValue={form.initialValues.vaccine_id}
-                      >
-                        {vaccines.map((vaccine) => (
-                          <Checkbox
-                            {...field}
-                            value={vaccine.id + ""}
-                            margin={"2.5"}
-                            name="vaccine_id"
-                          >
-                            <Text fontSize="12px">{vaccine.name}</Text>
-                          </Checkbox>
-                        ))}
-                      </CheckboxGroup>
-                    )}
+                    {({ field, form }) => {
+                      return (
+                        <RadioGroup
+                          defaultValue={form.initialValues.vaccine_id}
+                        >
+                          {vaccines.map((vaccine) => (
+                            <Radio
+                              {...field}
+                              value={vaccine.id + ""}
+                              margin={"2.5"}
+                              key={vaccine.id}
+                            >
+                              <Text fontSize="12px">{vaccine.name}</Text>
+                            </Radio>
+                          ))}
+                        </RadioGroup>
+                      );
+                    }}
                   </Field>
                 </AccordionPanel>
               </AccordionItem>
