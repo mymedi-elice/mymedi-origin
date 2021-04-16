@@ -175,7 +175,7 @@ DROP TABLE IF EXISTS `vaccine`;
 CREATE TABLE `vaccine` (
   `id` int NOT NULL AUTO_INCREMENT,
   `korean` varchar(45) COLLATE utf8_bin DEFAULT NULL,
-  `vietnam` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `vietnames` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `english` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `name` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
