@@ -273,6 +273,7 @@ export default function CalendarPage() {
   const handleDeleteEvent = useCallback(async (id, allEvents) => {
     let array = [...allEvents];
     let deleteInd;
+    console.log(id);
     addToast();
     allEvents.forEach((event, eventInd) => {
       if (event.id === id) {
@@ -282,7 +283,7 @@ export default function CalendarPage() {
     array.splice(deleteInd, 1);
     setAllEvents(array);
     const res = await axios.delete(serverUrl + "/calendar/delete", {
-      params: { _id: id },
+      data: { _id: id },
       headers: {
         Authorization: AuthStr,
       },
