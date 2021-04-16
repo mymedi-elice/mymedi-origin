@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useContext,
+  useRef,
+} from "react";
 import axios from "axios";
 import { serverUrl } from "../config";
 
@@ -7,10 +13,17 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Badge,
   Box,
   Button,
   Center,
+  Checkbox,
+  CheckboxGroup,
   Flex,
   FormControl,
   FormLabel,
@@ -41,6 +54,7 @@ import {
   Stack,
   Text,
   Textarea,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 
@@ -58,6 +72,7 @@ import {
 import DatePickerComponent from "../components/DatePickerComponent";
 import { date } from "yup/lib/locale";
 import { LanguageContext } from "../context";
+import { ResourceStore } from "i18next";
 
 export default function CalendarPage() {
   const { t } = useTranslation();
@@ -68,17 +83,31 @@ export default function CalendarPage() {
   const [focusedEvent, setFocusedEvent] = useState({ show: false, data: {} });
 
   const [showAddModal, setShowAddModal] = useState({ show: false, date: "" });
-  //TODO:
-  //회원정보 api에서도 get을 해야한다(일정 소유자를 지정하기 위해 가족을 띄워줘야함)
+
+  const [familyInfo, setFamilyInfo] = useState();
+
+  const [vaccines, setVaccines] = useState();
+  const [showVaccines, setShowVaccines] = useState();
+
   const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
 
   const { language, setLanguage } = useContext(LanguageContext);
+  const toast = useToast();
+  const toastIdRef = useRef();
+
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
       setIsPending(true);
       isLoggedInServer();
     }
+    getVaccines();
   }, []);
+
+  useEffect(() => {
+    if (vaccines) {
+      setShowVaccines(vaccines[language]);
+    }
+  }, [language, vaccines]);
 
   useEffect(() => {
     setIsLoggedIn(isConfirmed);
@@ -86,6 +115,7 @@ export default function CalendarPage() {
     if (isConfirmed) {
       setIsPending(false);
       getAllEvents();
+      getUserFamily();
     } else {
       //로그인 에러...
     }
@@ -105,26 +135,64 @@ export default function CalendarPage() {
         const formatEvents = eventData.map((eachEvent) => {
           let color;
           if (eachEvent.color) {
-            color = eachEvent.color;
+            color = eachEvent.color.toUpperCase();
           } else {
             color = "#039BE5";
+          }
+          let family_id;
+          if (eachEvent.family_id) {
+            family_id = eachEvent.family_id;
+          } else {
+            family_id = 0;
+          }
+          if (eachEvent.vaccine_id) {
+            return {
+              id: eachEvent.id,
+              title: eachEvent.summary,
+              date: eachEvent.date,
+              time: eachEvent.time,
+              location: eachEvent.location,
+              description: eachEvent.description,
+              color: color,
+              family_id: family_id,
+              vaccine_id: eachEvent.vaccine_id,
+            };
           }
           return {
             id: eachEvent.id,
             title: eachEvent.summary,
             date: eachEvent.date,
-            start: eachEvent.date,
-            end: eachEvent.date,
             time: eachEvent.time,
             location: eachEvent.location,
             description: eachEvent.description,
             color: color,
-          }; //조건문으로 달리할 수 있다.
+            family_id: family_id,
+          };
         });
 
         setAllEvents(formatEvents);
       }
     }
+  }, []);
+
+  const getUserFamily = useCallback(async () => {
+    const res = await axios.get(serverUrl + "/userinfo", {
+      headers: {
+        Authorization: AuthStr,
+      },
+    });
+    if (res.data.result.family_info) {
+      let familyList = [];
+      res.data.result.family_info.forEach((member) => {
+        familyList.push({ family_id: member.family_id, name: member.name });
+      });
+      setFamilyInfo(familyList);
+    }
+  }, []);
+
+  const getVaccines = useCallback(async () => {
+    const res = await axios.get(serverUrl + "/vaccine/");
+    setVaccines(res.data.data);
   }, []);
 
   const handleDateClick = (e) => {
@@ -141,8 +209,6 @@ export default function CalendarPage() {
         data.id = eventId;
         data.title = event.title;
         data.date = event.date;
-        data.start = event.start;
-        data.end = event.end;
         data.time = event.time;
         data.color = event.color;
         data.location = event.location;
@@ -154,9 +220,35 @@ export default function CalendarPage() {
     setFocusedEvent({ show: true, data: data });
   };
 
+  function addToast() {
+    toastIdRef.current = toast({
+      position: "bottom",
+      render: () => (
+        <Box
+          color="white"
+          bg="gray.700"
+          textAlign="center"
+          px={3}
+          py={1}
+          borderRadius="lg"
+          maxW="150px"
+        >
+          저장 중...
+        </Box>
+      ),
+    });
+  }
+
+  function closeToast() {
+    if (toastIdRef.current) {
+      toast.close(toastIdRef.current);
+    }
+  }
+
   const handleDeleteEvent = useCallback(async (id, allEvents) => {
     let array = [...allEvents];
     let deleteInd;
+    addToast();
     allEvents.forEach((event, eventInd) => {
       if (event.id === id) {
         deleteInd = eventInd;
@@ -171,22 +263,13 @@ export default function CalendarPage() {
       },
     });
     console.log(res);
-    // if (res.data.status === 200) {
-    //   let array = [...allEvents];
-    //   let deleteInd;
-    //   allEvents.forEach((event, eventInd) => {
-    //     if (event.id === id) {
-    //       deleteInd = eventInd;
-    //     }
-    //   });
-    //   array.splice(deleteInd, 1);
-    //   setAllEvents(array);
-    // }
-    //오래걸림...
-    //TODO : res 응답 돌아올때까지 저장 중이라는 toast 띄워주기
+    if (res.data.status === 200) {
+      closeToast();
+    }
   }, []);
 
   const handleAddEvent = useCallback(async (data, allEvents) => {
+    addToast();
     let title = data.title;
     let sendData = { ...data };
     delete sendData["title"];
@@ -199,15 +282,16 @@ export default function CalendarPage() {
     });
 
     if (res.data.status === 200) {
-      //응답 기다리는 동안 loading 처리 필요(혹은 기다리지 말고 띄운 다음 toast 처리)
       data.id = res.data.result.id;
 
       let addedArray = allEvents.concat(data);
       setAllEvents(addedArray);
+      closeToast();
     }
   }, []);
 
   const handleUpdateEvent = useCallback(async (data, allEvents) => {
+    addToast();
     let title = data.title;
     let id = data.id;
     let sendData = { ...data };
@@ -229,8 +313,10 @@ export default function CalendarPage() {
         Authorization: AuthStr,
       },
     });
-    //여기도 로딩처리 해주기!
-    console.log(res);
+
+    if (res.data.status === 200) {
+      closeToast();
+    }
   }, []);
 
   return (
@@ -242,27 +328,6 @@ export default function CalendarPage() {
       language={language}
       setLanguage={setLanguage}
     >
-      <IconButton
-        aria-label="see calendar alarms"
-        icon={<BellIcon />}
-        right="30px"
-        top="90px"
-        position="fixed"
-        variant="outline"
-        colorScheme="teal"
-      />
-      <Badge
-        right="30px"
-        top="90px"
-        position="fixed"
-        variant="ghost"
-        color="red"
-        borderRadius="xl"
-      >
-        10
-        {/* 여기에 알람 갯수 표시 */}
-      </Badge>
-
       <Box maxWidth="800px" maxHeight="800px" p={20}>
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
@@ -278,6 +343,8 @@ export default function CalendarPage() {
         handleShow={setShowAddModal}
         handleAdd={handleAddEvent}
         allEvents={allEvents}
+        familyInfo={familyInfo}
+        vaccines={showVaccines}
       />
       <ShowEventModal
         data={focusedEvent}
@@ -285,6 +352,8 @@ export default function CalendarPage() {
         handleDelete={handleDeleteEvent}
         handleUpdate={handleUpdateEvent}
         allEvents={allEvents}
+        familyInfo={familyInfo}
+        vaccines={showVaccines}
       />
     </MainLayout>
   );
@@ -320,6 +389,8 @@ const ShowEventModal = (props) => {
               allEvents={props.allEvents}
               curDate={props.data.data.date}
               setEdit={setEdit}
+              familyInfo={props.familyInfo}
+              vaccines={props.vaccines}
             />
           ) : (
             <VStack align="left" spacing="15px">
@@ -374,7 +445,12 @@ const AddEventModal = (props) => {
     location: "",
     description: "",
     color: "#039BE5",
+    family_id: 0,
+    vaccine_id: "",
   };
+
+  //family_id 정수형, vaccine_id 문자형...
+
   return (
     <Modal
       isCentered
@@ -395,6 +471,8 @@ const AddEventModal = (props) => {
             handleAdd={props.handleAdd}
             allEvents={props.allEvents}
             curDate={curDate}
+            familyInfo={props.familyInfo}
+            vaccines={props.vaccines}
           ></CalendarForm>
         </ModalBody>
         <ModalFooter />
@@ -412,7 +490,9 @@ const CalendarForm = (props) => {
     return error;
   };
   const curDate = props.curDate;
-
+  const familyInfo = props.familyInfo;
+  const vaccines = props.vaccines;
+  console.log(familyInfo);
   let defaultTime;
   if (props.show.data) {
     defaultTime = props.show.data.time;
@@ -501,6 +581,69 @@ const CalendarForm = (props) => {
                 </FormControl>
               )}
             </Field>
+            <Accordion allowToggle w="100%">
+              <AccordionItem>
+                <AccordionButton>
+                  <Box flex="1" textAlign="left">
+                    예방접종 일정 관리
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+                <AccordionPanel pb={4}>
+                  {familyInfo ? (
+                    <>
+                      <Box fontSize="xs" color="gray.500">
+                        * 본인의 일정이 아닌 가족의 예방 접종 일정을 등록하고
+                        싶으시다면 아래에서 가족 구성원의 이름을 선택해주세요
+                      </Box>
+                      <Field name="family_id">
+                        {({ field, form }) => (
+                          <Select
+                            size="sm"
+                            placeholder="가족 이름 선택"
+                            defaultValue={form.initialValues.family_id}
+                            onChange={(e) => {
+                              form.setValues({
+                                ...form.values,
+                                family_id: Number(e.target.value),
+                              });
+                            }}
+                          >
+                            {/* Select에 defaultValue 주기*/}
+                            {familyInfo.map((member, index) => (
+                              <option
+                                value={member.family_id}
+                                key={member.family_id}
+                              >
+                                {member.name}
+                              </option>
+                            ))}
+                          </Select>
+                        )}
+                      </Field>
+                    </>
+                  ) : null}
+                  <Field name="vaccine_id">
+                    {({ field, form }) => (
+                      <CheckboxGroup
+                        defaultValue={form.initialValues.vaccine_id}
+                      >
+                        {vaccines.map((vaccine) => (
+                          <Checkbox
+                            {...field}
+                            value={vaccine.id + ""}
+                            margin={"2.5"}
+                            name="vaccine_id"
+                          >
+                            <Text fontSize="12px">{vaccine.name}</Text>
+                          </Checkbox>
+                        ))}
+                      </CheckboxGroup>
+                    )}
+                  </Field>
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
             <IconButton
               variant="ghost"
               aria-label="save"
@@ -610,10 +753,11 @@ const TimePicker = (props) => {
   return (
     <Stack direction="row">
       <Select
+        defaultValue={defaultMeridiem}
         size="sm"
         maxWidth="120px"
         placeholder="오전/오후"
-        value={defaultMeridiem}
+        // value={defaultMeridiem}
         onChange={(e) => {
           let time;
           let formatHour;

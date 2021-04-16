@@ -9,6 +9,7 @@ import { serverUrl } from "../config";
 import { LanguageContext } from "../context";
 import { useHistory, useParams } from "react-router-dom";
 import { Box, Center } from "@chakra-ui/layout";
+import { useToast } from "@chakra-ui/toast";
 
 export default function MyPageUpdate() {
   const { t } = useTranslation();
@@ -27,6 +28,7 @@ export default function MyPageUpdate() {
   const [userInfo, setUserInfo] = useState();
   const history = useHistory();
   const AuthStr = `Bearer ${localStorage.getItem("access_token")}`;
+  const toast = useToast();
 
   useEffect(() => {
     if (localStorage.getItem("access_token")) {
@@ -86,6 +88,19 @@ export default function MyPageUpdate() {
     });
     console.log(res);
     history.push("/mypage");
+    if (res.data.status === 200) {
+      toast({
+        description: t("mypage.toast.update.success"),
+        status: "success",
+        isClosable: true,
+      });
+    } else {
+      toast({
+        description: t("mypage.toast.update.error"),
+        status: "error",
+        isClosable: true,
+      });
+    }
   }, []);
 
   const createInfo = useCallback(async (data) => {
@@ -96,6 +111,19 @@ export default function MyPageUpdate() {
     });
     console.log(res);
     history.push("/mypage");
+    if (res.data.status === 200) {
+      toast({
+        description: t("mypage.toast.add.success"),
+        status: "success",
+        isClosable: true,
+      });
+    } else {
+      toast({
+        description: t("mypage.toast.add.error"),
+        status: "error",
+        isClosable: true,
+      });
+    }
   }, []);
 
   const deleteFamilyInfo = useCallback(async (data) => {
