@@ -56,5 +56,6 @@
   },
   "devDependencies": {
     "prettier-eslint": "^12.0.0"
-  }
+  },
+  "proxy": "http://elice-kdt-ai-track-vm-da-07.koreacentral.cloudapp.azure.com:5000"
 }

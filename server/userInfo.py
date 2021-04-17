@@ -156,6 +156,8 @@ class UserInfo(Resource):
         elif not params['gender']:
             user_error = "There is no gender info"
 
+        print('params:', params)
+
         if user_error is None:
 
             # 로그인한 user의 name, birth, gender를 user_info table에 입력

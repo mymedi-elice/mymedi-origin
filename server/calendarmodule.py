@@ -35,6 +35,7 @@ def get_credentials():
     creds = None
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        print('creds: ', creds)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
@@ -43,7 +44,7 @@ def get_credentials():
                 CLIENT_SECRETS_FILE, SCOPES
             )
             print("success")
-            creds = flow.run_local_server(host = 'localhost', port = 8080)
+            creds = flow.run_local_server()
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
     return creds
@@ -112,6 +113,7 @@ def get_all_event(service):
             pageToken = page_token
         ).execute()
         events = events_result.get('items', [])
+        print('events: ', events)
         if not events:
             msg = "There are no events"
             return msg
