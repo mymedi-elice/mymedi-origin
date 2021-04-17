@@ -396,7 +396,7 @@ const ShowEventModal = (props) => {
 
   let eventOwner;
   let eventVaccine;
-  if (data.family_id) {
+  if (data.family_id && data.family_id !== "0") {
     props.familyInfo.forEach((member) => {
       if (member.family_id === Number(data.family_id)) {
         eventOwner = member.name;
