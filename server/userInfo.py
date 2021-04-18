@@ -130,6 +130,7 @@ class UserInfo(Resource):
                 status = 500,
                 error = "There is no username from your logged in google account, Register user information first"
             )
+
     @jwt_required()
     def post(self):
         sub = get_jwt_identity()
@@ -154,6 +155,8 @@ class UserInfo(Resource):
             user_error = "There is no birth info"
         elif not params['gender']:
             user_error = "There is no gender info"
+
+        print('params:', params)
 
         if user_error is None:
 

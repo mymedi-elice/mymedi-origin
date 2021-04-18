@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from datetime import timedelta
 from flask import Flask, session, abort, redirect, request
 from flask_cors import CORS
@@ -15,12 +18,6 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours = 1)
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days = 30)
 jwt = JWTManager(app)
 
-from test import test
-app.register_blueprint(test)
-
-from auth import auth
-app.register_blueprint(auth)
-
 from userInfo import userInfo
 app.register_blueprint(userInfo)
 
@@ -37,4 +34,4 @@ from hospital import hospital
 app.register_blueprint(hospital)
 
 if __name__ == "__main__":
-    app.run(port = 5000, debug = True)
+    app.run(port = 5000, debug = True, host = '0.0.0.0')

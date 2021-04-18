@@ -1,12 +1,14 @@
 import { Box, VStack, Heading } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 export default function SideBar() {
+  const { t } = useTranslation();
   const data = {
-    title: "내 정보",
+    title: t("mypage.sideBar.title"),
     links: [
-      ["회원 정보", "/mypage"],
-      ["회원 탈퇴", "/mypage/signout"],
+      [t("mypage.sideBar.links.1"), "/mypage"],
+      [t("mypage.sideBar.links.2"), "/mypage/signout"],
     ],
   };
   return (
@@ -22,7 +24,7 @@ export default function SideBar() {
         borderRadius="lg"
       >
         {data.links.map(([name, goto]) => (
-          <Link to={goto}>
+          <Link to={goto} key={name}>
             <Box
               w="100%"
               py="5px"

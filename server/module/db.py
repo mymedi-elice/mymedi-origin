@@ -36,13 +36,14 @@ from mysql.connector import pooling
 
 try:
     connection_pool = pooling.MySQLConnectionPool(pool_name="pool",
-                                                  pool_size=5,
+                                                  pool_size=32,
                                                   pool_reset_session=True,
                                                   host='localhost',
                                                   database='mymedi',
                                                   user='root',
                                                   charset="utf8",
-                                                  password="0000"
+                                                  password="",
+                                                  connection_timeout=30
                                                   )
 
     print("Printing connection pool properties ")

@@ -39,7 +39,7 @@
         },
         "mapCard":{
             "title": "Tìm kiếm bệnh viện",
-            "content": "Bạn có thể tìm một bệnh viện gần nhà và tìm xem họ cung cấp loại vắc xin nào.",
+            "content": "Bạn có thể tìm kiếm các bệnh viện có vắc xin trên bản đồ và tìm địa chỉ của họ.",
             "imageAlt": "ảnh bản đồ",
             "hashtags":{
                 "1":"",
@@ -103,36 +103,78 @@
             "title": "trang của tôi",
             "links": {
                 "1": "thông tin",
-                "2": "Unsubscribe"
+                "2": "Hủy đăng ký"
             }
         },
-        "show":{},
+        "show":{
+            "title": "Thông tin của tôi",
+            "edit":"Biên tập"
+        },
         "form":{
-            "name": "name",
+            "name": "Tên",
             "gender":{
-                "label": "sex",
-                "female": "female",
-                "male": "male"
+                "label": "tình dục",
+                "female": "giống cái",
+                "male": "Nam giới"
             },
-            "birth": "date of birth",
+            "birth": "ngày sinh",
             "vaccine": {
-                "label": "Vaccination history",
-                "helper": "Please select diseases with a history of vaccination."
+                "label": "Lịch sử tiêm chủng",
+                "helper": "Vui lòng chọn các bệnh có tiền sử tiêm phòng."
             },
-            "family": "Family information",
-            "save":"Save",
+            "family": "Thông tin gia đình",
+            "save":"tiết kiệm",
             "error":{
-                "name": "Please select a name.",
-                "gender": "Please choose your gender.",
-                "birth":"Please choose a birthday.",
-                "add": "Please enter all existing information before entering new information."
+                "name": "Vui lòng chọn một tên.",
+                "gender": "Vui lòng chọn giới tính của bạn.",
+                "birth":"Vui lòng chọn ngày sinh.",
+                "add": "Vui lòng nhập tất cả thông tin hiện có trước khi thêm thông tin mới."
             }
         },
         "signOut":{
-            "title": "Are you sure you want to unsubscribe?",
-            "warning": "Please decide carefully as your data cannot be recovered when you leave your membership.",
-            "button": "Unsubscribe"
+            "title": "Bạn có chắc chắn muốn hủy đăng ký không?",
+            "warning": "Hãy quyết định cẩn thận vì dữ liệu của bạn không thể khôi phục được khi bạn rời khỏi tư cách thành viên.",
+            "button": "Hủy đăng ký"
+        },
+        "toast":{
+            "update":{
+                "success":"Thông tin thành viên của bạn đã được sửa thành công.",
+                "error":"Đã xảy ra sự cố khi chỉnh sửa thông tin thành viên của bạn."
+            },
+            "add":{
+                "success":"Thông tin thành viên của bạn đã được nhập thành công.",
+                "error":"Đã xảy ra sự cố khi lưu thông tin thành viên của bạn."
+            }
         }
+    },
+    "calendar":{
+        "form":{
+            "title": "thêm tiêu đề lịch biểu",
+            "time": {
+                "placeHolder":"am/pm",
+                "am":"am",
+                "pm":"pm"
+            },
+            "location": "thêm vị trí",
+            "description": "thêm mô tả",
+            "vaccination":{
+                "title": "Quản lý lịch tiêm chủng",
+                "helper": "Nếu bạn muốn đăng ký lịch tiêm chủng của gia đình mình, không phải của riêng bạn, vui lòng chọn tên của thành viên gia đình bên dưới",
+                "family": "chọn tên gia đình"
+            }
+        },
+        "toast":{
+            "save": "Tiết kiệm..."
+        }
+    },
+    "hospital":{
+        "title": "Tìm kiếm bệnh viện",
+        "search":{
+            "placeHolder":"tìm kiếm với tên bệnh viện",
+            "button":"Tìm kiếm"
+        },
+        "vaccine": "Vắc xin do bệnh viện giữ"
+
     }
 
 }
