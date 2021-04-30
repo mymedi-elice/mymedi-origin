@@ -1,70 +1,38 @@
-//https://chakra-templates.dev/components/cards
-
-import React from "react";
-import {
-  Box,
-  Flex,
-  AspectRatio,
-  Image,
-  Text,
-  Link,
-  Button,
-  Stack,
-} from "@chakra-ui/react";
-
-function Card(props) {
-  const { product, summary, longLine } = props;
-
+import { Box, GridItem } from "@chakra-ui/layout";
+import { Image } from "@chakra-ui/image";
+import { Link } from "react-router-dom";
+export default function Card(props) {
+  const data = props.data;
   return (
-    <Box
-      p={4}
-      display={{ md: "flex" }}
-      maxWidth="32rem"
-      borderWidth={1}
-      margin={2}
-    >
-      <AspectRatio ratio={1 / 1}>
-        <Image
-          maxWidth="200px"
-          margin="auto"
-          src="https://picsum.photos/id/237/250/250"
-          alt="Woman paying for a purchase"
-        />
-      </AspectRatio>
-      <Stack
-        align={{ base: "center", md: "stretch" }}
-        textAlign={{ base: "center", md: "left" }}
-        mt={{ base: 4, md: 0 }}
-        ml={{ md: 6 }}
-      >
-        <Text
-          fontWeight="bold"
-          textTransform="uppercase"
-          fontSize="lg"
-          letterSpacing="wide"
-          color="teal.600"
+    <GridItem colSpan={1}>
+      <Link to={data.goto}>
+        <Box
+          maxW="sm"
+          minW="120px"
+          borderWidth="1px"
+          borderRadius="lg"
+          overflow="hidden"
+          height="420px"
+          _hover={{
+            boxShadow: "xl",
+          }}
         >
-          {product}
-        </Text>
-        <Link
-          my={1}
-          display="block"
-          fontSize="md"
-          lineHeight="normal"
-          fontWeight="semibold"
-          href="#"
-        >
-          {summary}
-        </Link>
-        <Text my={2} color="gray.500">
-          {longLine}
-        </Text>
-        <Button maxWidth="100px" my={2}>
-          Click me!
-        </Button>
-      </Stack>
-    </Box>
+          <Image src={data.imageUrl} alt={data.imageAlt} />
+
+          <Box p="6">
+            <Box
+              mt="1"
+              fontWeight="semibold"
+              as="h4"
+              lineHeight="tight"
+              py="6px"
+            >
+              {data.title}
+            </Box>
+            <Box pb="1">{data.content}</Box>
+          </Box>
+        </Box>
+      </Link>
+    </GridItem>
   );
 }
-
-export default Card;
